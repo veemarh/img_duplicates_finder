@@ -41,8 +41,8 @@ def get_sift_sim(img1, img2):
     return similarity
 
 # Пример использования функции
-img1 = 'image-1.jpeg'
-img2 = 'image-7.jpeg'
+img1 = 'images/image-1.jpeg'
+img2 = 'images/image-7.jpeg'
 
 images = {img1: cv2.imread(img1), 
           img2: cv2.imread(img2)}
