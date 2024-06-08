@@ -3,7 +3,7 @@ import numpy as np
 import os
 import time
 
-def get_orb_sim(img1, img2):
+def get_orb_similarity(img1, img2):
     orb = cv2.ORB_create()
 
     kp1, desc1 = orb.detectAndCompute(img1, None)
@@ -15,43 +15,30 @@ def get_orb_sim(img1, img2):
     good_mathes = [i for i in matches if i.distance < 50]
     if len(matches) == 0:
         sim = 0
-    sim = len(good_mathes) / len(matches) * 100
-    
+    else: 
+        sim = len(good_mathes) / len(matches) * 100
     return sim
 
-def get_orb_similarity(img1, img2):
+def is_duplicates(img1, img2, proc):
     # start = time.monotonic()
-    sim_img = get_orb_sim(img1, img2)
-    
-    reflected_img = reflect_img_for_y(img1)
-    sim_reflected_img = get_orb_sim(reflected_img, img2)
-    
-    if (sim_img > sim_reflected_img): 
-        res = sim_img 
-    else: 
-        res = sim_reflected_img
-    # print(f'\nВремя работы orb: {time.monotonic() - start}')
-    return res
-
-def reflect_img_for_y(img):
-    reflected_img = cv2.flip(img, 1)
-    return reflected_img
-
-def is_duplicate(img1, img2, proc):
-    
-    img1 = cv2.imread(img1)
-    img2 = cv2.imread(img2)
-
-    similarity = get_orb_similarity(img1, img2)
-    if similarity >= proc:
+    sim_img = get_orb_similarity(img1, img2)
+    if sim_img < proc and sim_img > 10:
+        reflected_img = cv2.flip(img1, 1)
+        sim_reflected_img = get_orb_similarity(reflected_img, img2)
+    else:
+        sim_reflected_img = 0
+        
+    if sim_img >= proc or sim_reflected_img >= proc:
+        # print(f'\nВремя работы orb: {time.monotonic() - start}')
         return True
+    # print(f'\nВремя работы orb: {time.monotonic() - start}')
     return False
 
 def find_duplicates_img(path_img, proc = 100):
-
     start = time.monotonic()
+    
     if not os.path.exists(path_img):
-        print('Директории не существует')
+        print('The directory does not exist')
         return
 
     images = os.listdir(path_img)
@@ -61,6 +48,7 @@ def find_duplicates_img(path_img, proc = 100):
     hasDuplicate = False
     while check_img < len(images):
         img1 = os.path.join(path_img, images[check_img])
+        img_r1 = cv2.imread(img1)
         curr_img = 0
         while curr_img < len(images):
             if curr_img == check_img:
@@ -68,8 +56,8 @@ def find_duplicates_img(path_img, proc = 100):
                 continue
             
             img2 = os.path.join(path_img, images[curr_img])
-            
-            if is_duplicate(img1, img2, proc):
+            img_r2 = cv2.imread(img2)
+            if is_duplicates(img_r1, img_r2, proc):
                 if not (img1 in duplicates):
                     duplicates[img1] = [img2]
                 else:
@@ -91,11 +79,11 @@ def find_duplicates_img(path_img, proc = 100):
 
 # Пример использования функции
 # img1 = "images/image-1.jpeg"
-# img2 = "images/image-7.jpeg"
+# img2 = "images/image-8.jpeg"
 
 # images = {img1: cv2.imread(img1), img2: cv2.imread(img2)}
 
 # sim = get_orb_similarity(images[img1], images[img2])
 # print(sim)
 
-print(find_duplicates_img('C:/Users/icecr/.vscode/img_duplicates_finder/images', 70))
+print(find_duplicates_img('images', proc = 90))
