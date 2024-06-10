@@ -1,6 +1,6 @@
 import cv2
-import numpy as np
 import os
+from pathlib import Path
 import time
 
 def get_orb_similarity(img1, img2):
@@ -29,61 +29,49 @@ def is_duplicates(img1, img2, proc):
         sim_reflected_img = 0
         
     if sim_img >= proc or sim_reflected_img >= proc:
-        # print(f'\nВремя работы orb: {time.monotonic() - start}')
+        # print(f'\nORB running time: {time.monotonic() - start}')
         return True
-    # print(f'\nВремя работы orb: {time.monotonic() - start}')
+    # print(f'\nORB running time: {time.monotonic() - start}')
     return False
 
-def find_duplicates_img(path_img, proc = 100):
+def find_duplicates_img(input_folder, duplicates_folder, proc):
     start = time.monotonic()
-    
-    if not os.path.exists(path_img):
+    if not os.path.exists(input_folder):
         print('The directory does not exist')
         return
 
-    images = os.listdir(path_img)
-    duplicates = {}
+    images = os.listdir(input_folder)
 
-    check_img = 0
+    check_i = 0
     hasDuplicate = False
-    while check_img < len(images):
-        img1 = os.path.join(path_img, images[check_img])
-        img_r1 = cv2.imread(img1)
-        curr_img = 0
-        while curr_img < len(images):
-            if curr_img == check_img:
-                curr_img += 1
+    while check_i < len(images):
+        path_check_img = f"{input_folder}/{images[check_i]}"
+        check_img = cv2.imread(path_check_img)
+        curr_i = 0
+        while curr_i < len(images):
+            if curr_i == check_i:
+                curr_i += 1
                 continue
             
-            img2 = os.path.join(path_img, images[curr_img])
-            img_r2 = cv2.imread(img2)
-            if is_duplicates(img_r1, img_r2, proc):
-                if not (img1 in duplicates):
-                    duplicates[img1] = [img2]
-                else:
-                    duplicates[img1].append(img2)
-                images.pop(curr_img)
+            name_curr_img = images[curr_i]
+            path_curr_img = f"{input_folder}/{name_curr_img}"
+            curr_img = cv2.imread(path_curr_img)
+            
+            if is_duplicates(check_img, curr_img, proc):
+                Path(path_curr_img).rename(f"{duplicates_folder}/{name_curr_img}")
                 hasDuplicate = True
+                images.pop(curr_i)
                 continue
             
-            curr_img += 1
+            curr_i += 1
             
         if hasDuplicate:
-            images.pop(check_img)
+            images.pop(check_i)
             hasDuplicate = False
         else:
-            check_img += 1
+            check_i += 1
         
-    print(f'\nВремя работы скрипта: {time.monotonic() - start}')
-    return duplicates
-
-# Пример использования функции
-# img1 = "images/image-1.jpeg"
-# img2 = "images/image-8.jpeg"
-
-# images = {img1: cv2.imread(img1), img2: cv2.imread(img2)}
-
-# sim = get_orb_similarity(images[img1], images[img2])
-# print(sim)
-
-print(find_duplicates_img('images', proc = 90))
+    print(f'\nScript running time: {time.monotonic() - start}')
+   
+# Example of work
+find_duplicates_img('images/', 'result/', 90)
