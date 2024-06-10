@@ -34,14 +34,14 @@ def is_duplicates(img1, img2, proc):
     # print(f'\nORB running time: {time.monotonic() - start}')
     return False
 
-def find_duplicates_img(input_folder, duplicates_folder, proc):
+def find_duplicates(input_folder, duplicates_folder, proc):
     start = time.monotonic()
     if not os.path.exists(input_folder):
         print('The directory does not exist')
         return
 
     images = os.listdir(input_folder)
-
+    duplicate_count = 0
     check_i = 0
     hasDuplicate = False
     while check_i < len(images):
@@ -61,6 +61,7 @@ def find_duplicates_img(input_folder, duplicates_folder, proc):
                 Path(path_curr_img).rename(f"{duplicates_folder}/{name_curr_img}")
                 hasDuplicate = True
                 images.pop(curr_i)
+                duplicate_count +=1
                 continue
             
             curr_i += 1
@@ -70,8 +71,8 @@ def find_duplicates_img(input_folder, duplicates_folder, proc):
             hasDuplicate = False
         else:
             check_i += 1
-        
-    print(f'\nScript running time: {time.monotonic() - start}')
+    print(duplicate_count, ' duplicates found')
+    print(f'Script running time: {time.monotonic() - start}')
    
 # Example of work
-find_duplicates_img('images/', 'result/', 90)
+find_duplicates('images/', 'result/', 90)
