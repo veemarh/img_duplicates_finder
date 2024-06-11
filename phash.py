@@ -1,87 +1,69 @@
-import cv2
 import os
 from pathlib import Path
 import time
+import imagehash
+from PIL import Image
 
-def calculate_mean(pixels_list):
-    mean = 0
-    total_pixels = len(pixels_list)
-    for i in range(total_pixels):
-        mean += pixels_list[i] / total_pixels
-    return mean
+""" 
+Positive
+- The hash has a small size
+- It is calculated quickly
+- It is being searched for quickly
+- Resistant to recycling
 
-def grab_pixels(squeezed_frame):
-    pixels_list = []
-    for x in range(0, squeezed_frame.shape[1], 1):
-        for y in range(0, squeezed_frame.shape[0], 1):
-            pixel_color = squeezed_frame[x, y]
-            pixels_list.append(pixel_color)
-    return pixels_list
+Minuses
+- It is not resistant to crop
+- Not resistant to turns
 
-def make_bits_list(mean, pixels_list):
-    bits_list = []
-    for i in range(len(pixels_list)):
-        if pixels_list[i] >= mean:
-            bits_list.append(255)
-        else:
-            bits_list.append(0)
-    return bits_list
+catches duplicates in different formats at threshold=20
+"""
 
-def hashify(squeezed_frame, bits_list):
-    bit_index = 0
-    hashed_frame = squeezed_frame
-    for x in range(0, squeezed_frame.shape[1], 1):
-        for y in range(0, squeezed_frame.shape[0], 1):
-            hashed_frame[x, y] = bits_list[bit_index]
-            bit_index += 1
-    return hashed_frame
-
-def generate_hash(frame, hash_size):
-    frame_squeezed = cv2.resize(frame, (hash_size, hash_size))
-    frame_squeezed = cv2.cvtColor(frame_squeezed, cv2.COLOR_BGR2GRAY)
-    pixels_list = grab_pixels(frame_squeezed)
-    mean_color = calculate_mean(pixels_list)
-    bits_list = make_bits_list(mean_color, pixels_list)
-    return bits_list
-
-
+# search for duplicates in the source folder
 def find_duplicates(input_folder, duplicates_folder, hash_size = 16, threshold = 0):
     start = time.monotonic()
-    files = os.listdir(input_folder)
-    i = 0
-    k = 1
-    frame = None
+    
+    images = os.listdir(input_folder)
+    check_i = 0
+    curr_i = 1
     duplicate_count = 0
     bits_list = []
 
-    while i < len(files):
+    while check_i < len(images):
         sum_diff = 0
 
-        if files[i] is not None:
-            frame = cv2.imread(f"{input_folder}/{files[i]}")
-            bits_list = generate_hash(frame, hash_size)
+        if images[check_i] is not None:
+            check_img = Image.open(f"{input_folder}/{images[check_i]}")
+            bits_list = imagehash.phash(check_img, hash_size).hash
 
-        while k < len(files):
-            if (i != k) and (files[k] is not None):
-                new_frame = cv2.imread(f"{input_folder}/{files[k]}")
-                new_bits_list = generate_hash(new_frame, hash_size)
-
+        while curr_i < len(images):
+            if (check_i != curr_i) and (images[curr_i] is not None):
+                name_curr_img = images[curr_i]
+                curr_img = Image.open(f"{input_folder}/{name_curr_img}")
+                new_bits_list = imagehash.phash(curr_img, hash_size).hash
+                
+                # we compare the images by bits
+                # sum up the number of different bits
                 for j in range(len(bits_list)):
-                    if bits_list[j] != new_bits_list[j]:
-                        sum_diff += 1
-
-                if sum_diff <= hash_size * hash_size * threshold / 100:
-                    Path(f"{input_folder}/{files[k]}").rename(f"{duplicates_folder}/{files[k]}")
-                    del files[k]
+                    for t in range(hash_size):
+                        if bits_list[j][t] != new_bits_list[j][t]:
+                            sum_diff += 1
+                
+                # we find the difference in percentages          
+                diff_prec = sum_diff / (hash_size * hash_size) * 100
+                if diff_prec <= threshold:
+                    # move the duplicate to the specified folder
+                    Path(f"{input_folder}/{name_curr_img}").rename(f"{duplicates_folder}/{name_curr_img}")
+                    del images[curr_i]
                     duplicate_count += 1
-                else:
-                    k += 1
+                else:   
+                    curr_i += 1
 
                 sum_diff = 0
-        i += 1
-        k = i + 1
+        check_i += 1
+        curr_i = check_i + 1
+        
     print(duplicate_count, 'duplicates found')
     print(f'Script running time: {time.monotonic() - start}')
-
-find_duplicates('images/', 'result/', 10)
     
+# Example of work
+find_duplicates('images/', 'result/', threshold = 30)   
