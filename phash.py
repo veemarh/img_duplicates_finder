@@ -22,6 +22,10 @@ catches duplicates in different formats at threshold=20
 def find_duplicates(input_folder, duplicates_folder, hash_size = 16, threshold = 0):
     start = time.monotonic()
     
+    if not os.path.exists(input_folder):
+        print('The directory does not exist')
+        return
+    
     images = os.listdir(input_folder)
     check_i = 0
     curr_i = 1
