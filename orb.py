@@ -46,51 +46,43 @@ def is_duplicates(img1, img2, perc):
     return False
 
 # search for duplicates in the source folder
-def find_duplicates(input_folder, duplicates_folder, perc):
+def find_duplicates(input_folder, duplicates_folder, perc = 100):
     start = time.monotonic()
+    
     if not os.path.exists(input_folder):
         print('The directory does not exist')
         return
-
+    
     images = os.listdir(input_folder)
-    duplicate_count = 0
     check_i = 0
-    hasDuplicate = False
+    curr_i = 1
+    duplicate_count = 0
+
     while check_i < len(images):
-        path_check_img = f"{input_folder}/{images[check_i]}"
-        # reading the image
-        check_img = cv2.imread(path_check_img)
-        curr_i = 0
-        while curr_i < len(images):
-            if curr_i == check_i:
-                curr_i += 1
-                continue
-            
-            name_curr_img = images[curr_i]
-            path_curr_img = f"{input_folder}/{name_curr_img}"
+        if images[check_i] is not None:
+            path_check_img = f"{input_folder}/{images[check_i]}"
             # reading the image
-            curr_img = cv2.imread(path_curr_img)
-            
-            if is_duplicates(check_img, curr_img, perc):
-                # move the duplicate to the specified folder
-                Path(path_curr_img).rename(f"{duplicates_folder}/{name_curr_img}")
-                hasDuplicate = True
-                # remove it from the list of viewed files
-                images.pop(curr_i)
-                duplicate_count +=1
-                continue
-            
-            curr_i += 1
-            
-        if hasDuplicate:
-            # remove it from the list of viewed files
-            images.pop(check_i)
-            hasDuplicate = False
-        else:
-            check_i += 1
-            
+            check_img = cv2.imread(path_check_img)
+
+        while curr_i < len(images):
+            if (check_i != curr_i) and (images[curr_i] is not None):
+                name_curr_img = images[curr_i]
+                # reading the image
+                curr_img = cv2.imread(f"{input_folder}/{name_curr_img}")
+
+                if is_duplicates(check_img, curr_img, perc):
+                    # move the duplicate to the specified folder
+                    Path(f"{input_folder}/{name_curr_img}").rename(f"{duplicates_folder}/{name_curr_img}")
+                    del images[curr_i]
+                    duplicate_count += 1
+                else:   
+                    curr_i += 1
+
+        check_i += 1
+        curr_i = check_i + 1
+        
     print(duplicate_count, 'duplicates found')
     print(f'Script running time: {time.monotonic() - start}')
-   
+
 # Example of work
-find_duplicates('images/', 'result/', 90)
+find_duplicates('images/', 'result/', 70)
