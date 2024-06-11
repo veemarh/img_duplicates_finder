@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QRadioButton, QVBoxLayout, \
-    QHBoxLayout, QFileDialog, QListWidget, QMessageBox
-from PyQt5.QtGui import QIcon
+    QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget
+from PyQt5.QtGui import QIcon, QFont
 
 
 # окно QWidget
@@ -13,9 +13,11 @@ class ImgDuplicatesFinder(QWidget):
 
     # GUI
     def initUI(self):
-        self.setGeometry(300, 300, 600, 400)
+        self.resize(600, 450)
+        self.center()
         self.setWindowTitle("Image Duplicates Finder")
-        self.setWindowIcon(QIcon('static/icon.ico'))
+        self.setWindowIcon(QIcon("static/icon.ico"))
+        self.setFont(QFont("OpenSans", 10))
 
         # выбор папки
         folder_label = QLabel("Select Folder:")
@@ -63,15 +65,19 @@ class ImgDuplicatesFinder(QWidget):
 
         self.setLayout(main_layout)
 
+        self.show()
+
+    # выбор папки для поиска
     def browse_folder(self):
         folder_path = QFileDialog.getExistingDirectory(self, "Select Folder")
         if folder_path:
             self.folder_entry.setText(folder_path)
 
+    # обработчик кнопки поиска
     def start_search(self):
         folder_path = self.folder_entry.text()
         if not folder_path:
-            QMessageBox.warning(self, "Warning", "Please select a folder.")
+            QMessageBox.warning(self, "Empty Folder Path", "Please select a folder to search for.")
             return
 
         option = 'exact' if self.exact_radio.isChecked() \
@@ -82,6 +88,7 @@ class ImgDuplicatesFinder(QWidget):
         # Then update the listbox with results
         self.display_results([])  # Replace with actual results
 
+    # вывод результатов
     def display_results(self, duplicates):
         self.result_listbox.clear()
         if duplicates:
@@ -90,10 +97,25 @@ class ImgDuplicatesFinder(QWidget):
         else:
             self.result_listbox.addItem("No duplicate images found.")
 
+    # подтверждение выхода
+    def closeEvent(self, event):
+        reply = QMessageBox.question(self, 'Confirm Quit', "Are you sure to quit?",
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            event.accept()
+        else:
+            event.ignore()
+
+    # центрирование окна
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
 
 # основной цикл
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = ImgDuplicatesFinder()
-    ex.show()
     sys.exit(app.exec_())
