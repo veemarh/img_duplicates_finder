@@ -1,11 +1,11 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QRadioButton, QVBoxLayout, \
-    QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget
+    QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow
 from PyQt5.QtGui import QIcon, QFont
 
 
 # окно QWidget
-class ImgDuplicatesFinder(QWidget):
+class ImgDuplicatesFinder(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -18,6 +18,9 @@ class ImgDuplicatesFinder(QWidget):
         self.setWindowTitle("Image Duplicates Finder")
         self.setWindowIcon(QIcon("static/icon.ico"))
         self.setFont(QFont("OpenSans", 10))
+
+        self.centralWidget = QWidget()
+        self.setCentralWidget(self.centralWidget)
 
         # выбор папки
         folder_label = QLabel("Select Folder:")
@@ -56,7 +59,7 @@ class ImgDuplicatesFinder(QWidget):
         self.result_listbox = QListWidget()
 
         # установка макетов
-        main_layout = QVBoxLayout()
+        main_layout = QVBoxLayout(self.centralWidget)
         main_layout.addLayout(folder_layout)
         main_layout.addLayout(options_layout)
         main_layout.addWidget(search_button)
