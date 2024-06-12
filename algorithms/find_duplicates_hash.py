@@ -2,8 +2,10 @@ import os
 from pathlib import Path
 import time
 import imagehash
+import hashlib
 from PIL import Image
 from algorithms.bhash import bhash
+from algorithms.mhash import mhash
 
 def get_hash(img, method='aHash', hash_size=16, quick=False, size='256x256'):
     match method:
@@ -14,15 +16,15 @@ def get_hash(img, method='aHash', hash_size=16, quick=False, size='256x256'):
         case 'dHash':
             return imagehash.dhash(img, hash_size=hash_size)
         case 'mHash':
-            return 
+            return mhash(img, hash_size=hash_size)
         case 'pHash':
             return imagehash.phash(img, hash_size=hash_size)
         case 'MD5':
-            return
+            return #hashlib.md5()
         case 'SHA-1':
-            return 
+            return #hashlib.sha1
         case 'SHA-2':
-            return
+            return #hashlib.sha224
 
     return "Error: the method was not found"
 
