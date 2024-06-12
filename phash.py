@@ -14,6 +14,7 @@ Positive
 Minuses
 - It is not resistant to crop
 - Not resistant to turns
+- Not resistant to reflection
 
 catches duplicates in different formats at threshold=20
 """
@@ -21,53 +22,38 @@ catches duplicates in different formats at threshold=20
 # search for duplicates in the source folder
 def find_duplicates(input_folder, duplicates_folder, hash_size = 16, threshold = 0):
     start = time.monotonic()
-    
-    if not os.path.exists(input_folder):
-        print('The directory does not exist')
-        return
-    
     images = os.listdir(input_folder)
-    check_i = 0
-    curr_i = 1
+    i = 0
+    k = 1
     duplicate_count = 0
-    bits_list = []
 
-    while check_i < len(images):
-        sum_diff = 0
+    while i < len(images):
+        if images[i] is not None:
+            check_img = Image.open(f"{input_folder}/{images[i]}")
+            check_hash = imagehash.phash(check_img, hash_size)
 
-        if images[check_i] is not None:
-            check_img = Image.open(f"{input_folder}/{images[check_i]}")
-            bits_list = imagehash.phash(check_img, hash_size).hash
-
-        while curr_i < len(images):
-            if (check_i != curr_i) and (images[curr_i] is not None):
-                name_curr_img = images[curr_i]
+        while k < len(images):
+            if (i != k) and (images[k] is not None):
+                name_curr_img = images[k]
                 curr_img = Image.open(f"{input_folder}/{name_curr_img}")
-                new_bits_list = imagehash.phash(curr_img, hash_size).hash
-                
-                # we compare the images by bits
-                # sum up the number of different bits
-                for j in range(len(bits_list)):
-                    for t in range(hash_size):
-                        if bits_list[j][t] != new_bits_list[j][t]:
-                            sum_diff += 1
-                
-                # we find the difference in percentages          
-                diff_prec = sum_diff / (hash_size * hash_size) * 100
-                if diff_prec <= threshold:
-                    # move the duplicate to the specified folder
-                    Path(f"{input_folder}/{name_curr_img}").rename(f"{duplicates_folder}/{name_curr_img}")
-                    del images[curr_i]
-                    duplicate_count += 1
-                else:   
-                    curr_i += 1
+                curr_hash = imagehash.phash(curr_img, hash_size)
 
-                sum_diff = 0
-        check_i += 1
-        curr_i = check_i + 1
+                hamming_distance = check_hash - curr_hash
+                # find the percentage difference
+                diff_prec = hamming_distance / (hash_size**2) * 100
+
+                if diff_prec <= threshold:
+                    Path(f"{input_folder}/{name_curr_img}").rename(f"{duplicates_folder}/{name_curr_img}")
+                    del images[k]
+                    duplicate_count += 1
+                else:
+                    k += 1
+
+        i += 1
+        k = i + 1
         
     print(duplicate_count, 'duplicates found')
     print(f'Script running time: {time.monotonic() - start}')
     
 # Example of work
-find_duplicates('images/', 'result/', threshold = 30)   
+find_duplicates('images/', 'result/', threshold = 45)   
