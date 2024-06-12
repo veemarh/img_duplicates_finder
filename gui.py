@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QRadioButton, QVBoxLayout, \
     QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow, QAction, QMenu
 from PyQt5.QtGui import QIcon, QFont
+from PyQt5.QtCore import Qt
 
 
 class ImgDuplicatesFinder(QMainWindow):
@@ -50,24 +51,30 @@ class ImgDuplicatesFinder(QMainWindow):
         self.setWindowTitle("Image Duplicates Finder")
         self.setWindowIcon(QIcon("static/icon.ico"))
         self.setFont(QFont("OpenSans", 10))
+        self.setAcceptDrops(True)
 
         # рабочая область
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
 
         # выбор папки
-        folder_label = QLabel("Select Folder:")
-        self.folder_entry = QLineEdit()
-        self.folder_entry.setPlaceholderText("Enter an absolute folder path...")
+        folder_label = QLabel("Drag folders here to add them to your search list")
         browse_button = QPushButton("Browse")
-        # browse_button.setToolTip('Some notes')
         browse_button.clicked.connect(self.browse_folder)
+        self.search_list = QListWidget()
+        self.search_list.setWordWrap(True)
+        clear_button = QPushButton("Clear")
+        clear_button.clicked.connect(self.clearSearchList)
 
-        # макет горизонтального блока для секции выбора папки
-        folder_layout = QHBoxLayout()
-        folder_layout.addWidget(folder_label)
-        folder_layout.addWidget(self.folder_entry)
-        folder_layout.addWidget(browse_button)
+        # макет блока для секции выбора папки
+        folder_layout = QVBoxLayout()
+        folder_layout.addWidget(folder_label, alignment=Qt.AlignCenter)
+        folder_layout.addWidget(self.search_list)
+        buttons_layout = QHBoxLayout()
+        buttons_layout.addStretch(1)
+        buttons_layout.addWidget(browse_button)
+        buttons_layout.addWidget(clear_button)
+        folder_layout.addLayout(buttons_layout)
 
         # выбор опций
         option_label = QLabel("Search Options:")
@@ -84,7 +91,7 @@ class ImgDuplicatesFinder(QMainWindow):
         options_layout.addWidget(self.filter_radio)
 
         # кнопка начала поиска
-        search_button = QPushButton("Start Search")
+        search_button = QPushButton("Search")
         search_button.clicked.connect(self.start_search)
 
         # дисплей результатов поиска
@@ -107,14 +114,14 @@ class ImgDuplicatesFinder(QMainWindow):
     def browse_folder(self):
         folder_path = QFileDialog.getExistingDirectory(self, "Select Folder")
         if folder_path:
-            self.folder_entry.setText(folder_path)
+            self.search_list.addItem(f"{folder_path}")
 
     # обработчик кнопки поиска
     def start_search(self):
-        folder_path = self.folder_entry.text()
-        if not folder_path:
+        if not self.search_list.count():
             QMessageBox.warning(self, "Empty Folder Path", "Please select a folder to search for.")
             return
+        folder_paths = [self.search_list.item(x) for x in range(self.search_list.count())]
 
         option = 'exact' if self.exact_radio.isChecked() \
             else 'resize' if self.resize_radio.isChecked() \
@@ -153,6 +160,22 @@ class ImgDuplicatesFinder(QMainWindow):
     def about(self):
         QMessageBox.about(self, "About Img Duplicates Finder", "<h3>About Img Duplicates Finder</h3>"
                                                                "<a href='https://github.com/soneXgo/img_duplicates_finder'>GitHub</a>")
+
+    # drag'n'drop
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        if self.search_list.frameGeometry().contains(event.pos()):
+            files = [u.toLocalFile() for u in event.mimeData().urls()]
+            for file in files:
+                self.search_list.addItem(f"{file}")
+
+    def clearSearchList(self):
+        self.search_list.clear()
 
 
 if __name__ == '__main__':
