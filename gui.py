@@ -2,13 +2,14 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QRadioButton, QVBoxLayout, \
     QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow, QAction, QMenu
 from PyQt5.QtGui import QIcon, QFont
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QFileInfo, QRect
 
 
 class ImgDuplicatesFinder(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.search_list = set()
         self._createActions()
         self._createToolbar()
         self._createMenuBar()
@@ -61,15 +62,15 @@ class ImgDuplicatesFinder(QMainWindow):
         folder_label = QLabel("Drag folders here to add them to your search list")
         browse_button = QPushButton("Browse")
         browse_button.clicked.connect(self.browse_folder)
-        self.search_list = QListWidget()
-        self.search_list.setWordWrap(True)
+        self.dnd_space = QListWidget()
+        self.dnd_space.setWordWrap(True)
         clear_button = QPushButton("Clear")
         clear_button.clicked.connect(self.clearSearchList)
 
         # макет блока для секции выбора папки
         folder_layout = QVBoxLayout()
         folder_layout.addWidget(folder_label, alignment=Qt.AlignCenter)
-        folder_layout.addWidget(self.search_list)
+        folder_layout.addWidget(self.dnd_space)
         buttons_layout = QHBoxLayout()
         buttons_layout.addStretch(1)
         buttons_layout.addWidget(browse_button)
@@ -106,22 +107,19 @@ class ImgDuplicatesFinder(QMainWindow):
         main_layout.addWidget(result_label)
         main_layout.addWidget(self.result_listbox)
 
-        self.setLayout(main_layout)
-
         self.show()
 
     # выбор папки для поиска
     def browse_folder(self):
         folder_path = QFileDialog.getExistingDirectory(self, "Select Folder")
-        if folder_path:
-            self.search_list.addItem(f"{folder_path}")
+        if folder_path and self.addToSearchList(folder_path):
+            self.dnd_space.addItem(f"{folder_path}")
 
     # обработчик кнопки поиска
     def start_search(self):
-        if not self.search_list.count():
+        if not self.search_list:
             QMessageBox.warning(self, "Empty Folder Path", "Please select a folder to search for.")
             return
-        folder_paths = [self.search_list.item(x) for x in range(self.search_list.count())]
 
         option = 'exact' if self.exact_radio.isChecked() \
             else 'resize' if self.resize_radio.isChecked() \
@@ -169,13 +167,24 @@ class ImgDuplicatesFinder(QMainWindow):
             event.ignore()
 
     def dropEvent(self, event):
-        if self.search_list.frameGeometry().contains(event.pos()):
-            files = [u.toLocalFile() for u in event.mimeData().urls()]
-            for file in files:
-                self.search_list.addItem(f"{file}")
+        dnd_rect = QRect(self.dnd_space.geometry().x(), self.dnd_space.geometry().y(),
+                         self.dnd_space.geometry().width(), self.dnd_space.geometry().height())
+        if dnd_rect.contains(event.pos()):
+            paths = [u.toLocalFile() for u in event.mimeData().urls()]
+            for path in paths:
+                if QFileInfo(path).isDir() and self.addToSearchList(path):
+                    self.dnd_space.addItem(f"{path}")
 
     def clearSearchList(self):
         self.search_list.clear()
+        self.dnd_space.clear()
+
+    # синхронизация серверного и клиентского списков
+    def addToSearchList(self, item):
+        if item not in self.search_list:
+            self.search_list.add(f"{item}")
+            return True
+        return False
 
 
 if __name__ == '__main__':
