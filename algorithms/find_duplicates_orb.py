@@ -46,7 +46,7 @@ def is_duplicates(img1, img2, perc):
     return False
 
 # search for duplicates in the source folder
-def find_duplicates(input_folder, duplicates_folder, perc = 100):
+def find_duplicates_use_orb(input_folder, duplicates_folder, perc = 100):
     start = time.monotonic()
     
     if not os.path.exists(input_folder):
@@ -83,6 +83,3 @@ def find_duplicates(input_folder, duplicates_folder, perc = 100):
         
     print(duplicate_count, 'duplicates found')
     print(f'Script running time: {time.monotonic() - start}')
-
-# Example of work
-find_duplicates('images/', 'result/', 70)
