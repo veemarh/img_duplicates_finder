@@ -16,4 +16,5 @@ def find_duplicates(input_folder, duplicates_folder, hash_size=16, perc_similari
 # Example of work
 # find_duplicates('images/', 'result/', perc_similarity=70, method='ORB')
 # find_duplicates('images/', 'result/', perc_similarity=100, method='aHash')
-find_duplicates('images/', 'result/', hash_size=16, perc_similarity=100, method='bHash', quick=False)
+# find_duplicates('images/', 'result/', hash_size=16, perc_similarity=100, method='bHash', quick=False)
+# find_duplicates('images/', 'result/', hash_size=16, perc_similarity=100, method='mHash')

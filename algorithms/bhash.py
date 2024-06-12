@@ -147,25 +147,14 @@ def blockhash(img, hash_size):
     translate_blocks_to_bits(result, block_width * block_height)
     return bits_to_hexhash(result)
 
-def bhash(img: Image, quick = False, hash_size = 16, size = '256x256', interpolation = 1):
+def bhash(img: Image, quick = False, hash_size = 16, size = '256x256'):
     # 'quick': type=bool, default=False,
     #     help='Use quick hashing method. Default: False'
     # 'hash_size': type=int, default=16,
     #     help='Create hash of size N^2 bits. Default: 16')
     # 'size':
     #     help='Resize image to specified size before hashing, e.g. 256x256')
-    # 'interpolation': type=int, default=1, choices=[1, 2, 3, 4],
-    #     help='Interpolation method: 1 - nearest neightbor, 2 - bilinear, 3 - bicubic, 4 - antialias. Default: 1'
-
-    if interpolation == 1:
-        interpolation = Image.NEAREST
-    elif interpolation == 2:
-        interpolation = Image.BILINEAR
-    elif interpolation == 3:
-        interpolation = Image.BICUBIC
-    elif interpolation == 4:
-        interpolation = Image.ANTIALIAS
-
+  
     if quick:
         method = blockhash_even
     else:
@@ -180,7 +169,7 @@ def bhash(img: Image, quick = False, hash_size = 16, size = '256x256', interpola
     if size:
         size = size.split('x')
         size = (int(size[0]), int(size[1]))
-        img = img.resize(size, interpolation)
+        img = img.resize(size, Image.BILINEAR)
 
     hash = method(img, hash_size)
     return imagehash.hex_to_hash(hash)
