@@ -1,17 +1,38 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QRadioButton, QVBoxLayout, \
-    QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow
+    QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow, QAction, QMenu
 from PyQt5.QtGui import QIcon, QFont
 
 
-# окно QWidget
 class ImgDuplicatesFinder(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self._createActions()
+        self._createMenuBar()
+        self._createStatusBar()
+
         self.initUI()
 
-    # GUI
+    def _createActions(self):
+        self.exitAction = QAction(QIcon("static/quit.png"), "&Quit", self)
+        self.exitAction.setShortcut('Ctrl+Q')
+        self.exitAction.setStatusTip('Quit application')
+        self.exitAction.triggered.connect(self.close)
+
+    def _createMenuBar(self):
+        menubar = self.menuBar()
+        file_menu = QMenu("&File", self)
+        file_menu.addAction(self.exitAction)
+        menubar.addMenu(file_menu)
+
+    def _createStatusBar(self):
+        statusbar = self.statusBar()
+        # постоянное сообщение
+        constant_message = "Constant"
+        constant_message_label = QLabel(f"{constant_message}")
+        statusbar.addPermanentWidget(constant_message_label)
+
     def initUI(self):
         self.resize(600, 450)
         self.center()
@@ -19,8 +40,9 @@ class ImgDuplicatesFinder(QMainWindow):
         self.setWindowIcon(QIcon("static/icon.ico"))
         self.setFont(QFont("OpenSans", 10))
 
-        self.centralWidget = QWidget()
-        self.setCentralWidget(self.centralWidget)
+        # рабочая область
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
 
         # выбор папки
         folder_label = QLabel("Select Folder:")
@@ -59,7 +81,7 @@ class ImgDuplicatesFinder(QMainWindow):
         self.result_listbox = QListWidget()
 
         # установка макетов
-        main_layout = QVBoxLayout(self.centralWidget)
+        main_layout = QVBoxLayout(central_widget)
         main_layout.addLayout(folder_layout)
         main_layout.addLayout(options_layout)
         main_layout.addWidget(search_button)
@@ -117,7 +139,6 @@ class ImgDuplicatesFinder(QMainWindow):
         self.move(qr.topLeft())
 
 
-# основной цикл
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = ImgDuplicatesFinder()
