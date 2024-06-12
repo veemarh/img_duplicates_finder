@@ -9,6 +9,7 @@ class ImgDuplicatesFinder(QMainWindow):
         super().__init__()
 
         self._createActions()
+        self._createToolbar()
         self._createMenuBar()
         self._createStatusBar()
 
@@ -19,12 +20,22 @@ class ImgDuplicatesFinder(QMainWindow):
         self.exitAction.setShortcut('Ctrl+Q')
         self.exitAction.setStatusTip('Quit application')
         self.exitAction.triggered.connect(self.close)
+        self.helpContentAction = QAction(QIcon("static/readme.png"), "&About", self)
+        self.helpContentAction.setStatusTip("Show the Img Duplicates Finder's About box")
+        self.helpContentAction.triggered.connect(self.about)
+
+    def _createToolbar(self):
+        toolbar = self.addToolBar('Tools')
+        # toolbar.addAction(self.exitAction)
 
     def _createMenuBar(self):
         menubar = self.menuBar()
         file_menu = QMenu("&File", self)
         file_menu.addAction(self.exitAction)
         menubar.addMenu(file_menu)
+        about_menu = QMenu("&Help", self)
+        about_menu.addAction(self.helpContentAction)
+        menubar.addMenu(about_menu)
 
     def _createStatusBar(self):
         statusbar = self.statusBar()
@@ -123,13 +134,13 @@ class ImgDuplicatesFinder(QMainWindow):
             self.result_listbox.addItem("No duplicate images found.")
 
     # подтверждение выхода
-    def closeEvent(self, event):
-        reply = QMessageBox.question(self, 'Confirm Quit', "Are you sure to quit?",
-                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if reply == QMessageBox.Yes:
-            event.accept()
-        else:
-            event.ignore()
+    # def closeEvent(self, event):
+    #     reply = QMessageBox.question(self, 'Confirm Quit', "Are you sure to quit?",
+    #                                  QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+    #     if reply == QMessageBox.Yes:
+    #         event.accept()
+    #     else:
+    #         event.ignore()
 
     # центрирование окна
     def center(self):
@@ -137,6 +148,11 @@ class ImgDuplicatesFinder(QMainWindow):
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
+
+    # о приложении
+    def about(self):
+        QMessageBox.about(self, "About Img Duplicates Finder", "<h3>About Img Duplicates Finder</h3>"
+                                                               "<a href='https://github.com/soneXgo/img_duplicates_finder'>GitHub</a>")
 
 
 if __name__ == '__main__':
