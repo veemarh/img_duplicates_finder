@@ -8,7 +8,7 @@ def find_duplicates(input_folder, duplicates_folder, hash_size=16, perc_similari
     match method:
         case 'ORB':
             find_duplicates_use_orb(input_folder, duplicates_folder, perc_similarity)
-        case 'aHash' | 'bHash' | 'dHash' | 'mHash' | 'pHash' | 'MD5' | 'SHA-1' | 'SHA-2':
+        case 'aHash' | 'bHash' | 'dHash' | 'mHash' | 'pHash' | 'MD5' | 'SHA-1 (160-bit)' | 'SHA-2 (256-bit)' | 'SHA-2 (384-bit)' | 'SHA-2 (512-bit)':
             find_duplicates_use_hash(input_folder, duplicates_folder, hash_size, perc_similarity, method, quick, size)
         case _:
             return "Error: method not found"
@@ -18,3 +18,4 @@ def find_duplicates(input_folder, duplicates_folder, hash_size=16, perc_similari
 # find_duplicates('images/', 'result/', perc_similarity=100, method='aHash')
 # find_duplicates('images/', 'result/', hash_size=16, perc_similarity=100, method='bHash', quick=False)
 # find_duplicates('images/', 'result/', hash_size=16, perc_similarity=100, method='mHash')
+# find_duplicates('images/', 'result/', method='SHA-2 (512-bit)')
