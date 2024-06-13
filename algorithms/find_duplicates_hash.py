@@ -38,22 +38,23 @@ def get_difference(hash1, hash2, hash_size):
     return hamming_distance / (hash_size**2) * 100
     
 # search for duplicates in the source folder
-def find_duplicates_use_hash(input_folder, duplicates_folder, hash_size=16, perc=100, method='aHash', quick=False, size=16):
+def find_duplicates_use_hash(paths_images, duplicates_folder, hash_size=16, perc=100, method='aHash', quick=False, size=16):
     start = time.monotonic()
-    images = os.listdir(input_folder)
+   
     check_i = 0
     curr_i = 1
     duplicate_count = 0
 
-    while check_i < len(images):
-        if images[check_i] is not None:
-            checked_img = Image.open(f"{input_folder}/{images[check_i]}")
+    while check_i < len(paths_images):
+        if paths_images[check_i] is not None:
+            path_checked_img = paths_images[check_i]
+            checked_img = Image.open(path_checked_img)
             checked_hash = get_hash(checked_img, method=method, hash_size=hash_size, quick=quick, size=size)
 
-        while curr_i < len(images):
-            if (check_i != curr_i) and (images[curr_i] is not None):
-                name_curr_img = images[curr_i]
-                curr_img = Image.open(f"{input_folder}/{name_curr_img}")
+        while curr_i < len(paths_images):
+            if (check_i != curr_i) and (paths_images[curr_i] is not None):
+                path_curr_img = paths_images[curr_i]
+                curr_img = Image.open(path_curr_img)
                 curr_hash = get_hash(curr_img, method=method, hash_size=hash_size, quick=quick, size=size)
                 
                 # find the hash percentage difference
@@ -64,9 +65,10 @@ def find_duplicates_use_hash(input_folder, duplicates_folder, hash_size=16, perc
                         diff = get_difference(checked_hash, curr_hash, hash_size)
 
                 if diff <= (100 - perc):
-                    print(name_curr_img)
-                    Path(f"{input_folder}/{name_curr_img}").rename(f"{duplicates_folder}/{name_curr_img}")
-                    del images[curr_i]
+                    print(f"{path_checked_img} - {path_curr_img}")
+                    name_curr_img = os.path.basename(path_curr_img)
+                    Path(path_curr_img).rename(f"{duplicates_folder}/{name_curr_img}")
+                    del paths_images[curr_i]
                     duplicate_count += 1
                 else:
                     curr_i += 1
