@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QRadioButton, QVBoxLayout, \
-    QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow, QAction, QMenu
+    QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow, QAction, QMenu, QActionGroup
 from PyQt5.QtGui import QIcon, QFont, QCursor
 from PyQt5.QtCore import Qt, QFileInfo, QRect
 
@@ -18,26 +18,72 @@ class ImgDuplicatesFinder(QMainWindow):
         self.initUI()
 
     def _createActions(self):
+        # File
         self.exitAction = QAction(QIcon("static/quit.png"), "&Quit", self)
         self.exitAction.setShortcut('Ctrl+Q')
         self.exitAction.setStatusTip('Quit application')
         self.exitAction.triggered.connect(self.close)
-        self.helpContentAction = QAction(QIcon("static/readme.png"), "&About", self)
-        self.helpContentAction.setStatusTip("Show the Img Duplicates Finder's About box")
-        self.helpContentAction.triggered.connect(self.about)
+        # Folders
+        self.recursiveSearchAction = QAction(QIcon("static/recursive.png"), "&Recursive Search", self)
+        self.recursiveSearchAction.setStatusTip("Search only in the specified folders")
+        self.currentSearchAction = QAction(QIcon("static/current.png"), "In the &Current Folder", self)
+        self.currentSearchAction.setStatusTip("Search in folders and their subfolders")
+        self.recursiveSearchAction.setCheckable(True)
+        self.currentSearchAction.setCheckable(True)
+        folder_options_group = QActionGroup(self)
+        folder_options_group.addAction(self.recursiveSearchAction)
+        folder_options_group.addAction(self.currentSearchAction)
+        self.recursiveSearchAction.setChecked(True)
+        # Algorithms
+        self.aHashAction = QAction("a&Hash", self)
+        self.aHashAction.setStatusTip("Use aHash comparison algorithm")
+        self.pHashAction = QAction("p&Hash", self)
+        self.pHashAction.setStatusTip("Use pHash comparison algorithm")
+        self.orbAction = QAction("&ORB", self)
+        self.orbAction.setStatusTip("Use ORB comparison algorithm")
+        self.aHashAction.setCheckable(True)
+        self.pHashAction.setCheckable(True)
+        self.orbAction.setCheckable(True)
+        self.algorithms_group = QActionGroup(self)
+        self.algorithms_group.addAction(self.aHashAction)
+        self.algorithms_group.addAction(self.pHashAction)
+        self.algorithms_group.addAction(self.orbAction)
+        self.aHashAction.setChecked(True)
+        # Help
+        self.helpContentAction = QAction(QIcon("static/readme.png"), "&Help Content", self)
+        self.helpContentAction.setStatusTip("Launch the Help manual")
+        self.aboutAction = QAction(QIcon("static/about.png"), "&About", self)
+        self.aboutAction.setStatusTip("Show the Img Duplicates Finder's About box")
+        self.aboutAction.triggered.connect(self.about)
 
     def _createToolbar(self):
         toolbar = self.addToolBar('Tools')
-        # toolbar.addAction(self.exitAction)
+        toolbar.setFloatable(False)
+        # File
+        toolbar.addAction(self.exitAction)
+        toolbar.addSeparator()
+        # Folders
+        toolbar.addAction(self.recursiveSearchAction)
+        toolbar.addAction(self.currentSearchAction)
+        toolbar.addSeparator()
 
     def _createMenuBar(self):
         menubar = self.menuBar()
-        file_menu = QMenu("&File", self)
+        # File
+        file_menu = menubar.addMenu("&File")
+        open_recent_menu = file_menu.addMenu("&Open Recent")
         file_menu.addAction(self.exitAction)
-        menubar.addMenu(file_menu)
-        about_menu = QMenu("&Help", self)
-        about_menu.addAction(self.helpContentAction)
-        menubar.addMenu(about_menu)
+        # Folders
+        folders_menu = menubar.addMenu("&Folders")
+        folders_menu.addAction(self.recursiveSearchAction)
+        folders_menu.addAction(self.currentSearchAction)
+        # Algorithms
+        algorithms_menu = menubar.addMenu("&Algorithm")
+        algorithms_menu.addActions([self.aHashAction, self.pHashAction, self.orbAction])
+        # Help
+        help_menu = menubar.addMenu("&Help")
+        help_menu.addAction(self.helpContentAction)
+        help_menu.addAction(self.aboutAction)
 
     def _createStatusBar(self):
         statusbar = self.statusBar()
@@ -45,6 +91,18 @@ class ImgDuplicatesFinder(QMainWindow):
         constant_message = "Constant"
         constant_message_label = QLabel(f"{constant_message}")
         statusbar.addPermanentWidget(constant_message_label)
+
+    def contextMenuEvent(self, event):
+        context_menu = QMenu(self.central_widget)
+        separator = QAction(self)
+        separator.setSeparator(True)
+        context_menu.addAction(self.recursiveSearchAction)
+        context_menu.addAction(self.currentSearchAction)
+        context_menu.addAction(separator)
+        context_menu.addAction(self.aHashAction)
+        context_menu.addAction(self.pHashAction)
+        context_menu.addAction(self.orbAction)
+        context_menu.exec(event.globalPos())
 
     def initUI(self):
         self.resize(600, 450)
@@ -55,8 +113,8 @@ class ImgDuplicatesFinder(QMainWindow):
         self.setAcceptDrops(True)
 
         # рабочая область
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
 
         # выбор папки
         folder_label = QLabel("Drag folders here to add them to your search list")
@@ -77,20 +135,6 @@ class ImgDuplicatesFinder(QMainWindow):
         buttons_layout.addWidget(clear_button)
         folder_layout.addLayout(buttons_layout)
 
-        # выбор опций
-        # option_label = QLabel("Search Options:")
-        # self.exact_radio = QRadioButton("Exact Match")
-        # self.exact_radio.setChecked(True)
-        # self.resize_radio = QRadioButton("Match with Resize")
-        # self.filter_radio = QRadioButton("Match with Filter")
-
-        # макет вертикального блока для секции выбора опций
-        # options_layout = QVBoxLayout()
-        # options_layout.addWidget(option_label)
-        # options_layout.addWidget(self.exact_radio)
-        # options_layout.addWidget(self.resize_radio)
-        # options_layout.addWidget(self.filter_radio)
-
         # кнопка начала поиска
         search_button = QPushButton("Search")
         search_button.clicked.connect(self.start_search)
@@ -100,9 +144,8 @@ class ImgDuplicatesFinder(QMainWindow):
         self.result_listbox = QListWidget()
 
         # установка макетов
-        main_layout = QVBoxLayout(central_widget)
+        main_layout = QVBoxLayout(self.central_widget)
         main_layout.addLayout(folder_layout)
-        # main_layout.addLayout(options_layout)
         main_layout.addWidget(search_button)
         main_layout.addWidget(result_label)
         main_layout.addWidget(self.result_listbox)
