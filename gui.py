@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QRadioButton, QVBoxLayout, \
     QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow, QAction, QMenu
-from PyQt5.QtGui import QIcon, QFont
+from PyQt5.QtGui import QIcon, QFont, QCursor
 from PyQt5.QtCore import Qt, QFileInfo, QRect
 
 
@@ -78,18 +78,18 @@ class ImgDuplicatesFinder(QMainWindow):
         folder_layout.addLayout(buttons_layout)
 
         # выбор опций
-        option_label = QLabel("Search Options:")
-        self.exact_radio = QRadioButton("Exact Match")
-        self.exact_radio.setChecked(True)
-        self.resize_radio = QRadioButton("Match with Resize")
-        self.filter_radio = QRadioButton("Match with Filter")
+        # option_label = QLabel("Search Options:")
+        # self.exact_radio = QRadioButton("Exact Match")
+        # self.exact_radio.setChecked(True)
+        # self.resize_radio = QRadioButton("Match with Resize")
+        # self.filter_radio = QRadioButton("Match with Filter")
 
         # макет вертикального блока для секции выбора опций
-        options_layout = QVBoxLayout()
-        options_layout.addWidget(option_label)
-        options_layout.addWidget(self.exact_radio)
-        options_layout.addWidget(self.resize_radio)
-        options_layout.addWidget(self.filter_radio)
+        # options_layout = QVBoxLayout()
+        # options_layout.addWidget(option_label)
+        # options_layout.addWidget(self.exact_radio)
+        # options_layout.addWidget(self.resize_radio)
+        # options_layout.addWidget(self.filter_radio)
 
         # кнопка начала поиска
         search_button = QPushButton("Search")
@@ -102,7 +102,7 @@ class ImgDuplicatesFinder(QMainWindow):
         # установка макетов
         main_layout = QVBoxLayout(central_widget)
         main_layout.addLayout(folder_layout)
-        main_layout.addLayout(options_layout)
+        # main_layout.addLayout(options_layout)
         main_layout.addWidget(search_button)
         main_layout.addWidget(result_label)
         main_layout.addWidget(self.result_listbox)
@@ -121,9 +121,9 @@ class ImgDuplicatesFinder(QMainWindow):
             QMessageBox.warning(self, "Empty Folder Path", "Please select a folder to search for.")
             return
 
-        option = 'exact' if self.exact_radio.isChecked() \
-            else 'resize' if self.resize_radio.isChecked() \
-            else 'filter'
+        # option = 'exact' if self.exact_radio.isChecked() \
+        #     else 'resize' if self.resize_radio.isChecked() \
+        #     else 'filter'
         # Call your search function here and update the result_listbox with the results
         # For example: duplicates = find_duplicate_images(folder_path, option)
         # Then update the listbox with results
@@ -167,9 +167,9 @@ class ImgDuplicatesFinder(QMainWindow):
             event.ignore()
 
     def dropEvent(self, event):
-        dnd_rect = QRect(self.dnd_space.geometry().x(), self.dnd_space.geometry().y(),
-                         self.dnd_space.geometry().width(), self.dnd_space.geometry().height())
-        if dnd_rect.contains(event.pos()):
+        dnd_rect = self.dnd_space.rect()
+        mouse_pos = self.dnd_space.mapFromGlobal(QCursor.pos())
+        if dnd_rect.contains(mouse_pos):
             paths = [u.toLocalFile() for u in event.mimeData().urls()]
             for path in paths:
                 if QFileInfo(path).isDir() and self.addToSearchList(path):
