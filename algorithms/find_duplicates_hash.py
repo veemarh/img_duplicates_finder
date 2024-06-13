@@ -7,18 +7,18 @@ from PIL import Image
 from algorithms.bhash import bhash
 from algorithms.mhash import mhash
 
-def get_hash(img, method='aHash', hash_size=16, quick=False, size='256x256'):
+def get_hash(img, method='aHash', hash_size=16, quick=False, size=16):
     match method:
         case 'aHash':
-            return imagehash.average_hash(img, hash_size=hash_size)
+            return imagehash.average_hash(img, hash_size)
         case 'bHash':
-            return bhash(img, quick=quick, hash_size=hash_size, size=size)
+            return bhash(img, quick=quick, size=size)
         case 'dHash':
-            return imagehash.dhash(img, hash_size=hash_size)
+            return imagehash.dhash(img, hash_size)
         case 'mHash':
-            return mhash(img, hash_size=hash_size)
+            return mhash(img, size=size)
         case 'pHash':
-            return imagehash.phash(img, hash_size=hash_size)
+            return imagehash.phash(img, hash_size)
         case 'MD5':
             return hashlib.md5(img.tobytes()).hexdigest()
         case 'SHA-1 (160-bit)':
@@ -38,7 +38,7 @@ def get_difference(hash1, hash2, hash_size):
     return hamming_distance / (hash_size**2) * 100
     
 # search for duplicates in the source folder
-def find_duplicates_use_hash(input_folder, duplicates_folder, hash_size = 16, perc = 100, method = 'aHash', quick=False, size='256x256'):
+def find_duplicates_use_hash(input_folder, duplicates_folder, hash_size=16, perc=100, method='aHash', quick=False, size=16):
     start = time.monotonic()
     images = os.listdir(input_folder)
     check_i = 0
