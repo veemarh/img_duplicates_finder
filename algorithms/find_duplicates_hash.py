@@ -7,26 +7,30 @@ from PIL import Image
 from algorithms.bhash import bhash
 from algorithms.mhash import mhash
 
-def get_hash(img, method='aHash', hash_size=16, quick=False, size='256x256'):
+def get_hash(img, method='aHash', hash_size=16, quick=False, size=16):
     match method:
         case 'aHash':
-            return imagehash.average_hash(img, hash_size=hash_size)
+            return imagehash.average_hash(img, hash_size)
         case 'bHash':
-            return bhash(img, quick=quick, hash_size=hash_size, size=size)
+            return bhash(img, quick=quick, size=size)
         case 'dHash':
-            return imagehash.dhash(img, hash_size=hash_size)
+            return imagehash.dhash(img, hash_size)
         case 'mHash':
-            return mhash(img, hash_size=hash_size)
+            return mhash(img, size=size)
         case 'pHash':
-            return imagehash.phash(img, hash_size=hash_size)
+            return imagehash.phash(img, hash_size)
         case 'MD5':
-            return #hashlib.md5()
-        case 'SHA-1':
-            return #hashlib.sha1
-        case 'SHA-2':
-            return #hashlib.sha224
-
-    return "Error: the method was not found"
+            return hashlib.md5(img.tobytes()).hexdigest()
+        case 'SHA-1 (160-bit)':
+            return hashlib.sha1(img.tobytes()).hexdigest()
+        case 'SHA-2 (256-bit)':
+            return hashlib.sha256(img.tobytes()).hexdigest()
+        case 'SHA-2 (384-bit)':
+            return hashlib.sha384(img.tobytes()).hexdigest()
+        case 'SHA-2 (512-bit)':
+            return hashlib.sha512(img.tobytes()).hexdigest()
+        case _:
+            return "Error: the method was not found"
 
 # find the percentage difference
 def get_difference(hash1, hash2, hash_size):
@@ -34,7 +38,7 @@ def get_difference(hash1, hash2, hash_size):
     return hamming_distance / (hash_size**2) * 100
     
 # search for duplicates in the source folder
-def find_duplicates_use_hash(input_folder, duplicates_folder, hash_size = 16, perc = 100, method = 'aHash', quick=False, size='256x256'):
+def find_duplicates_use_hash(input_folder, duplicates_folder, hash_size=16, perc=100, method='aHash', quick=False, size=16):
     start = time.monotonic()
     images = os.listdir(input_folder)
     check_i = 0
@@ -53,7 +57,11 @@ def find_duplicates_use_hash(input_folder, duplicates_folder, hash_size = 16, pe
                 curr_hash = get_hash(curr_img, method=method, hash_size=hash_size, quick=quick, size=size)
                 
                 # find the hash percentage difference
-                diff = get_difference(checked_hash, curr_hash, hash_size)
+                match method:
+                    case 'MD5' | 'SHA-1 (160-bit)' | 'SHA-2 (256-bit)' | 'SHA-2 (384-bit)' | 'SHA-2 (512-bit)':
+                        diff = 0 if checked_hash == curr_hash else 100
+                    case _:
+                        diff = get_difference(checked_hash, curr_hash, hash_size)
 
                 if diff <= (100 - perc):
                     print(name_curr_img)

@@ -147,7 +147,7 @@ def blockhash(img, hash_size):
     translate_blocks_to_bits(result, block_width * block_height)
     return bits_to_hexhash(result)
 
-def bhash(img: Image, quick = False, hash_size = 16, size = '256x256'):
+def bhash(img: Image, quick = False, hash_size=16, size=256):
     # 'quick': type=bool, default=False,
     #     help='Use quick hashing method. Default: False'
     # 'hash_size': type=int, default=16,
@@ -167,9 +167,7 @@ def bhash(img: Image, quick = False, hash_size = 16, size = '256x256'):
         img = img.convert('RGBA')
     # resize the image
     if size:
-        size = size.split('x')
-        size = (int(size[0]), int(size[1]))
-        img = img.resize(size, Image.BILINEAR)
+        img = img.resize((size, size), Image.BILINEAR)
 
     hash = method(img, hash_size)
     return imagehash.hex_to_hash(hash)

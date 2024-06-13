@@ -9,10 +9,11 @@ import imagehash
 def bin_str_to_hex(str):
     return '{0:0={width}x}'.format(int(str, 2), width = len(str) // 4)
 
-def mhash(img: Image, hash_size=16):
+def mhash(img: Image, size=16):
     grey_img = img.convert('L')
-    resized_img = grey_img.resize((hash_size, hash_size), Image.BILINEAR)
-    pixels = list(resized_img.getdata())
+    if size:
+        grey_img = grey_img.resize((size, size), Image.BILINEAR)
+    pixels = list(grey_img.getdata())
     median_pixel = sorted(pixels)[len(pixels) // 2]
     bin_hash_str = ''.join(['1' if p > median_pixel else '0' for p in pixels])
     hex_hash_str = bin_str_to_hex(bin_hash_str)
