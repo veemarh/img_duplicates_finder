@@ -1,14 +1,18 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QRadioButton, QVBoxLayout, \
-    QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow, QAction, QMenu, QActionGroup
+    QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow, QAction, QMenu, QActionGroup, \
+    QUndoStack
 from PyQt5.QtGui import QIcon, QFont, QCursor
 from PyQt5.QtCore import Qt, QFileInfo, QRect
+from PyQt5.undo_commands import AddFileCommand, ClearSearchListCommand
 
 
 class ImgDuplicatesFinder(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.undo_stack = QUndoStack(self)
+        self.options = {}
         self.search_list = set()
         self._createActions()
         self._createToolbar()
@@ -23,6 +27,22 @@ class ImgDuplicatesFinder(QMainWindow):
         self.exitAction.setShortcut('Ctrl+Q')
         self.exitAction.setStatusTip('Quit application')
         self.exitAction.triggered.connect(self.close)
+        # Edit
+        self.undoAction = QAction(QIcon("static/undo.png"), "&Undo", self)
+        self.undoAction.setShortcut('Ctrl+Z')
+        self.undoAction.setStatusTip('Undo')
+        self.undoAction.triggered.connect(self.undo_action)
+        self.redoAction = QAction(QIcon("static/redo.png"), "&Redo", self)
+        self.redoAction.setShortcut('Ctrl+Shift+Z')
+        self.redoAction.setStatusTip('Redo')
+        self.redoAction.triggered.connect(self.redo_action)
+        self.addFolderAction = QAction(QIcon("static/add.png"), "&Add", self)
+        self.addFolderAction.setShortcut('Ctrl+M')
+        self.addFolderAction.setStatusTip('Add a new folder to search list')
+        self.addFolderAction.triggered.connect(self.browse_folder)
+        self.clearFoldersAction = QAction("&Clear", self)
+        self.clearFoldersAction.setStatusTip('Clear search list')
+        self.clearFoldersAction.triggered.connect(self.clearSearchList)
         # Folders
         self.recursiveSearchAction = QAction(QIcon("static/recursive.png"), "&Recursive Search", self)
         self.recursiveSearchAction.setStatusTip("Search only in the specified folders")
@@ -59,8 +79,8 @@ class ImgDuplicatesFinder(QMainWindow):
     def _createToolbar(self):
         toolbar = self.addToolBar('Tools')
         toolbar.setFloatable(False)
-        # File
-        toolbar.addAction(self.exitAction)
+        # Edit
+        toolbar.addAction(self.addFolderAction)
         toolbar.addSeparator()
         # Folders
         toolbar.addAction(self.recursiveSearchAction)
@@ -73,6 +93,12 @@ class ImgDuplicatesFinder(QMainWindow):
         file_menu = menubar.addMenu("&File")
         open_recent_menu = file_menu.addMenu("&Open Recent")
         file_menu.addAction(self.exitAction)
+        # Edit
+        edit_menu = menubar.addMenu("&Edit")
+        edit_menu.addAction(self.undoAction)
+        edit_menu.addAction(self.redoAction)
+        edit_menu.addAction(self.addFolderAction)
+        edit_menu.addAction(self.clearFoldersAction)
         # Folders
         folders_menu = menubar.addMenu("&Folders")
         folders_menu.addAction(self.recursiveSearchAction)
@@ -155,8 +181,9 @@ class ImgDuplicatesFinder(QMainWindow):
     # выбор папки для поиска
     def browse_folder(self):
         folder_path = QFileDialog.getExistingDirectory(self, "Select Folder")
-        if folder_path and self.addToSearchList(folder_path):
-            self.dnd_space.addItem(f"{folder_path}")
+        if folder_path:
+            command = AddFileCommand(folder_path, self.dnd_space, self.search_list)
+            self.undo_stack.push(command)
 
     # обработчик кнопки поиска
     def start_search(self):
@@ -213,21 +240,21 @@ class ImgDuplicatesFinder(QMainWindow):
         dnd_rect = self.dnd_space.rect()
         mouse_pos = self.dnd_space.mapFromGlobal(QCursor.pos())
         if dnd_rect.contains(mouse_pos):
-            paths = [u.toLocalFile() for u in event.mimeData().urls()]
+            paths = set([u.toLocalFile() for u in event.mimeData().urls()])
             for path in paths:
-                if QFileInfo(path).isDir() and self.addToSearchList(path):
-                    self.dnd_space.addItem(f"{path}")
+                if QFileInfo(path).isDir():
+                    command = AddFileCommand(path, self.dnd_space, self.search_list)
+                    self.undo_stack.push(command)
 
     def clearSearchList(self):
-        self.search_list.clear()
-        self.dnd_space.clear()
+        command = ClearSearchListCommand(self.dnd_space, self.search_list)
+        self.undo_stack.push(command)
 
-    # синхронизация серверного и клиентского списков
-    def addToSearchList(self, item):
-        if item not in self.search_list:
-            self.search_list.add(f"{item}")
-            return True
-        return False
+    def undo_action(self):
+        self.undo_stack.undo()
+
+    def redo_action(self):
+        self.undo_stack.redo()
 
 
 if __name__ == '__main__':
