@@ -2,7 +2,7 @@ from algorithms.find_duplicates_hash import find_duplicates_use_hash
 from algorithms.find_duplicates_orb import find_duplicates_use_orb
 
 # arg 'quick' only for bhash - parameter 'Fast' = True, 'Precise' = False
-# arg 'size' oly for bhash - parameter 'Comparison area' (128x128, 256x256, 512x512)
+# arg 'size' for bhash and mhash - parameter 'Comparison area' (bhash:128x128, 256x256, 512x512; mhash: 8x8, 16x16 )
 def find_duplicates(input_folder, duplicates_folder, hash_size=16, perc_similarity=100, method='aHash', quick=False, size=16):
     match method:
         case 'ORB':
