@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QRadioButton, QVBoxLayout, \
     QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow, QAction, QMenu
 from PyQt5.QtGui import QIcon, QFont
+from PyQt5.QtCore import Qt
 
 
 class ImgDuplicatesFinder(QMainWindow):
@@ -9,6 +10,7 @@ class ImgDuplicatesFinder(QMainWindow):
         super().__init__()
 
         self._createActions()
+        self._createToolbar()
         self._createMenuBar()
         self._createStatusBar()
 
@@ -19,12 +21,22 @@ class ImgDuplicatesFinder(QMainWindow):
         self.exitAction.setShortcut('Ctrl+Q')
         self.exitAction.setStatusTip('Quit application')
         self.exitAction.triggered.connect(self.close)
+        self.helpContentAction = QAction(QIcon("static/readme.png"), "&About", self)
+        self.helpContentAction.setStatusTip("Show the Img Duplicates Finder's About box")
+        self.helpContentAction.triggered.connect(self.about)
+
+    def _createToolbar(self):
+        toolbar = self.addToolBar('Tools')
+        # toolbar.addAction(self.exitAction)
 
     def _createMenuBar(self):
         menubar = self.menuBar()
         file_menu = QMenu("&File", self)
         file_menu.addAction(self.exitAction)
         menubar.addMenu(file_menu)
+        about_menu = QMenu("&Help", self)
+        about_menu.addAction(self.helpContentAction)
+        menubar.addMenu(about_menu)
 
     def _createStatusBar(self):
         statusbar = self.statusBar()
@@ -39,24 +51,30 @@ class ImgDuplicatesFinder(QMainWindow):
         self.setWindowTitle("Image Duplicates Finder")
         self.setWindowIcon(QIcon("static/icon.ico"))
         self.setFont(QFont("OpenSans", 10))
+        self.setAcceptDrops(True)
 
         # рабочая область
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
 
         # выбор папки
-        folder_label = QLabel("Select Folder:")
-        self.folder_entry = QLineEdit()
-        self.folder_entry.setPlaceholderText("Enter an absolute folder path...")
+        folder_label = QLabel("Drag folders here to add them to your search list")
         browse_button = QPushButton("Browse")
-        # browse_button.setToolTip('Some notes')
         browse_button.clicked.connect(self.browse_folder)
+        self.search_list = QListWidget()
+        self.search_list.setWordWrap(True)
+        clear_button = QPushButton("Clear")
+        clear_button.clicked.connect(self.clearSearchList)
 
-        # макет горизонтального блока для секции выбора папки
-        folder_layout = QHBoxLayout()
-        folder_layout.addWidget(folder_label)
-        folder_layout.addWidget(self.folder_entry)
-        folder_layout.addWidget(browse_button)
+        # макет блока для секции выбора папки
+        folder_layout = QVBoxLayout()
+        folder_layout.addWidget(folder_label, alignment=Qt.AlignCenter)
+        folder_layout.addWidget(self.search_list)
+        buttons_layout = QHBoxLayout()
+        buttons_layout.addStretch(1)
+        buttons_layout.addWidget(browse_button)
+        buttons_layout.addWidget(clear_button)
+        folder_layout.addLayout(buttons_layout)
 
         # выбор опций
         option_label = QLabel("Search Options:")
@@ -73,7 +91,7 @@ class ImgDuplicatesFinder(QMainWindow):
         options_layout.addWidget(self.filter_radio)
 
         # кнопка начала поиска
-        search_button = QPushButton("Start Search")
+        search_button = QPushButton("Search")
         search_button.clicked.connect(self.start_search)
 
         # дисплей результатов поиска
@@ -96,14 +114,14 @@ class ImgDuplicatesFinder(QMainWindow):
     def browse_folder(self):
         folder_path = QFileDialog.getExistingDirectory(self, "Select Folder")
         if folder_path:
-            self.folder_entry.setText(folder_path)
+            self.search_list.addItem(f"{folder_path}")
 
     # обработчик кнопки поиска
     def start_search(self):
-        folder_path = self.folder_entry.text()
-        if not folder_path:
+        if not self.search_list.count():
             QMessageBox.warning(self, "Empty Folder Path", "Please select a folder to search for.")
             return
+        folder_paths = [self.search_list.item(x) for x in range(self.search_list.count())]
 
         option = 'exact' if self.exact_radio.isChecked() \
             else 'resize' if self.resize_radio.isChecked() \
@@ -123,13 +141,13 @@ class ImgDuplicatesFinder(QMainWindow):
             self.result_listbox.addItem("No duplicate images found.")
 
     # подтверждение выхода
-    def closeEvent(self, event):
-        reply = QMessageBox.question(self, 'Confirm Quit', "Are you sure to quit?",
-                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if reply == QMessageBox.Yes:
-            event.accept()
-        else:
-            event.ignore()
+    # def closeEvent(self, event):
+    #     reply = QMessageBox.question(self, 'Confirm Quit', "Are you sure to quit?",
+    #                                  QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+    #     if reply == QMessageBox.Yes:
+    #         event.accept()
+    #     else:
+    #         event.ignore()
 
     # центрирование окна
     def center(self):
@@ -137,6 +155,27 @@ class ImgDuplicatesFinder(QMainWindow):
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
+
+    # о приложении
+    def about(self):
+        QMessageBox.about(self, "About Img Duplicates Finder", "<h3>About Img Duplicates Finder</h3>"
+                                                               "<a href='https://github.com/soneXgo/img_duplicates_finder'>GitHub</a>")
+
+    # drag'n'drop
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        if self.search_list.frameGeometry().contains(event.pos()):
+            files = [u.toLocalFile() for u in event.mimeData().urls()]
+            for file in files:
+                self.search_list.addItem(f"{file}")
+
+    def clearSearchList(self):
+        self.search_list.clear()
 
 
 if __name__ == '__main__':
