@@ -3,29 +3,19 @@ from search import get_images_in_folder_and_subfolders
 
 class FileSearcher:
     def __init__(self):
-        self.searchInSubfolders = False
-        self.foldersForSearch = []
-        self.fileFormats= []
+        self.search_in_subfolders = False
+        self.folders_for_search = []
+        self.file_formats= []
     
     def search(self):
-        if self.searchInSubfolders:
+        if self.search_in_subfolders:
             search_method = get_images_in_folder_and_subfolders
         else:
             search_method = get_images_in_folder
             
-        formats = self.fileFormats
+        formats = self.file_formats
         files = []
-        for folder in self.foldersForSearch:
+        for folder in self.folders_for_search:
             new_files = search_method(folder, formats)
             files = files + new_files
         return files, len(files)
-
-# Example of work    
-file_searcher = FileSearcher()
-file_searcher.searchInSubfolders = True
-file_searcher.foldersForSearch = ['images', 'result']
-file_searcher.fileFormats = ['.png', '.jpg', '.jpeg']
-
-images, count = file_searcher.search()
-print(images, count)
-
