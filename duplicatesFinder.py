@@ -1,23 +1,22 @@
 import os
 import time
 from pathlib import Path
-from func_for_find import get_data_orb
-from func_for_find import get_data_hash
-from func_for_find import get_orb_similarity
-from func_for_find import get_difference
+from find_funcs import *
 
 # arg 'bhash_quick' only for bhash - parameter 'Fast' = True, 'Precise' = False
 # arg 'compare_size' for bhash and mhash - parameter 'Comparison area' (bhash:128x128, 256x256, 512x512; mhash: 8x8, 16x16 )  
 class DuplicatesFinder:
     def __init__(self):
         self.files = []
-        self.file_is_specified = False
+        self.file_is_specified = False #
+        self.require_identical_properties =  False
+        self.identical_properties = {'name': False, 'format': False, 'size': False}
+        self.search_modified_images = False # rotated 90 deg to the right, rotated 180 deg, rotated 90 deg to the left, reflected horizontally, reflected vertically
         self.method = 'aHash'
         self.hash_size = 16
         self.bhash_quick = False
         self.compare_size = 16
         self.similarity = 100
-        self.search_modified_images = False
         self.folder_for_move = None
         
     def find(self):
@@ -47,6 +46,12 @@ class DuplicatesFinder:
             while curr_i < len(paths_images):
                 if (check_i != curr_i) and (paths_images[curr_i] is not None):
                     path_curr_img = paths_images[curr_i]
+                    
+                    if self.require_identical_properties:
+                        if not check_identical_properties(path_checked_img, path_curr_img, self.identical_properties):
+                            curr_i += 1
+                            continue
+                    
                     curr_data = get_data(path_curr_img, method, hash_size, self.bhash_quick, size)
                     
                     # find the percentage difference

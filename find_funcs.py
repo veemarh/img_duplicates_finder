@@ -1,3 +1,4 @@
+import os
 import cv2
 import imagehash
 import hashlib
@@ -75,3 +76,21 @@ def get_data_hash(file_path, method, hash_size, quick, size):
     img = Image.open(file_path)
     hash = get_hash(img, method, hash_size, quick, size)
     return hash  
+
+def check_identical_properties(file1, file2, properties={'name': False, 'format': False, 'size': False}):
+    if properties['name']:
+        name1 = os.path.splitext(os.path.basename(file1))[0]
+        name2 = os.path.splitext(os.path.basename(file2))[0]
+        if not name1 == name2:
+            return False
+    if properties['format']:
+        format1 = os.path.splitext(os.path.basename(file1))[1].lower()
+        format2 = os.path.splitext(os.path.basename(file2))[1].lower()
+        if not format1 == format2:
+            return False
+    if properties['size']:
+        size1 = os.path.getsize(file1)
+        size2 = os.path.getsize(file2)
+        if not size1 == size2:
+            return False
+    return True

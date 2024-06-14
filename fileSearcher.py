@@ -1,5 +1,5 @@
-from search import get_images_in_folder
-from search import get_images_in_folder_and_subfolders
+from search_funcs import get_images_in_folder
+from search_funcs import get_images_in_folder_and_subfolders
 
 class FileSearcher:
     def __init__(self):
