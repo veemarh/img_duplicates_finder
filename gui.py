@@ -1,10 +1,11 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QRadioButton, QVBoxLayout, \
     QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow, QAction, QMenu, QActionGroup, \
-    QUndoStack, QToolButton
+    QUndoStack, QToolButton, QDialog
 from PyQt5.QtGui import QIcon, QFont, QCursor
 from PyQt5.QtCore import Qt, QFileInfo, QRect
 from PyQt5.undo_commands import AddFolderCommand, ClearSearchListCommand, RemoveSelFolderCommand
+from PyQt5.options_dialog import OptionsDialog
 
 
 class ImgDuplicatesFinder(QMainWindow):
@@ -94,6 +95,7 @@ class ImgDuplicatesFinder(QMainWindow):
         self.openSettingsAction = QAction(QIcon("static/settings.png"), "&More...", self)
         self.openSettingsAction.setShortcut('Ctrl+Alt+S')
         self.openSettingsAction.setStatusTip("Open detailed settings")
+        self.openSettingsAction.triggered.connect(self.open_options_dialog)
 
         # Help
         self.helpContentAction = QAction(QIcon("static/readme.png"), "&Help Content", self)
@@ -319,6 +321,16 @@ class ImgDuplicatesFinder(QMainWindow):
         if sel_item:
             command = RemoveSelFolderCommand(sel_item.text(), self.dnd_space, self.search_list)
             self.undo_stack.push(command)
+
+    def open_options_dialog(self):
+        dialog = OptionsDialog(self.options, self)
+        if dialog.exec_() == QDialog.Accepted:
+            self.options = dialog.get_options()
+            self.update_options()
+
+    def update_options(self):
+        # some updates
+        print("Options updated", self.options)
 
 
 if __name__ == '__main__':
