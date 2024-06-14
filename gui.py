@@ -13,7 +13,7 @@ class ImgDuplicatesFinder(QMainWindow):
 
         self.undo_stack = QUndoStack(self)
         self.options = {}
-        self.search_list = set()
+        self.search_list = list()
         self._createActions()
         self._createToolbar()
         self._createMenuBar()
@@ -131,7 +131,7 @@ class ImgDuplicatesFinder(QMainWindow):
         context_menu.exec(event.globalPos())
 
     def initUI(self):
-        self.resize(600, 450)
+        self.resize(800, 600)
         self.center()
         self.setWindowTitle("Image Duplicates Finder")
         self.setWindowIcon(QIcon("static/icon.ico"))
@@ -181,7 +181,7 @@ class ImgDuplicatesFinder(QMainWindow):
     # выбор папки для поиска
     def browse_folder(self):
         folder_path = QFileDialog.getExistingDirectory(self, "Select Folder")
-        if folder_path:
+        if folder_path and folder_path not in self.search_list:
             command = AddFileCommand(folder_path, self.dnd_space, self.search_list)
             self.undo_stack.push(command)
 
@@ -242,13 +242,14 @@ class ImgDuplicatesFinder(QMainWindow):
         if dnd_rect.contains(mouse_pos):
             paths = set([u.toLocalFile() for u in event.mimeData().urls()])
             for path in paths:
-                if QFileInfo(path).isDir():
+                if QFileInfo(path).isDir() and path not in self.search_list:
                     command = AddFileCommand(path, self.dnd_space, self.search_list)
                     self.undo_stack.push(command)
 
     def clearSearchList(self):
-        command = ClearSearchListCommand(self.dnd_space, self.search_list)
-        self.undo_stack.push(command)
+        if self.search_list:
+            command = ClearSearchListCommand(self.dnd_space, self.search_list)
+            self.undo_stack.push(command)
 
     def undo_action(self):
         self.undo_stack.undo()
