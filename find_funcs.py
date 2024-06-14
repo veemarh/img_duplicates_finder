@@ -77,6 +77,23 @@ def get_data_hash(file_path, method, hash_size, quick, size):
     hash = get_hash(img, method, hash_size, quick, size)
     return hash  
 
+def func_get_data(method):
+    match method:
+        case 'ORB':
+            return get_data_orb
+        case _:
+            return get_data_hash
+
+def find_percentage_difference(data1, data2, method, similarity, hash_size):
+    match method:
+        case 'ORB':
+            diff = similarity - get_orb_similarity(data1, data2)
+        case 'MD5' | 'SHA-1 (160-bit)' | 'SHA-2 (256-bit)' | 'SHA-2 (384-bit)' | 'SHA-2 (512-bit)':
+            diff = 0 if data1 == data2 else 100
+        case _:
+            diff = get_difference(data1, data2, hash_size)
+    return diff
+
 def check_identical_properties(file1, file2, properties={'name': False, 'format': False, 'size': False}):
     if properties['name']:
         name1 = os.path.splitext(os.path.basename(file1))[0]

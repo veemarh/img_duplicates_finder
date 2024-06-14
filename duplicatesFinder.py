@@ -25,18 +25,8 @@ class DuplicatesFinder:
             return self.__find(self.specified_file)
         start = time.monotonic()
         paths_images = self.files
-        method = self.method
-        similarity = self.similarity
-        duplicates_folder = self.folder_for_move
-        hash_size = self.hash_size
-        size = self.compare_size
         
-        match method:
-            case 'ORB':
-                get_data = get_data_orb
-            case _:
-                get_data = get_data_hash
-    
+        get_data = func_get_data(self.method)
         check_i = 0
         curr_i = 1
         duplicate_count = 0
@@ -44,33 +34,26 @@ class DuplicatesFinder:
         while check_i < len(paths_images):
             if paths_images[check_i] is not None:
                 path_checked_img = paths_images[check_i]
-                checked_data = get_data(path_checked_img, method, hash_size, self.bhash_quick, size)
+                checked_data = get_data(path_checked_img, self.method, self.hash_size, self.bhash_quick, self.compare_size)
                     
             while curr_i < len(paths_images):
-                if (check_i != curr_i) and (paths_images[curr_i] is not None):
-                    path_curr_img = paths_images[curr_i]
-                    
+                path_curr_img = paths_images[curr_i]
+                if (check_i != curr_i) and (path_curr_img is not None):
                     if self.require_identical_properties:
                         if not check_identical_properties(path_checked_img, path_curr_img, self.identical_properties):
                             curr_i += 1
                             continue
                     
-                    curr_data = get_data(path_curr_img, method, hash_size, self.bhash_quick, size)
+                    curr_data = get_data(path_curr_img, self.method, self.hash_size, self.bhash_quick, self.compare_size)
                     
                     # find the percentage difference
-                    match method:
-                        case 'ORB':
-                            diff = similarity - get_orb_similarity(checked_data, curr_data)
-                        case 'MD5' | 'SHA-1 (160-bit)' | 'SHA-2 (256-bit)' | 'SHA-2 (384-bit)' | 'SHA-2 (512-bit)':
-                            diff = 0 if checked_data == curr_data else 100
-                        case _:
-                            diff = get_difference(checked_data, curr_data, self.hash_size)
+                    diff = find_percentage_difference(checked_data, curr_data, self.method, self.similarity, self.hash_size)
 
-                    if diff <= (100 - similarity):
+                    if diff <= (100 - self.similarity):
                         print(f"{path_checked_img} - {path_curr_img}")
                         name_curr_img = os.path.basename(path_curr_img)
-                        if duplicates_folder:
-                            Path(path_curr_img).rename(f"{duplicates_folder}/{name_curr_img}")
+                        if self.folder_for_move:
+                            Path(path_curr_img).rename(f"{self.folder_for_move}/{name_curr_img}")
                         del paths_images[curr_i]
                         duplicate_count += 1
                     else:
@@ -86,22 +69,12 @@ class DuplicatesFinder:
     def __find(self, specified_file):
         start = time.monotonic()
         paths_images = self.files
-        method = self.method
-        similarity = self.similarity
-        duplicates_folder = self.folder_for_move
-        hash_size = self.hash_size
-        size = self.compare_size
         
-        match method:
-            case 'ORB':
-                get_data = get_data_orb
-            case _:
-                get_data = get_data_hash
-    
+        get_data = func_get_data(self.method)
         duplicate_count = 0
 
         if specified_file is not None:
-            checked_data = get_data(specified_file, method, hash_size, self.bhash_quick, size)
+            checked_data = get_data(specified_file, self.method, self.hash_size, self.bhash_quick, self.compare_size)
                 
         for curr_img in paths_images:
             if (specified_file != curr_img) and (curr_img is not None):
@@ -109,23 +82,19 @@ class DuplicatesFinder:
                     if not check_identical_properties(specified_file, curr_img, self.identical_properties):
                         continue
                 
-                curr_data = get_data(curr_img, method, hash_size, self.bhash_quick, size)
+                curr_data = get_data(curr_img, self.method, self.hash_size, self.bhash_quick, self.compare_size)
                 
                 # find the percentage difference
-                match method:
-                    case 'ORB':
-                        diff = similarity - get_orb_similarity(checked_data, curr_data)
-                    case 'MD5' | 'SHA-1 (160-bit)' | 'SHA-2 (256-bit)' | 'SHA-2 (384-bit)' | 'SHA-2 (512-bit)':
-                        diff = 0 if checked_data == curr_data else 100
-                    case _:
-                        diff = get_difference(checked_data, curr_data, self.hash_size)
-                if diff <= (100 - similarity):
+                diff = find_percentage_difference(checked_data, curr_data, self.method, self.similarity, self.hash_size)
+                
+                if diff <= (100 - self.similarity):
                     print(f"{specified_file} - {curr_img}")
                     name_curr_img = os.path.basename(curr_img)
-                    if duplicates_folder:
-                        Path(curr_img).rename(f"{duplicates_folder}/{name_curr_img}")
+                    if self.folder_for_move:
+                        Path(curr_img).rename(f"{self.folder_for_move}/{name_curr_img}")
                     del curr_img
                     duplicate_count += 1
                                 
         print(duplicate_count, 'duplicates found')
         print(f'Script running time: {time.monotonic() - start}')
+        
