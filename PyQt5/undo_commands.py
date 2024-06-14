@@ -33,3 +33,21 @@ class ClearSearchListCommand(QUndoCommand):
         for item in self.removed_items:
             self.search_list.append(item)
             self.list_widget.addItem(item)
+
+
+class RemoveSelFolderCommand(QUndoCommand):
+    def __init__(self, file_path, list_widget, search_list):
+        super().__init__()
+        self.list_widget = list_widget
+        self.search_list = search_list
+        self.file_path = file_path
+        self.row_item = self.search_list.index(self.file_path)
+
+    def redo(self):
+        self.search_list.pop(self.row_item)
+        self.list_widget.takeItem(self.row_item)
+
+    def undo(self):
+        if self.file_path not in self.search_list:
+            self.search_list.insert(self.row_item, self.file_path)
+            self.list_widget.insertItem(self.row_item, self.file_path)

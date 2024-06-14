@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButto
     QUndoStack
 from PyQt5.QtGui import QIcon, QFont, QCursor
 from PyQt5.QtCore import Qt, QFileInfo, QRect
-from PyQt5.undo_commands import AddFileCommand, ClearSearchListCommand
+from PyQt5.undo_commands import AddFileCommand, ClearSearchListCommand, RemoveSelFolderCommand
 
 
 class ImgDuplicatesFinder(QMainWindow):
@@ -40,6 +40,10 @@ class ImgDuplicatesFinder(QMainWindow):
         self.addFolderAction.setShortcut('Ctrl+M')
         self.addFolderAction.setStatusTip('Add a new folder to search list')
         self.addFolderAction.triggered.connect(self.browse_folder)
+        self.removeSelAction = QAction(QIcon("static/remove.png"), "&Remove", self)
+        self.removeSelAction.setShortcut('Delete')
+        self.removeSelAction.setStatusTip('Remove selected folder from search list')
+        self.removeSelAction.triggered.connect(self.remove_sel_folder)
         self.clearFoldersAction = QAction("&Clear", self)
         self.clearFoldersAction.setStatusTip('Clear search list')
         self.clearFoldersAction.triggered.connect(self.clearSearchList)
@@ -81,6 +85,7 @@ class ImgDuplicatesFinder(QMainWindow):
         toolbar.setFloatable(False)
         # Edit
         toolbar.addAction(self.addFolderAction)
+        toolbar.addAction(self.removeSelAction)
         toolbar.addSeparator()
         # Folders
         toolbar.addAction(self.recursiveSearchAction)
@@ -98,6 +103,7 @@ class ImgDuplicatesFinder(QMainWindow):
         edit_menu.addAction(self.undoAction)
         edit_menu.addAction(self.redoAction)
         edit_menu.addAction(self.addFolderAction)
+        edit_menu.addAction(self.removeSelAction)
         edit_menu.addAction(self.clearFoldersAction)
         # Folders
         folders_menu = menubar.addMenu("&Folders")
@@ -148,6 +154,8 @@ class ImgDuplicatesFinder(QMainWindow):
         browse_button.clicked.connect(self.browse_folder)
         self.dnd_space = QListWidget()
         self.dnd_space.setWordWrap(True)
+        remove_button = QPushButton("Remove")
+        remove_button.clicked.connect(self.remove_sel_folder)
         clear_button = QPushButton("Clear")
         clear_button.clicked.connect(self.clearSearchList)
 
@@ -158,6 +166,7 @@ class ImgDuplicatesFinder(QMainWindow):
         buttons_layout = QHBoxLayout()
         buttons_layout.addStretch(1)
         buttons_layout.addWidget(browse_button)
+        buttons_layout.addWidget(remove_button)
         buttons_layout.addWidget(clear_button)
         folder_layout.addLayout(buttons_layout)
 
@@ -256,6 +265,12 @@ class ImgDuplicatesFinder(QMainWindow):
 
     def redo_action(self):
         self.undo_stack.redo()
+
+    def remove_sel_folder(self):
+        sel_item = self.dnd_space.currentItem()
+        if sel_item:
+            command = RemoveSelFolderCommand(sel_item.text(), self.dnd_space, self.search_list)
+            self.undo_stack.push(command)
 
 
 if __name__ == '__main__':
