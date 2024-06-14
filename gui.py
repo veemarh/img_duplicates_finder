@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButto
     QUndoStack
 from PyQt5.QtGui import QIcon, QFont, QCursor
 from PyQt5.QtCore import Qt, QFileInfo, QRect
-from PyQt5.undo_commands import AddFileCommand, ClearSearchListCommand, RemoveSelFolderCommand
+from PyQt5.undo_commands import AddFolderCommand, ClearSearchListCommand, RemoveSelFolderCommand
 
 
 class ImgDuplicatesFinder(QMainWindow):
@@ -46,7 +46,7 @@ class ImgDuplicatesFinder(QMainWindow):
         self.removeSelAction.triggered.connect(self.remove_sel_folder)
         self.clearFoldersAction = QAction("&Clear", self)
         self.clearFoldersAction.setStatusTip('Clear search list')
-        self.clearFoldersAction.triggered.connect(self.clearSearchList)
+        self.clearFoldersAction.triggered.connect(self.clear_search_list)
         # Folders
         self.recursiveSearchAction = QAction(QIcon("static/recursive.png"), "&Recursive Search", self)
         self.recursiveSearchAction.setStatusTip("Search only in the specified folders")
@@ -157,7 +157,7 @@ class ImgDuplicatesFinder(QMainWindow):
         remove_button = QPushButton("Remove")
         remove_button.clicked.connect(self.remove_sel_folder)
         clear_button = QPushButton("Clear")
-        clear_button.clicked.connect(self.clearSearchList)
+        clear_button.clicked.connect(self.clear_search_list)
 
         # макет блока для секции выбора папки
         folder_layout = QVBoxLayout()
@@ -191,7 +191,7 @@ class ImgDuplicatesFinder(QMainWindow):
     def browse_folder(self):
         folder_path = QFileDialog.getExistingDirectory(self, "Select Folder")
         if folder_path and folder_path not in self.search_list:
-            command = AddFileCommand(folder_path, self.dnd_space, self.search_list)
+            command = AddFolderCommand(folder_path, self.dnd_space, self.search_list)
             self.undo_stack.push(command)
 
     # обработчик кнопки поиска
@@ -252,10 +252,10 @@ class ImgDuplicatesFinder(QMainWindow):
             paths = set([u.toLocalFile() for u in event.mimeData().urls()])
             for path in paths:
                 if QFileInfo(path).isDir() and path not in self.search_list:
-                    command = AddFileCommand(path, self.dnd_space, self.search_list)
+                    command = AddFolderCommand(path, self.dnd_space, self.search_list)
                     self.undo_stack.push(command)
 
-    def clearSearchList(self):
+    def clear_search_list(self):
         if self.search_list:
             command = ClearSearchListCommand(self.dnd_space, self.search_list)
             self.undo_stack.push(command)

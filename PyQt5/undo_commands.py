@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QUndoCommand
 
 
-class AddFileCommand(QUndoCommand):
+class AddFolderCommand(QUndoCommand):
     def __init__(self, file_path, list_widget, search_list):
         super().__init__()
         self.file_path = file_path
