@@ -5,6 +5,7 @@ import hashlib
 from PIL import Image
 from algorithms.bhash import bhash
 from algorithms.mhash import mhash
+from comparisonMethod import ComparisonMethod
 
 def get_orb_similarity(img1, img2):
     # create ORB feature extractor
@@ -25,22 +26,12 @@ def get_orb_similarity(img1, img2):
         sim = len(good_mathes) / len(matches) * 100
     return sim
 
-# def is_duplicates(img1, img2, perc):
-#     sim_img = get_orb_similarity(img1, img2)
-#     if sim_img < perc and sim_img > 10:
-#         # the algorithm is unstable to the reflected image, 
-#         # so we can check that the images are not identical if we flip it over
-#         reflected_img = cv2.flip(img1, 1)
-#         sim_reflected_img = get_orb_similarity(reflected_img, img2)
-#     else:
-#         sim_reflected_img = 0
-        
-#     if sim_img >= perc or sim_reflected_img >= perc:
-#         return True
-#     return False
-
-def get_hash(img, method='aHash', hash_size=16, quick=False, size=16):
-    match method:
+def get_hash(img, method: ComparisonMethod):
+    name = method.name
+    hash_size = method.hash_size
+    quick = method.bhash_quick
+    size = method.comparison_size
+    match name:
         case 'aHash':
             return imagehash.average_hash(img, hash_size)
         case 'bHash':
@@ -69,30 +60,33 @@ def get_difference(hash1, hash2, hash_size):
     hamming_distance = hash1 - hash2
     return hamming_distance / (hash_size**2) * 100
 
-def get_data_orb(file_path, method, hash_size, quick, size):
-    return cv2.imread(file_path)
-
-def get_data_hash(file_path, method, hash_size, quick, size):
-    img = Image.open(file_path)
-    hash = get_hash(img, method, hash_size, quick, size)
-    return hash  
-
-def func_get_data(method):
-    match method:
+def get_data(file_path: str, method: ComparisonMethod):
+    match method.name:
         case 'ORB':
-            return get_data_orb
+            img = cv2.imread(file_path)
+            return img, img
         case _:
-            return get_data_hash
+            img = Image.open(file_path)
+            hash = get_hash(img, method)
+            return img, hash
 
-def find_percentage_difference(data1, data2, method, similarity, hash_size):
-    match method:
+def find_percentage_difference(data1, data2, method: ComparisonMethod):
+    match method.name:
         case 'ORB':
-            diff = similarity - get_orb_similarity(data1, data2)
+            diff = method.similarity - get_orb_similarity(data1, data2)
         case 'MD5' | 'SHA-1 (160-bit)' | 'SHA-2 (256-bit)' | 'SHA-2 (384-bit)' | 'SHA-2 (512-bit)':
             diff = 0 if data1 == data2 else 100
         case _:
-            diff = get_difference(data1, data2, hash_size)
+            diff = get_difference(data1, data2, method.hash_size)
     return diff
+
+# def is_duplicates(checked_data, path_curr_img, get_data, method: ComparisonMethod):
+#     curr_data, curr_img = get_data(path_curr_img, method)
+                    
+#     # find the percentage difference
+#     diff = find_percentage_difference(checked_data, curr_data, method)
+
+#     return diff <= (100 - method.similarity)
 
 def check_identical_properties(file1, file2, properties={'name': False, 'format': False, 'size': False}):
     if properties['name']:
@@ -111,3 +105,29 @@ def check_identical_properties(file1, file2, properties={'name': False, 'format'
         if not size1 == size2:
             return False
     return True
+
+def check_modified():
+    return
+
+def modify_image(img, properties):
+    if isinstance(img, Image.Image):
+        return modify_image_with_Image(img, properties)
+    return modify_image_with_cv2(img, properties)
+
+# arg 'modified_images_properties' has keys:
+# 1 - rotated 90 deg to the right,
+# 2 - rotated 180 deg,
+# 3 - rotated 90 deg to the left, 
+# 4 - reflected horizontally,
+# 5 - reflected vertically
+def modify_image_with_Image(check_img, img_to_modif: Image, properties):
+    if properties[1]:
+        modified_img = img_to_modif.rotate(-90, expand=True)
+        check_modified(check_img, modified_img)
+        return 
+
+def modify_image_with_cv2(img, properties):
+    return
+
+
+# modify_image(Image.open('images/image-1.jpeg'), {1: True, 2: True, 3: True, 4: True, 5: True})

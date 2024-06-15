@@ -5,10 +5,11 @@ from pathlib import Path
 from find_funcs import *
 from comparisonMethod import ComparisonMethod
 
-# class ComparisonObject:
-#     def __init__(self, file_path: str, comparison_method: ComparisonMethod):
-#         self.file_path = file_path
-#         self.object = get_img_obj(file_path, method)
+class ComparisonObject:
+    def __init__(self, file_path: str, comparison_method: ComparisonMethod):
+        self.file_path = file_path
+        self.object, self.comparison_data = get_data(file_path, comparison_method)
+
 # var 'bhash_quick' only for bhash - parameter 'Fast' = True, 'Precise' = False
 # var 'compare_size' for bhash and mhash - parameter 'Comparison area' (bhash:128x128, 256x256, 512x512; mhash: 8x8, 16x16 )  
 # var 'modified_images_properties' has keys:
@@ -35,32 +36,29 @@ class DuplicatesFinder:
         paths_images = self.files
         comparison_method = self.comparison_method
         
-        get_data = func_get_data(comparison_method.name)
         check_i = 0
         curr_i = 1
         duplicate_count = 0
 
         while check_i < len(paths_images):
             if paths_images[check_i] is not None:
-                path_checked_img = paths_images[check_i]
-                checked_data, checked_img = get_data(path_checked_img, comparison_method)
+                checked_obj = ComparisonObject(paths_images[check_i], comparison_method)
                     
             while curr_i < len(paths_images):
                 path_curr_img = paths_images[curr_i]
                 if (check_i != curr_i) and (path_curr_img is not None):
                     if self.require_identical_properties:
-                        if not check_identical_properties(path_checked_img, path_curr_img, self.identical_properties):
+                        if not check_identical_properties(checked_obj.file_path, path_curr_img, self.identical_properties):
                             curr_i += 1
                             continue
                     
                     # is_duplicates(checked_data, path_curr_img, get_data, comparison_method)
-                    curr_data, curr_img = get_data(path_curr_img, comparison_method)
-                    
+                    curr_obj = ComparisonObject(path_curr_img, comparison_method)
                     # find the percentage difference
-                    diff = find_percentage_difference(checked_data, curr_data, comparison_method)
+                    diff = find_percentage_difference(checked_obj.comparison_data, curr_obj.comparison_data, comparison_method)
 
                     if diff <= (100 - comparison_method.similarity):
-                        print(f"{path_checked_img} - {path_curr_img}")
+                        print(f"{checked_obj.file_path} - {path_curr_img}")
                         name_curr_img = os.path.basename(path_curr_img)
                         if self.folder_for_move:
                             Path(path_curr_img).rename(f"{self.folder_for_move}/{name_curr_img}")
