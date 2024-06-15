@@ -338,6 +338,28 @@ class ImgDuplicatesFinder(QMainWindow):
         dialog = OptionsDialog(self.options_manager.options, self)
         if dialog.exec_() == QDialog.Accepted:
             self.options_manager.options = dialog.get_options()
+            self.update_options()
+            print(self.options_manager.options)
+
+    def update_options(self):
+        self.recursiveSearchAction.setChecked(self.options_manager.options["recursive_search"])
+        self.currentSearchAction.setChecked(not self.options_manager.options["recursive_search"])
+
+        search_by = self.options_manager.options.get("search_by")
+        if search_by == "Content":
+            self.byContentAction.setChecked(True)
+        elif search_by == "Name":
+            self.byNameAction.setChecked(True)
+        elif search_by == "Size":
+            self.bySizeAction.setChecked(True)
+
+        algorithm = self.options_manager.options.get("algorithm")
+        if algorithm == "aHash":
+            self.aHashAction.setChecked(True)
+        elif algorithm == "pHash":
+            self.pHashAction.setChecked(True)
+        elif algorithm == "ORB":
+            self.orbAction.setChecked(True)
 
 
 if __name__ == '__main__':

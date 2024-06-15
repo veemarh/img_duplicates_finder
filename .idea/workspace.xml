@@ -92,7 +92,7 @@
       <workItem from="1718355138118" duration="1266000" />
       <workItem from="1718363061588" duration="759000" />
       <workItem from="1718446708272" duration="1846000" />
-      <workItem from="1718460459191" duration="7483000" />
+      <workItem from="1718460459191" duration="12183000" />
     </task>
     <servers />
   </component>
@@ -129,7 +129,7 @@
     <SUITE FILE_PATH="coverage/img_duplicates_finder$options_manager.coverage" NAME="options_manager Coverage Results" MODIFIED="1718467827229" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PyQt5" />
     <SUITE FILE_PATH="coverage/img_duplicates_finder$options_dialog.coverage" NAME="options_dialog Coverage Results" MODIFIED="1718448175777" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PyQt5" />
     <SUITE FILE_PATH="coverage/img_duplicates_finder$fileSearcher.coverage" NAME="fileSearcher Coverage Results" MODIFIED="1718460663181" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/img_duplicates_finder$gui.coverage" NAME="gui Coverage Results" MODIFIED="1718467985428" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/img_duplicates_finder$gui.coverage" NAME="gui Coverage Results" MODIFIED="1718473285201" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/img_duplicates_finder$test.coverage" NAME="test Coverage Results" MODIFIED="1718194718393" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/img_duplicates_finder$options_widget.coverage" NAME="options_widget Coverage Results" MODIFIED="1718366590938" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PyQt5" />
   </component>
