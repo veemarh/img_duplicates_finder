@@ -6,6 +6,7 @@ from PyQt5.QtGui import QIcon, QFont, QCursor
 from PyQt5.QtCore import Qt, QFileInfo, QRect
 from PyQt5.undo_commands import AddFolderCommand, ClearSearchListCommand, RemoveSelFolderCommand
 from PyQt5.options_dialog import OptionsDialog
+from PyQt5.options_manager import *
 
 
 class ImgDuplicatesFinder(QMainWindow):
@@ -13,14 +14,7 @@ class ImgDuplicatesFinder(QMainWindow):
         super().__init__()
 
         self.undo_stack = QUndoStack(self)
-        self.options = {
-            "recursive_search": True,
-            "search_by": "Content",
-            "algorithm": "aHash",
-            "limit_size": False,
-            "limit_creation_date": False,
-            "limit_changing_date": False
-        }
+        self.options_manager = OptionsManager()
         self.search_list = list()
         self._createActions()
         self._createToolbar()
@@ -60,21 +54,27 @@ class ImgDuplicatesFinder(QMainWindow):
         # Folders
         self.recursiveSearchAction = QAction(QIcon("static/recursive.png"), "&Recursive Search", self)
         self.recursiveSearchAction.setStatusTip("Search only in the specified folders")
+        self.recursiveSearchAction.triggered.connect(lambda: self.options_manager.set_option("recursive_search", True))
         self.currentSearchAction = QAction(QIcon("static/current.png"), "In the &Current Folder", self)
         self.currentSearchAction.setStatusTip("Search in folders and their subfolders")
+        self.currentSearchAction.triggered.connect(lambda: self.options_manager.set_option("recursive_search", False))
         self.recursiveSearchAction.setCheckable(True)
         self.currentSearchAction.setCheckable(True)
         folder_options_group = QActionGroup(self)
         folder_options_group.addAction(self.recursiveSearchAction)
         folder_options_group.addAction(self.currentSearchAction)
+        folder_options_group.setExclusive(True)
         self.recursiveSearchAction.setChecked(True)
         # Search by
         self.byContentAction = QAction("&Content", self)
         self.byContentAction.setStatusTip("Search for similar images")
+        self.byContentAction.triggered.connect(lambda: self.options_manager.set_option("search_by", "Content"))
         self.byNameAction = QAction("&Name", self)
         self.byNameAction.setStatusTip("Search for images with the same name")
+        self.byNameAction.triggered.connect(lambda: self.options_manager.set_option("search_by", "Name"))
         self.bySizeAction = QAction("&Size", self)
         self.bySizeAction.setStatusTip("Search for images of the same size")
+        self.bySizeAction.triggered.connect(lambda: self.options_manager.set_option("search_by", "Size"))
         self.byContentAction.setCheckable(True)
         self.byNameAction.setCheckable(True)
         self.bySizeAction.setCheckable(True)
@@ -82,14 +82,18 @@ class ImgDuplicatesFinder(QMainWindow):
         search_by_group.addAction(self.byContentAction)
         search_by_group.addAction(self.byNameAction)
         search_by_group.addAction(self.bySizeAction)
+        search_by_group.setExclusive(True)
         self.byContentAction.setChecked(True)
         # Algorithms
         self.aHashAction = QAction("a&Hash", self)
         self.aHashAction.setStatusTip("Use aHash comparison algorithm")
+        self.aHashAction.triggered.connect(lambda: self.options_manager.set_option("algorithm", "aHash"))
         self.pHashAction = QAction("p&Hash", self)
         self.pHashAction.setStatusTip("Use pHash comparison algorithm")
+        self.pHashAction.triggered.connect(lambda: self.options_manager.set_option("algorithm", "pHash"))
         self.orbAction = QAction("&ORB", self)
         self.orbAction.setStatusTip("Use ORB comparison algorithm")
+        self.orbAction.triggered.connect(lambda: self.options_manager.set_option("algorithm", "ORB"))
         self.aHashAction.setCheckable(True)
         self.pHashAction.setCheckable(True)
         self.orbAction.setCheckable(True)
@@ -97,6 +101,7 @@ class ImgDuplicatesFinder(QMainWindow):
         self.algorithms_group.addAction(self.aHashAction)
         self.algorithms_group.addAction(self.pHashAction)
         self.algorithms_group.addAction(self.orbAction)
+        self.algorithms_group.setExclusive(True)
         self.aHashAction.setChecked(True)
         # More
         self.openSettingsAction = QAction(QIcon("static/settings.png"), "&More...", self)
@@ -330,14 +335,9 @@ class ImgDuplicatesFinder(QMainWindow):
             self.undo_stack.push(command)
 
     def open_options_dialog(self):
-        dialog = OptionsDialog(self.options, self)
+        dialog = OptionsDialog(self.options_manager.options, self)
         if dialog.exec_() == QDialog.Accepted:
-            self.options = dialog.get_options()
-            self.update_options()
-
-    def update_options(self):
-        # some updates
-        print("Options updated", self.options)
+            self.options_manager.options = dialog.get_options()
 
 
 if __name__ == '__main__':
