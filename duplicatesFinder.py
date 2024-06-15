@@ -52,12 +52,9 @@ class DuplicatesFinder:
                             curr_i += 1
                             continue
                     
-                    # is_duplicates(checked_data, path_curr_img, get_data, comparison_method)
                     curr_obj = ComparisonObject(path_curr_img, comparison_method)
-                    # find the percentage difference
-                    diff = find_percentage_difference(checked_obj.comparison_data, curr_obj.comparison_data, comparison_method)
 
-                    if diff <= (100 - comparison_method.similarity):
+                    if is_duplicates(checked_obj.comparison_data, curr_obj.comparison_data, comparison_method):
                         print(f"{checked_obj.file_path} - {path_curr_img}")
                         name_curr_img = os.path.basename(path_curr_img)
                         if self.folder_for_move:

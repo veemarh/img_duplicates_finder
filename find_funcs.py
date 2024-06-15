@@ -26,7 +26,7 @@ def get_orb_similarity(img1, img2):
         sim = len(good_mathes) / len(matches) * 100
     return sim
 
-def get_hash(img, method: ComparisonMethod):
+def get_hash(img: Image, method: ComparisonMethod):
     name = method.name
     hash_size = method.hash_size
     quick = method.bhash_quick
@@ -56,7 +56,7 @@ def get_hash(img, method: ComparisonMethod):
             return "Error: the method was not found"
 
 # find the percentage difference
-def get_difference(hash1, hash2, hash_size):
+def get_difference(hash1: imagehash.ImageHash, hash2: imagehash.ImageHash, hash_size: int):
     hamming_distance = hash1 - hash2
     return hamming_distance / (hash_size**2) * 100
 
@@ -80,15 +80,12 @@ def find_percentage_difference(data1, data2, method: ComparisonMethod):
             diff = get_difference(data1, data2, method.hash_size)
     return diff
 
-# def is_duplicates(checked_data, path_curr_img, get_data, method: ComparisonMethod):
-#     curr_data, curr_img = get_data(path_curr_img, method)
-                    
-#     # find the percentage difference
-#     diff = find_percentage_difference(checked_data, curr_data, method)
+def is_duplicates(data1, data2, method: ComparisonMethod):                    
+    # find the percentage difference
+    diff = find_percentage_difference(data1, data2, method)
+    return diff <= (100 - method.similarity)
 
-#     return diff <= (100 - method.similarity)
-
-def check_identical_properties(file1, file2, properties={'name': False, 'format': False, 'size': False}):
+def check_identical_properties(file1: str, file2: str, properties={'name': False, 'format': False, 'size': False}):
     if properties['name']:
         name1 = os.path.splitext(os.path.basename(file1))[0]
         name2 = os.path.splitext(os.path.basename(file2))[0]
