@@ -13,7 +13,14 @@ class ImgDuplicatesFinder(QMainWindow):
         super().__init__()
 
         self.undo_stack = QUndoStack(self)
-        self.options = {}
+        self.options = {
+            "recursive_search": True,
+            "search_by": "Content",
+            "algorithm": "aHash",
+            "limit_size": False,
+            "limit_creation_date": False,
+            "limit_changing_date": False
+        }
         self.search_list = list()
         self._createActions()
         self._createToolbar()
@@ -119,7 +126,7 @@ class ImgDuplicatesFinder(QMainWindow):
         search_by_menu = QMenu(self)
         search_by_menu.addActions([self.byContentAction, self.byNameAction, self.bySizeAction])
         search_by_tool = QToolButton(self)
-        search_by_tool.setToolTip("&Search by")
+        search_by_tool.setToolTip("Search by")
         search_by_tool.setIcon(QIcon("static/search_by.png"))
         search_by_tool.setPopupMode(QToolButton.InstantPopup)
         search_by_tool.setMenu(search_by_menu)
@@ -129,7 +136,7 @@ class ImgDuplicatesFinder(QMainWindow):
         algorithms_menu = QMenu(self)
         algorithms_menu.addActions([self.aHashAction, self.pHashAction, self.orbAction])
         algorithms_tool = QToolButton(self)
-        algorithms_tool.setToolTip("&Algorithm")
+        algorithms_tool.setToolTip("Algorithm")
         algorithms_tool.setIcon(QIcon("static/algorithm.png"))
         algorithms_tool.setPopupMode(QToolButton.InstantPopup)
         algorithms_tool.setMenu(algorithms_menu)
@@ -247,7 +254,7 @@ class ImgDuplicatesFinder(QMainWindow):
     # обработчик кнопки поиска
     def start_search(self):
         if not self.search_list:
-            QMessageBox.warning(self, "Empty Folder Path", "Please select a folder to search for.")
+            QMessageBox.warning(self, "Empty Folder Path", "Please select a folder for search.")
             return
 
         # option = 'exact' if self.exact_radio.isChecked() \
