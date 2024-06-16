@@ -45,6 +45,12 @@ def get_data(file_path: str, method: ComparisonMethod):
             img = Image.open(file_path)
             hash = get_hash(img, method)
             return img, hash
+        
+def get_data_obj(obj, method: ComparisonMethod):
+    if isinstance(obj, Image.Image):
+        return get_hash(obj, method)      
+    else:    
+        return obj
 
 class ComparisonObject:
     def __init__(self, file_path: str, comparison_method: ComparisonMethod):
