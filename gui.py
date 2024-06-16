@@ -1,10 +1,12 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QRadioButton, QVBoxLayout, \
     QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow, QAction, QMenu, QActionGroup, \
-    QUndoStack, QToolButton
+    QUndoStack, QToolButton, QDialog
 from PyQt5.QtGui import QIcon, QFont, QCursor
 from PyQt5.QtCore import Qt, QFileInfo, QRect
 from PyQt5.undo_commands import AddFolderCommand, ClearSearchListCommand, RemoveSelFolderCommand
+from PyQt5.options_dialog import OptionsDialog
+from PyQt5.options_manager import *
 
 
 class ImgDuplicatesFinder(QMainWindow):
@@ -12,7 +14,7 @@ class ImgDuplicatesFinder(QMainWindow):
         super().__init__()
 
         self.undo_stack = QUndoStack(self)
-        self.options = {}
+        self.options_manager = OptionsManager()
         self.search_list = list()
         self._createActions()
         self._createToolbar()
@@ -52,21 +54,27 @@ class ImgDuplicatesFinder(QMainWindow):
         # Folders
         self.recursiveSearchAction = QAction(QIcon("static/recursive.png"), "&Recursive Search", self)
         self.recursiveSearchAction.setStatusTip("Search only in the specified folders")
+        self.recursiveSearchAction.triggered.connect(lambda: self.options_manager.set_option("recursive_search", True))
         self.currentSearchAction = QAction(QIcon("static/current.png"), "In the &Current Folder", self)
         self.currentSearchAction.setStatusTip("Search in folders and their subfolders")
+        self.currentSearchAction.triggered.connect(lambda: self.options_manager.set_option("recursive_search", False))
         self.recursiveSearchAction.setCheckable(True)
         self.currentSearchAction.setCheckable(True)
         folder_options_group = QActionGroup(self)
         folder_options_group.addAction(self.recursiveSearchAction)
         folder_options_group.addAction(self.currentSearchAction)
+        folder_options_group.setExclusive(True)
         self.recursiveSearchAction.setChecked(True)
         # Search by
         self.byContentAction = QAction("&Content", self)
         self.byContentAction.setStatusTip("Search for similar images")
+        self.byContentAction.triggered.connect(lambda: self.options_manager.set_option("search_by", "Content"))
         self.byNameAction = QAction("&Name", self)
         self.byNameAction.setStatusTip("Search for images with the same name")
+        self.byNameAction.triggered.connect(lambda: self.options_manager.set_option("search_by", "Name"))
         self.bySizeAction = QAction("&Size", self)
         self.bySizeAction.setStatusTip("Search for images of the same size")
+        self.bySizeAction.triggered.connect(lambda: self.options_manager.set_option("search_by", "Size"))
         self.byContentAction.setCheckable(True)
         self.byNameAction.setCheckable(True)
         self.bySizeAction.setCheckable(True)
@@ -74,14 +82,18 @@ class ImgDuplicatesFinder(QMainWindow):
         search_by_group.addAction(self.byContentAction)
         search_by_group.addAction(self.byNameAction)
         search_by_group.addAction(self.bySizeAction)
+        search_by_group.setExclusive(True)
         self.byContentAction.setChecked(True)
         # Algorithms
         self.aHashAction = QAction("a&Hash", self)
         self.aHashAction.setStatusTip("Use aHash comparison algorithm")
+        self.aHashAction.triggered.connect(lambda: self.options_manager.set_option("algorithm", "aHash"))
         self.pHashAction = QAction("p&Hash", self)
         self.pHashAction.setStatusTip("Use pHash comparison algorithm")
+        self.pHashAction.triggered.connect(lambda: self.options_manager.set_option("algorithm", "pHash"))
         self.orbAction = QAction("&ORB", self)
         self.orbAction.setStatusTip("Use ORB comparison algorithm")
+        self.orbAction.triggered.connect(lambda: self.options_manager.set_option("algorithm", "ORB"))
         self.aHashAction.setCheckable(True)
         self.pHashAction.setCheckable(True)
         self.orbAction.setCheckable(True)
@@ -89,11 +101,13 @@ class ImgDuplicatesFinder(QMainWindow):
         self.algorithms_group.addAction(self.aHashAction)
         self.algorithms_group.addAction(self.pHashAction)
         self.algorithms_group.addAction(self.orbAction)
+        self.algorithms_group.setExclusive(True)
         self.aHashAction.setChecked(True)
         # More
         self.openSettingsAction = QAction(QIcon("static/settings.png"), "&More...", self)
         self.openSettingsAction.setShortcut('Ctrl+Alt+S')
         self.openSettingsAction.setStatusTip("Open detailed settings")
+        self.openSettingsAction.triggered.connect(self.open_options_dialog)
 
         # Help
         self.helpContentAction = QAction(QIcon("static/readme.png"), "&Help Content", self)
@@ -117,7 +131,7 @@ class ImgDuplicatesFinder(QMainWindow):
         search_by_menu = QMenu(self)
         search_by_menu.addActions([self.byContentAction, self.byNameAction, self.bySizeAction])
         search_by_tool = QToolButton(self)
-        search_by_tool.setToolTip("&Search by")
+        search_by_tool.setToolTip("Search by")
         search_by_tool.setIcon(QIcon("static/search_by.png"))
         search_by_tool.setPopupMode(QToolButton.InstantPopup)
         search_by_tool.setMenu(search_by_menu)
@@ -127,7 +141,7 @@ class ImgDuplicatesFinder(QMainWindow):
         algorithms_menu = QMenu(self)
         algorithms_menu.addActions([self.aHashAction, self.pHashAction, self.orbAction])
         algorithms_tool = QToolButton(self)
-        algorithms_tool.setToolTip("&Algorithm")
+        algorithms_tool.setToolTip("Algorithm")
         algorithms_tool.setIcon(QIcon("static/algorithm.png"))
         algorithms_tool.setPopupMode(QToolButton.InstantPopup)
         algorithms_tool.setMenu(algorithms_menu)
@@ -245,7 +259,7 @@ class ImgDuplicatesFinder(QMainWindow):
     # обработчик кнопки поиска
     def start_search(self):
         if not self.search_list:
-            QMessageBox.warning(self, "Empty Folder Path", "Please select a folder to search for.")
+            QMessageBox.warning(self, "Empty Folder Path", "Please select a folder for search.")
             return
 
         # option = 'exact' if self.exact_radio.isChecked() \
@@ -319,6 +333,33 @@ class ImgDuplicatesFinder(QMainWindow):
         if sel_item:
             command = RemoveSelFolderCommand(sel_item.text(), self.dnd_space, self.search_list)
             self.undo_stack.push(command)
+
+    def open_options_dialog(self):
+        dialog = OptionsDialog(self.options_manager.options, self)
+        if dialog.exec_() == QDialog.Accepted:
+            self.options_manager.options = dialog.get_options()
+            self.update_options()
+            print(self.options_manager.options)
+
+    def update_options(self):
+        self.recursiveSearchAction.setChecked(self.options_manager.options["recursive_search"])
+        self.currentSearchAction.setChecked(not self.options_manager.options["recursive_search"])
+
+        search_by = self.options_manager.options.get("search_by")
+        if search_by == "Content":
+            self.byContentAction.setChecked(True)
+        elif search_by == "Name":
+            self.byNameAction.setChecked(True)
+        elif search_by == "Size":
+            self.bySizeAction.setChecked(True)
+
+        algorithm = self.options_manager.options.get("algorithm")
+        if algorithm == "aHash":
+            self.aHashAction.setChecked(True)
+        elif algorithm == "pHash":
+            self.pHashAction.setChecked(True)
+        elif algorithm == "ORB":
+            self.orbAction.setChecked(True)
 
 
 if __name__ == '__main__':
