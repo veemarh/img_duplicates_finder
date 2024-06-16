@@ -2,10 +2,10 @@ import os
 import time
 from copy import copy
 from pathlib import Path
-from find_funcs import *
+from duplicates_finder.find_funcs import *
 from algorithms.orb import get_orb_similarity
-from comparisonMethod import ComparisonMethod
-from comparisonObject import ComparisonObject
+from duplicates_finder.comparisonMethod import ComparisonMethod
+from duplicates_finder.comparisonObject import ComparisonObject
 
 # var 'bhash_quick' only for bhash - parameter 'Fast' = True, 'Precise' = False
 # var 'compare_size' for bhash and mhash - parameter 'Comparison area' (bhash:128x128, 256x256, 512x512; mhash: 8x8, 16x16 )  

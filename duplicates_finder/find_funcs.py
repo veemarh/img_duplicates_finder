@@ -2,7 +2,32 @@ import os
 import cv2
 import imagehash
 from PIL import Image
-from comparisonObject import *
+from algorithms.hash import get_hash
+from duplicates_finder.comparisonMethod import ComparisonMethod
+
+def get_data(file_path: str, method: ComparisonMethod):
+    name = method.name
+    match name:
+        case 'ORB':
+            img = cv2.imread(file_path)
+            return img, img
+        case _:
+            hash_size = method.hash_size
+            quick = method.bhash_quick
+            size = method.comparison_size
+            img = Image.open(file_path)
+            hash = get_hash(img, name, hash_size, quick, size)
+            return img, hash
+        
+def get_data_obj(obj, method: ComparisonMethod):
+    name = method.name
+    if isinstance(obj, Image.Image):
+        hash_size = method.hash_size
+        quick = method.bhash_quick
+        size = method.comparison_size
+        return get_hash(obj, name, hash_size, quick, size)      
+    else:    
+        return obj
 
 # find the percentage difference
 def get_difference(hash1: imagehash.ImageHash, hash2: imagehash.ImageHash, hash_size: int):
