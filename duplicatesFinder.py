@@ -29,7 +29,7 @@ class DuplicatesFinder:
         
     def find(self):
         if self.specified_file:
-            return #self.__find(self.specified_file)
+            return self.__find(self.specified_file)
         start = time.monotonic()
         paths_images = self.files
         comparison_method = self.comparison_method
@@ -65,40 +65,33 @@ class DuplicatesFinder:
             
         print(duplicate_count, 'duplicates found')
         print(f'Script running time: {time.monotonic() - start}')
-    
-    # @protected     
-    # def __find(self, specified_file):
-    #     start = time.monotonic()
-    #     paths_images = self.files
+     
+    def __find(self, specified_file: str):
+        start = time.monotonic()
+        paths_images = self.files
+        comparison_method = self.comparison_method
         
-    #     get_data = func_get_data(self.method)
-    #     duplicate_count = 0
+        duplicate_count = 0
 
-    #     if specified_file is not None:
-    #         checked_data = get_data(specified_file, self.method, self.hash_size, self.bhash_quick, self.compare_size)
-                
-    #     for curr_img in paths_images:
-    #         if (specified_file != curr_img) and (curr_img is not None):
-    #             if self.require_identical_properties:
-    #                 if not check_identical_properties(specified_file, curr_img, self.identical_properties):
-    #                     continue
-                
-    #             curr_data = get_data(curr_img, self.method, self.hash_size, self.bhash_quick, self.compare_size)
-    #             # find the percentage difference
-    #             diff = find_percentage_difference(checked_data, curr_data, self.method, self.similarity, self.hash_size)
-                
-    #             if diff <= (100 - self.similarity):
-    #                 print(f"{specified_file} - {curr_img}")
-    #                 name_curr_img = os.path.basename(curr_img)
-    #                 if self.folder_for_move:
-    #                     Path(curr_img).rename(f"{self.folder_for_move}/{name_curr_img}")
-    #                 del curr_img
-    #                 duplicate_count += 1
-                                
-    #     print(duplicate_count, 'duplicates found')
-    #     print(f'Script running time: {time.monotonic() - start}')
+        if specified_file is not None:
+            checked_obj = ComparisonObject(specified_file, comparison_method)
+                    
+        for curr_img in paths_images:
+            if (specified_file != curr_img) and (curr_img is not None):
+                if self.require_identical_properties:
+                    if not check_identical_properties(checked_obj.file_path, curr_img, self.identical_properties):
+                        continue
+                    
+                curr_obj = ComparisonObject(curr_img, comparison_method)
+
+                if is_duplicates(checked_obj.comparison_data, curr_obj.comparison_data, comparison_method) or \
+                    (self.search_modified_images and check_modified(checked_obj, curr_obj, comparison_method, self.modified_images_properties)):
+                    self.__action_with_duplicates(checked_obj, curr_obj)
+                    duplicate_count += 1
+            
+        print(duplicate_count, 'duplicates found')
+        print(f'Script running time: {time.monotonic() - start}')
     
-    @protected
     def __action_with_duplicates(self, checked_obj: ComparisonObject, curr_obj: ComparisonObject):
         path_curr_img = curr_obj.file_path
         print(f"{checked_obj.file_path} - {path_curr_img}")
