@@ -1,9 +1,7 @@
 import os
 import cv2
-from copy import copy
 import imagehash
 from PIL import Image
-from comparisonMethod import ComparisonMethod
 from comparisonObject import *
 
 def get_orb_similarity(img1, img2):
@@ -30,21 +28,6 @@ def get_difference(hash1: imagehash.ImageHash, hash2: imagehash.ImageHash, hash_
     hamming_distance = hash1 - hash2
     return hamming_distance / (hash_size**2) * 100
 
-def find_percentage_difference(data1, data2, method: ComparisonMethod):
-    match method.name:
-        case 'ORB':
-            diff = method.similarity - get_orb_similarity(data1, data2)
-        case 'MD5' | 'SHA-1 (160-bit)' | 'SHA-2 (256-bit)' | 'SHA-2 (384-bit)' | 'SHA-2 (512-bit)':
-            diff = 0 if data1 == data2 else 100
-        case _:
-            diff = get_difference(data1, data2, method.hash_size)
-    return diff
-
-def is_duplicates(data1, data2, method: ComparisonMethod):                    
-    # find the percentage difference
-    diff = find_percentage_difference(data1, data2, method)
-    return diff <= (100 - method.similarity)
-
 def check_identical_properties(file1: str, file2: str, properties={'name': False, 'format': False, 'size': False}):
     if properties['name']:
         name1 = os.path.splitext(os.path.basename(file1))[0]
@@ -62,30 +45,6 @@ def check_identical_properties(file1: str, file2: str, properties={'name': False
         if not size1 == size2:
             return False
     return True
-
-# arg 'properties' has keys:
-# 1 - rotated 90 deg to the right,
-# 2 - rotated 180 deg,
-# 3 - rotated 90 deg to the left, 
-# 4 - reflected horizontally,
-# 5 - reflected vertically,
-# 6 - reflected horizontally and rotated 90 degrees to the right,
-# 7 - reflected vertically and rotated 90 degrees to the right
-def check_modified(obj: ComparisonObject, obj_to_mod: ComparisonObject, method: ComparisonMethod, 
-        properties={1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True}):
-    img_to_mod = copy(obj_to_mod.object)
-    for key in properties:
-        if properties[key]:
-            if check_property(obj, img_to_mod, method, key): 
-                return True        
-    return False
-
-def check_property(obj: ComparisonObject, img_to_mod, method: ComparisonMethod, property: int):
-    modified_img = modify_img(img_to_mod, property)
-    modified_comparison_data = get_data_obj(modified_img, method)
-    if is_duplicates(obj.comparison_data, modified_comparison_data, method): 
-        return True
-    return False
     
 def modify_img(img, option: int):
     if isinstance(img, Image.Image):

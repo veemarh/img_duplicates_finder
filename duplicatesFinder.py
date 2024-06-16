@@ -1,6 +1,6 @@
 import os
 import time
-from accessify import protected
+from copy import copy
 from pathlib import Path
 from find_funcs import *
 from comparisonMethod import ComparisonMethod
@@ -52,8 +52,8 @@ class DuplicatesFinder:
                     
                     curr_obj = ComparisonObject(path_curr_img, comparison_method)
 
-                    if is_duplicates(checked_obj.comparison_data, curr_obj.comparison_data, comparison_method) or \
-                        (self.search_modified_images and check_modified(checked_obj, curr_obj, comparison_method, self.modified_images_properties)):
+                    if self.__is_duplicates(checked_obj.comparison_data, curr_obj.comparison_data) or \
+                        (self.search_modified_images and self.__check_modified(checked_obj, curr_obj)):
                         self.__action_with_duplicates(checked_obj, curr_obj)
                         del paths_images[curr_i]
                         duplicate_count += 1
@@ -84,13 +84,46 @@ class DuplicatesFinder:
                     
                 curr_obj = ComparisonObject(curr_img, comparison_method)
 
-                if is_duplicates(checked_obj.comparison_data, curr_obj.comparison_data, comparison_method) or \
-                    (self.search_modified_images and check_modified(checked_obj, curr_obj, comparison_method, self.modified_images_properties)):
+                if self.__is_duplicates(checked_obj.comparison_data, curr_obj.comparison_data) or \
+                    (self.search_modified_images and self.__check_modified(checked_obj, curr_obj)):
                     self.__action_with_duplicates(checked_obj, curr_obj)
                     duplicate_count += 1
             
         print(duplicate_count, 'duplicates found')
         print(f'Script running time: {time.monotonic() - start}')
+        
+    def __find_percentage_difference(self, data1, data2):
+        method = self.comparison_method
+        match method.name:
+            case 'ORB':
+                diff = method.similarity - get_orb_similarity(data1, data2)
+            case 'MD5' | 'SHA-1 (160-bit)' | 'SHA-2 (256-bit)' | 'SHA-2 (384-bit)' | 'SHA-2 (512-bit)':
+                diff = 0 if data1 == data2 else 100
+            case _:
+                diff = get_difference(data1, data2, method.hash_size)
+        return diff
+
+    def __is_duplicates(self, data1, data2):              
+        # find the percentage difference
+        diff = self.__find_percentage_difference(data1, data2)
+        return diff <= (100 - self.comparison_method.similarity)
+        
+    def __check_modified(self, obj: ComparisonObject, obj_to_mod: ComparisonObject):
+        properties = self.modified_images_properties
+        img_to_mod = copy(obj_to_mod.object)
+        for key in properties:
+            if properties[key]:
+                if self.__check_property(obj, img_to_mod, key): 
+                    return True        
+        return False
+
+    def __check_property(self, obj: ComparisonObject, img_to_mod, property: int):
+        method = self.comparison_method
+        modified_img = modify_img(img_to_mod, property)
+        modified_comparison_data = get_data_obj(modified_img, method)
+        if self.__is_duplicates(obj.comparison_data, modified_comparison_data): 
+            return True
+        return False
     
     def __action_with_duplicates(self, checked_obj: ComparisonObject, curr_obj: ComparisonObject):
         path_curr_img = curr_obj.file_path
