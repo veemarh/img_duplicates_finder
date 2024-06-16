@@ -74,27 +74,10 @@ def check_identical_properties(file1: str, file2: str, properties={'name': False
 def check_modified(obj: ComparisonObject, obj_to_mod: ComparisonObject, method: ComparisonMethod, 
         properties={1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True}):
     img_to_mod = copy(obj_to_mod.object)
-    if properties[1]:
-        if check_property(obj, img_to_mod, method, 1): return True
-        
-    if properties[2]:
-        if check_property(obj, img_to_mod, method, 2): return True
-        
-    if properties[3]:
-        if check_property(obj, img_to_mod, method, 3): return True
-        
-    if properties[4]:
-        if check_property(obj, img_to_mod, method, 4): return True
-        
-    if properties[5]:
-        if check_property(obj, img_to_mod, method, 5): return True
-        
-    if properties[6]:
-        if check_property(obj, img_to_mod, method, 6): return True
-    
-    if properties[7]:
-        if check_property(obj, img_to_mod, method, 7): return True
-        
+    for key in properties:
+        if properties[key]:
+            if check_property(obj, img_to_mod, method, key): 
+                return True        
     return False
 
 def check_property(obj: ComparisonObject, img_to_mod, method: ComparisonMethod, property: int):
