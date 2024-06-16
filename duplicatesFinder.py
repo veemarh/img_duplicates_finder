@@ -3,6 +3,7 @@ import time
 from copy import copy
 from pathlib import Path
 from find_funcs import *
+from algorithms.orb import get_orb_similarity
 from comparisonMethod import ComparisonMethod
 from comparisonObject import ComparisonObject
 
