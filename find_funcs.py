@@ -70,46 +70,40 @@ def check_identical_properties(file1: str, file2: str, properties={'name': False
 # 4 - reflected horizontally,
 # 5 - reflected vertically,
 # 6 - reflected horizontally and rotated 90 degrees to the right,
-# 7 - reflected vertically and rotated 90 degrees to the left
-def check_modified(obj: ComparisonObject, obj_to_mod: ComparisonObject, method: ComparisonMethod, properties={1: True, 2: True, 3: True, 4: True, 5: True}):
+# 7 - reflected vertically and rotated 90 degrees to the right
+def check_modified(obj: ComparisonObject, obj_to_mod: ComparisonObject, method: ComparisonMethod, 
+        properties={1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True}):
     img_to_mod = copy(obj_to_mod.object)
     if properties[1]:
-        modified_img = modify_img(img_to_mod, 1)
-        modified_comparison_data = get_data_obj(modified_img, method)
-        if is_duplicates(obj.comparison_data, modified_comparison_data, method): return True
+        if check_property(obj, img_to_mod, method, 1): return True
         
     if properties[2]:
-        modified_img = modify_img(img_to_mod, 2)
-        modified_comparison_data = get_data_obj(modified_img, method)
-        if is_duplicates(obj.comparison_data, modified_comparison_data, method): return True
+        if check_property(obj, img_to_mod, method, 2): return True
         
     if properties[3]:
-        modified_img = modify_img(img_to_mod, 3)
-        modified_comparison_data = get_data_obj(modified_img, method)
-        if is_duplicates(obj.comparison_data, modified_comparison_data, method): return True
+        if check_property(obj, img_to_mod, method, 3): return True
         
     if properties[4]:
-        modified_img = modify_img(img_to_mod, 4)
-        modified_comparison_data = get_data_obj(modified_img, method)
-        if is_duplicates(obj.comparison_data, modified_comparison_data, method): return True
+        if check_property(obj, img_to_mod, method, 4): return True
         
     if properties[5]:
-        modified_img = modify_img(img_to_mod, 5)
-        modified_comparison_data = get_data_obj(modified_img, method)
-        if is_duplicates(obj.comparison_data, modified_comparison_data, method): return True
+        if check_property(obj, img_to_mod, method, 5): return True
         
     if properties[6]:
-        modified_img = modify_img(img_to_mod, 6)
-        modified_comparison_data = get_data_obj(modified_img, method)
-        if is_duplicates(obj.comparison_data, modified_comparison_data, method): return True
+        if check_property(obj, img_to_mod, method, 6): return True
     
     if properties[7]:
-        modified_img = modify_img(img_to_mod, 7)
-        modified_comparison_data = get_data_obj(modified_img, method)
-        if is_duplicates(obj.comparison_data, modified_comparison_data, method): return True
+        if check_property(obj, img_to_mod, method, 7): return True
         
     return False
 
+def check_property(obj: ComparisonObject, img_to_mod, method: ComparisonMethod, property: int):
+    modified_img = modify_img(img_to_mod, property)
+    modified_comparison_data = get_data_obj(modified_img, method)
+    if is_duplicates(obj.comparison_data, modified_comparison_data, method): 
+        return True
+    return False
+    
 def modify_img(img, option: int):
     if isinstance(img, Image.Image):
         img = modify_img_with_Image(img, option)
