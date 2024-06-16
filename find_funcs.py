@@ -2,10 +2,7 @@ import os
 import cv2
 from copy import copy
 import imagehash
-
 from PIL import Image
-from algorithms.bhash import bhash
-from algorithms.mhash import mhash
 from comparisonMethod import ComparisonMethod
 from comparisonObject import *
 
@@ -124,13 +121,12 @@ def modify_img_with_Image(img: Image, option: int):
 def modify_img_with_cv2(img, option: int):
     match option:
         case 1:
-            return 'cv'
+            return cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
         case 2:
-            return 'cv'
+            return cv2.rotate(img, cv2.ROTATE_180)
         case 3:
-            return 'cv'
+            return cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
         case 4:
-            return 'cv'
+            return cv2.flip(img, 1)
         case 5:
-            return 'cv'
-
+            return cv2.flip(img, 0)
