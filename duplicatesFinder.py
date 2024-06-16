@@ -13,7 +13,9 @@ from comparisonObject import ComparisonObject
 # 2 - rotated 180 deg,
 # 3 - rotated 90 deg to the left, 
 # 4 - reflected horizontally,
-# 5 - reflected vertically
+# 5 - reflected vertically,
+# 6 - reflected horizontally and rotated 90 degrees to the right,
+# 7 - reflected vertically and rotated 90 degrees to the left
 class DuplicatesFinder:
     def __init__(self, comparison_method: ComparisonMethod):
         self.files = []
@@ -21,7 +23,7 @@ class DuplicatesFinder:
         self.require_identical_properties =  False
         self.identical_properties = {'name': False, 'format': False, 'size': False}
         self.search_modified_images = False 
-        self.modified_images_properties = {1: True, 2: True, 3: True, 4: True, 5: True}
+        self.modified_images_properties = {1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True}
         self.comparison_method = comparison_method
         self.folder_for_move = None
         

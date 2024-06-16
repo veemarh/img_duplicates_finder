@@ -68,7 +68,9 @@ def check_identical_properties(file1: str, file2: str, properties={'name': False
 # 2 - rotated 180 deg,
 # 3 - rotated 90 deg to the left, 
 # 4 - reflected horizontally,
-# 5 - reflected vertically
+# 5 - reflected vertically,
+# 6 - reflected horizontally and rotated 90 degrees to the right,
+# 7 - reflected vertically and rotated 90 degrees to the left
 def check_modified(obj: ComparisonObject, obj_to_mod: ComparisonObject, method: ComparisonMethod, properties={1: True, 2: True, 3: True, 4: True, 5: True}):
     img_to_mod = copy(obj_to_mod.object)
     if properties[1]:
@@ -96,6 +98,16 @@ def check_modified(obj: ComparisonObject, obj_to_mod: ComparisonObject, method: 
         modified_comparison_data = get_data_obj(modified_img, method)
         if is_duplicates(obj.comparison_data, modified_comparison_data, method): return True
         
+    if properties[6]:
+        modified_img = modify_img(img_to_mod, 6)
+        modified_comparison_data = get_data_obj(modified_img, method)
+        if is_duplicates(obj.comparison_data, modified_comparison_data, method): return True
+    
+    if properties[7]:
+        modified_img = modify_img(img_to_mod, 7)
+        modified_comparison_data = get_data_obj(modified_img, method)
+        if is_duplicates(obj.comparison_data, modified_comparison_data, method): return True
+        
     return False
 
 def modify_img(img, option: int):
@@ -117,6 +129,12 @@ def modify_img_with_Image(img: Image, option: int):
             return img.transpose(Image.FLIP_LEFT_RIGHT)
         case 5:
             return img.transpose(Image.FLIP_TOP_BOTTOM)
+        case 6:
+            modified_img = img.transpose(Image.FLIP_LEFT_RIGHT)
+            return modified_img.rotate(-90, expand=True)
+        case 7:
+            modified_img = img.transpose(Image.FLIP_TOP_BOTTOM)
+            return modified_img.rotate(-90, expand=True)
 
 def modify_img_with_cv2(img, option: int):
     match option:
@@ -127,6 +145,12 @@ def modify_img_with_cv2(img, option: int):
         case 3:
             return cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
         case 4:
-            return cv2.flip(img, 1)
+            return cv2.flip(img, 1) # reflected horizontally
         case 5:
-            return cv2.flip(img, 0)
+            return cv2.flip(img, 0) # reflected vertically
+        case 6:
+            modified_img = cv2.flip(img, 1)
+            return cv2.rotate(modified_img, cv2.ROTATE_90_CLOCKWISE)
+        case 7:
+            modified_img = cv2.flip(img, 0)
+            return cv2.rotate(modified_img, cv2.ROTATE_90_CLOCKWISE)
