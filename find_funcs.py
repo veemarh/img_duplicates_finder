@@ -1,11 +1,13 @@
 import os
 import cv2
+from copy import copy
 import imagehash
-import hashlib
+
 from PIL import Image
 from algorithms.bhash import bhash
 from algorithms.mhash import mhash
 from comparisonMethod import ComparisonMethod
+from comparisonObject import *
 
 def get_orb_similarity(img1, img2):
     # create ORB feature extractor
@@ -26,49 +28,10 @@ def get_orb_similarity(img1, img2):
         sim = len(good_mathes) / len(matches) * 100
     return sim
 
-def get_hash(img: Image, method: ComparisonMethod):
-    name = method.name
-    hash_size = method.hash_size
-    quick = method.bhash_quick
-    size = method.comparison_size
-    match name:
-        case 'aHash':
-            return imagehash.average_hash(img, hash_size)
-        case 'bHash':
-            return bhash(img, quick=quick, size=size)
-        case 'dHash':
-            return imagehash.dhash(img, hash_size)
-        case 'mHash':
-            return mhash(img, size=size)
-        case 'pHash':
-            return imagehash.phash(img, hash_size)
-        case 'MD5':
-            return hashlib.md5(img.tobytes()).hexdigest()
-        case 'SHA-1 (160-bit)':
-            return hashlib.sha1(img.tobytes()).hexdigest()
-        case 'SHA-2 (256-bit)':
-            return hashlib.sha256(img.tobytes()).hexdigest()
-        case 'SHA-2 (384-bit)':
-            return hashlib.sha384(img.tobytes()).hexdigest()
-        case 'SHA-2 (512-bit)':
-            return hashlib.sha512(img.tobytes()).hexdigest()
-        case _:
-            return "Error: the method was not found"
-
 # find the percentage difference
 def get_difference(hash1: imagehash.ImageHash, hash2: imagehash.ImageHash, hash_size: int):
     hamming_distance = hash1 - hash2
     return hamming_distance / (hash_size**2) * 100
-
-def get_data(file_path: str, method: ComparisonMethod):
-    match method.name:
-        case 'ORB':
-            img = cv2.imread(file_path)
-            return img, img
-        case _:
-            img = Image.open(file_path)
-            hash = get_hash(img, method)
-            return img, hash
 
 def find_percentage_difference(data1, data2, method: ComparisonMethod):
     match method.name:
@@ -103,28 +66,71 @@ def check_identical_properties(file1: str, file2: str, properties={'name': False
             return False
     return True
 
-def check_modified():
-    return
-
-def modify_image(img, properties):
-    if isinstance(img, Image.Image):
-        return modify_image_with_Image(img, properties)
-    return modify_image_with_cv2(img, properties)
-
-# arg 'modified_images_properties' has keys:
+# arg 'properties' has keys:
 # 1 - rotated 90 deg to the right,
 # 2 - rotated 180 deg,
 # 3 - rotated 90 deg to the left, 
 # 4 - reflected horizontally,
 # 5 - reflected vertically
-def modify_image_with_Image(check_img, img_to_modif: Image, properties):
+def check_modified(obj: ComparisonObject, obj_to_mod: ComparisonObject, method: ComparisonMethod, properties={1: True, 2: True, 3: True, 4: True, 5: True}):
+    img_to_mod = copy(obj_to_mod.object)
     if properties[1]:
-        modified_img = img_to_modif.rotate(-90, expand=True)
-        check_modified(check_img, modified_img)
-        return 
+        modified_img = modify_img(img_to_mod, 1)
+        modified_comparison_data = get_data_obj(modified_img, method)
+        if is_duplicates(obj.comparison_data, modified_comparison_data, method): return True
+        
+    if properties[2]:
+        modified_img = modify_img(img_to_mod, 2)
+        modified_comparison_data = get_data_obj(modified_img, method)
+        if is_duplicates(obj.comparison_data, modified_comparison_data, method): return True
+        
+    if properties[3]:
+        modified_img = modify_img(img_to_mod, 3)
+        modified_comparison_data = get_data_obj(modified_img, method)
+        if is_duplicates(obj.comparison_data, modified_comparison_data, method): return True
+        
+    if properties[4]:
+        modified_img = modify_img(img_to_mod, 4)
+        modified_comparison_data = get_data_obj(modified_img, method)
+        if is_duplicates(obj.comparison_data, modified_comparison_data, method): return True
+        
+    if properties[5]:
+        modified_img = modify_img(img_to_mod, 5)
+        modified_comparison_data = get_data_obj(modified_img, method)
+        if is_duplicates(obj.comparison_data, modified_comparison_data, method): return True
+        
+    return False
 
-def modify_image_with_cv2(img, properties):
-    return
+def modify_img(img, option: int):
+    if isinstance(img, Image.Image):
+        img = modify_img_with_Image(img, option)
+    else:
+        img = modify_img_with_cv2(img, option)
+    return img
+    
+def modify_img_with_Image(img: Image, option: int):
+    match option:
+        case 1:
+            return img.rotate(90, expand=True)
+        case 2:
+            return img.rotate(180, expand=True)
+        case 3:
+            return img.rotate(-90, expand=True)
+        case 4:
+            return img.transpose(Image.FLIP_LEFT_RIGHT)
+        case 5:
+            return img.transpose(Image.FLIP_TOP_BOTTOM)
 
+def modify_img_with_cv2(img, option: int):
+    match option:
+        case 1:
+            return 'cv'
+        case 2:
+            return 'cv'
+        case 3:
+            return 'cv'
+        case 4:
+            return 'cv'
+        case 5:
+            return 'cv'
 
-# modify_image(Image.open('images/image-1.jpeg'), {1: True, 2: True, 3: True, 4: True, 5: True})
