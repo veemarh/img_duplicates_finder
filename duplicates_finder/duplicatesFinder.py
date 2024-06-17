@@ -27,6 +27,7 @@ class DuplicatesFinder:
         self.modified_images_properties = {1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True}
         self.comparison_method = comparison_method
         self.folder_for_move = None
+        self.max_num_duplicates = 1000
         
     def find(self):
         if self.specified_file:
@@ -58,9 +59,11 @@ class DuplicatesFinder:
                         self.__action_with_duplicates(checked_obj, curr_obj)
                         del paths_images[curr_i]
                         duplicate_count += 1
+                        if duplicate_count >= self.max_num_duplicates: break
                     else:
                         curr_i += 1
                         
+            if duplicate_count >= self.max_num_duplicates: break
             check_i += 1
             curr_i = check_i + 1
             
@@ -89,6 +92,7 @@ class DuplicatesFinder:
                     (self.search_modified_images and self.__check_modified(checked_obj, curr_obj)):
                     self.__action_with_duplicates(checked_obj, curr_obj)
                     duplicate_count += 1
+                    if duplicate_count >= self.max_num_duplicates: break
             
         print(duplicate_count, 'duplicates found')
         print(f'Script running time: {time.monotonic() - start}')
