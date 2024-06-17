@@ -22,13 +22,13 @@ class DuplicatesFinder:
     def __init__(self, comparison_method: ComparisonMethod):
         self.files = []
         self.specified_file = None
-        self.require_identical_properties =  False
-        self.identical_properties = {'name': False, 'format': False, 'size': False}
-        self.search_modified_images = False
-        self.modified_images_properties = {1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True}
-        self.comparison_method = comparison_method
         self.folder_for_move = None
         self.max_num_duplicates = 1000
+        self.__require_identical_properties =  False
+        self.__identical_properties = {'name': False, 'format': False, 'size': False}
+        self.__search_modified_images = False
+        self.__modified_properties = {1: False, 2: False, 3: False, 4: False, 5: False, 6: False, 7: False}
+        self.__comparison_method = comparison_method
         
     def find(self):
         start = time.monotonic()
@@ -44,7 +44,7 @@ class DuplicatesFinder:
             curr_i = 1
         
         paths_images = self.files
-        comparison_method = self.comparison_method
+        comparison_method = self.__comparison_method
         
         duplicate_count = 0
 
@@ -65,15 +65,15 @@ class DuplicatesFinder:
                     curr_i += 1
                     continue
                 
-                if self.require_identical_properties:
-                    if not check_identical_properties(checked_obj.file_path, path_curr_img, self.identical_properties):
+                if self.__require_identical_properties:
+                    if not check_identical_properties(checked_obj.file_path, path_curr_img, self.__identical_properties):
                         curr_i += 1
                         continue
                 
                 curr_obj = ComparisonObject(path_curr_img, comparison_method)
                 
                 if self.__is_duplicates(checked_obj.comparison_data, curr_obj.comparison_data) or \
-                    (self.search_modified_images and self.__check_modified(checked_obj, curr_obj)):
+                    (self.__search_modified_images and self.__check_modified(checked_obj, curr_obj)):
                     self.__action_with_duplicates(checked_obj, curr_obj)
                     if file_is_specified:
                         curr_i += 1
@@ -90,9 +90,34 @@ class DuplicatesFinder:
             
         print(duplicate_count, 'duplicates found')
         print(f'Script running time: {time.monotonic() - start}')
+        
+    def set_identical_properties(self, name: bool = False, format: bool = False, size: bool = False):
+        self.__require_identical_properties = True
+        self.__identical_properties['name'] = name
+        self.__identical_properties['format'] = format
+        self.__identical_properties['size'] = size
+        
+    def set_modified_properties(self, _1: bool = False, _2: bool = False, \
+        _3: bool = False, _4: bool = False, _5: bool = False, \
+            _6: bool = False, _7: bool = False):
+        # 1 - rotated 90 deg to the right,
+        # 2 - rotated 180 deg,
+        # 3 - rotated 90 deg to the left, 
+        # 4 - reflected horizontally,
+        # 5 - reflected vertically,
+        # 6 - reflected horizontally and rotated 90 degrees to the right,
+        # 7 - reflected vertically and rotated 90 degrees to the right
+        self.__search_modified_images = True
+        self.__modified_properties[1] = _1
+        self.__modified_properties[2] = _2
+        self.__modified_properties[3] = _3
+        self.__modified_properties[4] = _4
+        self.__modified_properties[5] = _5
+        self.__modified_properties[6] = _6
+        self.__modified_properties[7] = _7
     
     def __find_percentage_difference(self, data1, data2):
-        method = self.comparison_method
+        method = self.__comparison_method
         match method.name:
             case 'ORB':
                 diff = method.similarity - get_orb_similarity(data1, data2)
@@ -105,10 +130,10 @@ class DuplicatesFinder:
     def __is_duplicates(self, data1, data2):              
         # find the percentage difference
         diff = self.__find_percentage_difference(data1, data2)
-        return diff <= (100 - self.comparison_method.similarity)
+        return diff <= (100 - self.__comparison_method.similarity)
     
     def __check_modified(self, obj: ComparisonObject, obj_to_mod: ComparisonObject):
-        properties = self.modified_images_properties
+        properties = self.__modified_properties
         img_to_mod = copy(obj_to_mod.object)
         for key in properties:
             if properties[key]:
@@ -117,7 +142,7 @@ class DuplicatesFinder:
         return False
 
     def __check_property(self, obj: ComparisonObject, img_to_mod, property: int):
-        method = self.comparison_method
+        method = self.__comparison_method
         modified_img = modify_img(img_to_mod, property)
         modified_comparison_data = get_data_obj(modified_img, method)
         if self.__is_duplicates(obj.comparison_data, modified_comparison_data): 
