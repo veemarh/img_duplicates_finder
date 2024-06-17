@@ -4,7 +4,11 @@ from PIL import Image
 from algorithms.bhash import bhash
 from algorithms.mhash import mhash
 
-def get_hash(img: Image, method_name: str = 'aHash', hash_size: int = 16, bhash_quick: bool = False, comparison_size: int = 16):
+# arg 'bhash_quick' only for bhash - parameter 'Fast' = True, 'Precise' = False
+# arg 'comparison_size' for bhash and mhash 
+# - parameter 'Comparison area' (bhash:128x128, 256x256, 512x512; mhash: 8x8, 16x16 ) 
+def get_hash(img: Image, method_name: str = 'aHash', \
+    hash_size: int = 16, bhash_quick: bool = False, comparison_size: int = 16):
     match method_name:
         case 'aHash':
             return imagehash.average_hash(img, hash_size)

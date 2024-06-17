@@ -1,5 +1,7 @@
 # Perceptual image hash calculation tool based on algorithm descibed in
 # Block Mean Value Based Image Perceptual Hashing by Bian Yang, Fan Gu and Xiamu Niu
+# The block hash algorithm divides the image into blocks and generates a value for each block, 
+# either 1 or 0. These values are combined serially from left to right into a hash. 
 
 import math
 import imagehash
@@ -147,12 +149,12 @@ def blockhash(img, hash_size):
     translate_blocks_to_bits(result, block_width * block_height)
     return bits_to_hexhash(result)
 
-def bhash(img: Image, quick = False, hash_size=16, size=256):
+def bhash(img: Image, quick: bool = False, hash_size: int = 16, size: int = 256):
     # 'quick': type=bool, default=False,
     #     help='Use quick hashing method. Default: False'
     # 'hash_size': type=int, default=16,
     #     help='Create hash of size N^2 bits. Default: 16')
-    # 'size':
+    # 'size': int
     #     help='Resize image to specified size before hashing, e.g. 256x256')
   
     if quick:

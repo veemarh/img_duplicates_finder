@@ -7,9 +7,9 @@ from algorithms.orb import get_orb_similarity
 from duplicates_finder.comparisonMethod import ComparisonMethod
 from duplicates_finder.comparisonObject import ComparisonObject
 
-# var 'bhash_quick' only for bhash - parameter 'Fast' = True, 'Precise' = False
-# var 'compare_size' for bhash and mhash 
-# - parameter 'Comparison area' (bhash:128x128, 256x256, 512x512; mhash: 8x8, 16x16 )  
+# var 'files': array of strings - file paths
+# var 'specified_file': str
+# var 'folder_for_move': str
 # var 'modified_images_properties' has keys:
 # 1 - rotated 90 deg to the right,
 # 2 - rotated 180 deg,
@@ -51,13 +51,13 @@ class DuplicatesFinder:
         while check_i < len(paths_images):
             if not file_is_specified:
                 path_check_img = paths_images[check_i]
-                
+            
             if path_check_img is not None:
                 checked_obj = ComparisonObject(path_check_img, comparison_method)
             else:
                 check_i += 1
                 continue
-                    
+            
             while curr_i < len(paths_images):
                 path_curr_img = paths_images[curr_i]
                 

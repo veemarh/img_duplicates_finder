@@ -1,15 +1,17 @@
 import os
 from datetime import datetime
 
+# var 'folders_for_search': array of strings - folder paths
+# var 'file_formats': array of strings - formats, e.g. '.png'
 class FileSearcher:
     def __init__(self):
         self.search_in_subfolders = False
         self.folders_for_search = []
-        self.file_formats= []
+        self.file_formats = []
         self.__limit_file_creating_time = False
-        self.__file_creating_time = {'min': None, 'max': None}
+        self.__file_creating_time = {'min': None, 'max': None} # datetime
         self.__limit_file_modifying_time = False
-        self.__file_modifying_time = {'min': None, 'max': None}
+        self.__file_modifying_time = {'min': None, 'max': None} # datetime
         self.__limit_file_size = False
         self.__file_size = {'min': None, 'max': None} # bytes
     

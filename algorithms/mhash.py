@@ -9,7 +9,9 @@ import imagehash
 def bin_str_to_hex(str):
     return '{0:0={width}x}'.format(int(str, 2), width = len(str) // 4)
 
-def mhash(img: Image, size=16):
+def mhash(img: Image, size: int = 16):
+    # 'size': int
+    #     help='Resize image to specified size before hashing, e.g. 16x16')
     grey_img = img.convert('L')
     if size:
         grey_img = grey_img.resize((size, size), Image.BILINEAR)

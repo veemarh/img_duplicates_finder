@@ -1,5 +1,6 @@
 import cv2
 
+# find the percentage of similarity of images using ORB descriptors to match features
 def get_orb_similarity(img1, img2):
     # create ORB feature extractor
     orb = cv2.ORB_create()
