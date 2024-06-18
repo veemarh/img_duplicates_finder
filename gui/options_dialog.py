@@ -4,8 +4,8 @@ from PyQt5.QtGui import QFont
 
 
 class OptionsDialog(QDialog):
-    def __init__(self, options, parent=None):
-        super().__init__(parent)
+    def __init__(self, options):
+        super().__init__()
 
         self.setWindowTitle("General options")
         self.setFont(QFont("OpenSans", 10))
@@ -108,3 +108,32 @@ class OptionsDialog(QDialog):
         self.form_layout.addItem(spacer)
         self.form_layout.addRow(QLabel(text))
         self.form_layout.addRow(separator)
+
+
+def open_options_dialog(main_window):
+    dialog = OptionsDialog(main_window.options_manager.options)
+    if dialog.exec_() == QDialog.Accepted:
+        main_window.options_manager.options = dialog.get_options()
+        update_options(main_window)
+        print(main_window.options_manager.options)
+
+
+def update_options(main_window):
+    main_window.recursiveSearchAction.setChecked(main_window.options_manager.options["recursive_search"])
+    main_window.currentSearchAction.setChecked(not main_window.options_manager.options["recursive_search"])
+
+    search_by = main_window.options_manager.options.get("search_by")
+    if search_by == "Content":
+        main_window.byContentAction.setChecked(True)
+    elif search_by == "Name":
+        main_window.byNameAction.setChecked(True)
+    elif search_by == "Size":
+        main_window.bySizeAction.setChecked(True)
+
+    algorithm = main_window.options_manager.options.get("algorithm")
+    if algorithm == "aHash":
+        main_window.aHashAction.setChecked(True)
+    elif algorithm == "pHash":
+        main_window.pHashAction.setChecked(True)
+    elif algorithm == "ORB":
+        main_window.orbAction.setChecked(True)

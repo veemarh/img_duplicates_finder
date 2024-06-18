@@ -5,8 +5,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButto
 from PyQt5.QtGui import QIcon, QFont, QCursor
 from PyQt5.QtCore import Qt, QFileInfo, QRect
 from gui.undo_commands import AddFolderCommand, ClearSearchListCommand, RemoveSelFolderCommand
-from gui.options_dialog import OptionsDialog
-from gui.options_manager import *
+from gui.options_manager import OptionsManager
 from file_search.fileSearcher import FileSearcher
 from duplicates_finder.duplicatesFinder import DuplicatesFinder
 from duplicates_finder.comparisonMethod import ComparisonMethod
@@ -188,33 +187,6 @@ class ImgDuplicatesFinder(QMainWindow):
         if sel_item:
             command = RemoveSelFolderCommand(sel_item.text(), self.dnd_space, self.search_list)
             self.undo_stack.push(command)
-
-    def open_options_dialog(self):
-        dialog = OptionsDialog(self.options_manager.options, self)
-        if dialog.exec_() == QDialog.Accepted:
-            self.options_manager.options = dialog.get_options()
-            self.update_options()
-            print(self.options_manager.options)
-
-    def update_options(self):
-        self.recursiveSearchAction.setChecked(self.options_manager.options["recursive_search"])
-        self.currentSearchAction.setChecked(not self.options_manager.options["recursive_search"])
-
-        search_by = self.options_manager.options.get("search_by")
-        if search_by == "Content":
-            self.byContentAction.setChecked(True)
-        elif search_by == "Name":
-            self.byNameAction.setChecked(True)
-        elif search_by == "Size":
-            self.bySizeAction.setChecked(True)
-
-        algorithm = self.options_manager.options.get("algorithm")
-        if algorithm == "aHash":
-            self.aHashAction.setChecked(True)
-        elif algorithm == "pHash":
-            self.pHashAction.setChecked(True)
-        elif algorithm == "ORB":
-            self.orbAction.setChecked(True)
 
 
 if __name__ == '__main__':

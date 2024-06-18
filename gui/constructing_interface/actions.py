@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QAction, QActionGroup
 from PyQt5.QtGui import QIcon
+from gui.options_dialog import open_options_dialog
 
 
 def create_actions(main_window):
@@ -89,7 +90,7 @@ def create_actions(main_window):
     main_window.openSettingsAction = QAction(QIcon("static/settings.png"), "&More...", main_window)
     main_window.openSettingsAction.setShortcut("Ctrl+Alt+S")
     main_window.openSettingsAction.setStatusTip("Open detailed settings")
-    main_window.openSettingsAction.triggered.connect(main_window.open_options_dialog)
+    main_window.openSettingsAction.triggered.connect(lambda: open_options_dialog(main_window))
 
     # Help
     main_window.helpContentAction = QAction(QIcon("static/readme.png"), "&Help Content", main_window)
