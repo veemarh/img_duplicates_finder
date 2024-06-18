@@ -4,9 +4,9 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButto
     QUndoStack, QToolButton, QDialog
 from PyQt5.QtGui import QIcon, QFont, QCursor
 from PyQt5.QtCore import Qt, QFileInfo, QRect
-from PyQt5.undo_commands import AddFolderCommand, ClearSearchListCommand, RemoveSelFolderCommand
-from PyQt5.options_dialog import OptionsDialog
-from PyQt5.options_manager import *
+from gui.undo_commands import AddFolderCommand, ClearSearchListCommand, RemoveSelFolderCommand
+from gui.options_dialog import OptionsDialog
+from gui.options_manager import *
 from file_search.fileSearcher import FileSearcher
 from duplicates_finder.duplicatesFinder import DuplicatesFinder
 from duplicates_finder.comparisonMethod import ComparisonMethod
