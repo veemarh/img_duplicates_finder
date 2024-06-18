@@ -7,6 +7,9 @@ from PyQt5.QtCore import Qt, QFileInfo, QRect
 from PyQt5.undo_commands import AddFolderCommand, ClearSearchListCommand, RemoveSelFolderCommand
 from PyQt5.options_dialog import OptionsDialog
 from PyQt5.options_manager import *
+from file_search.fileSearcher import FileSearcher
+from duplicates_finder.duplicatesFinder import DuplicatesFinder
+from duplicates_finder.comparisonMethod import ComparisonMethod
 
 
 class ImgDuplicatesFinder(QMainWindow):
@@ -15,11 +18,15 @@ class ImgDuplicatesFinder(QMainWindow):
 
         self.undo_stack = QUndoStack(self)
         self.options_manager = OptionsManager()
-        self.search_list = list()
         self._createActions()
         self._createToolbar()
         self._createMenuBar()
         self._createStatusBar()
+
+        self.file_searcher = FileSearcher()
+        self.method = ComparisonMethod()
+        self.search_list = self.file_searcher.folders_for_search
+        self.excluded_list = self.file_searcher.excluded_folders
 
         self.initUI()
 
@@ -262,13 +269,16 @@ class ImgDuplicatesFinder(QMainWindow):
             QMessageBox.warning(self, "Empty Folder Path", "Please select a folder for search.")
             return
 
-        # option = 'exact' if self.exact_radio.isChecked() \
-        #     else 'resize' if self.resize_radio.isChecked() \
-        #     else 'filter'
-        # Call your search function here and update the result_listbox with the results
-        # For example: duplicates = find_duplicate_images(folder_path, option)
-        # Then update the listbox with results
-        self.display_results([])  # Replace with actual results
+        self.file_searcher.file_formats = ['.png', '.jpg', '.jpeg']
+        # img params
+        images = self.file_searcher.search()
+        # method params
+        dupl_finder = DuplicatesFinder(self.method)
+        dupl_finder.files = images[0]
+        # finder params
+        dupl_finder.find()
+
+        # self.display_results(dups)
 
     # вывод результатов
     def display_results(self, duplicates):
