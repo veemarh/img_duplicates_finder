@@ -10,6 +10,11 @@ from gui.options_manager import *
 from file_search.fileSearcher import FileSearcher
 from duplicates_finder.duplicatesFinder import DuplicatesFinder
 from duplicates_finder.comparisonMethod import ComparisonMethod
+from gui.constructing_interface.toolbar import create_toolbar
+from gui.constructing_interface.menubar import create_menubar
+from gui.constructing_interface.context_menu import create_context_menu
+from gui.constructing_interface.statusbar import create_status_bar
+from gui.constructing_interface.actions import create_actions
 
 
 class ImgDuplicatesFinder(QMainWindow):
@@ -31,179 +36,19 @@ class ImgDuplicatesFinder(QMainWindow):
         self.initUI()
 
     def _createActions(self):
-        # File
-        self.exitAction = QAction(QIcon("static/quit.png"), "&Quit", self)
-        self.exitAction.setShortcut('Ctrl+Q')
-        self.exitAction.setStatusTip('Quit application')
-        self.exitAction.triggered.connect(self.close)
-        # Edit
-        self.undoAction = QAction(QIcon("static/undo.png"), "&Undo", self)
-        self.undoAction.setShortcut('Ctrl+Z')
-        self.undoAction.setStatusTip('Undo')
-        self.undoAction.triggered.connect(self.undo_action)
-        self.redoAction = QAction(QIcon("static/redo.png"), "&Redo", self)
-        self.redoAction.setShortcut('Ctrl+Shift+Z')
-        self.redoAction.setStatusTip('Redo')
-        self.redoAction.triggered.connect(self.redo_action)
-        self.addFolderAction = QAction(QIcon("static/add.png"), "&Add", self)
-        self.addFolderAction.setShortcut('Ctrl+M')
-        self.addFolderAction.setStatusTip('Add a new folder to search list')
-        self.addFolderAction.triggered.connect(self.browse_folder)
-        self.removeSelAction = QAction(QIcon("static/remove.png"), "&Remove", self)
-        self.removeSelAction.setShortcut('Delete')
-        self.removeSelAction.setStatusTip('Remove selected folder from search list')
-        self.removeSelAction.triggered.connect(self.remove_sel_folder)
-        self.clearFoldersAction = QAction("&Clear", self)
-        self.clearFoldersAction.setStatusTip('Clear search list')
-        self.clearFoldersAction.triggered.connect(self.clear_search_list)
-
-        # *** Search options
-        # Folders
-        self.recursiveSearchAction = QAction(QIcon("static/recursive.png"), "&Recursive Search", self)
-        self.recursiveSearchAction.setStatusTip("Search only in the specified folders")
-        self.recursiveSearchAction.triggered.connect(lambda: self.options_manager.set_option("recursive_search", True))
-        self.currentSearchAction = QAction(QIcon("static/current.png"), "In the &Current Folder", self)
-        self.currentSearchAction.setStatusTip("Search in folders and their subfolders")
-        self.currentSearchAction.triggered.connect(lambda: self.options_manager.set_option("recursive_search", False))
-        self.recursiveSearchAction.setCheckable(True)
-        self.currentSearchAction.setCheckable(True)
-        folder_options_group = QActionGroup(self)
-        folder_options_group.addAction(self.recursiveSearchAction)
-        folder_options_group.addAction(self.currentSearchAction)
-        folder_options_group.setExclusive(True)
-        self.recursiveSearchAction.setChecked(True)
-        # Search by
-        self.byContentAction = QAction("&Content", self)
-        self.byContentAction.setStatusTip("Search for similar images")
-        self.byContentAction.triggered.connect(lambda: self.options_manager.set_option("search_by", "Content"))
-        self.byNameAction = QAction("&Name", self)
-        self.byNameAction.setStatusTip("Search for images with the same name")
-        self.byNameAction.triggered.connect(lambda: self.options_manager.set_option("search_by", "Name"))
-        self.bySizeAction = QAction("&Size", self)
-        self.bySizeAction.setStatusTip("Search for images of the same size")
-        self.bySizeAction.triggered.connect(lambda: self.options_manager.set_option("search_by", "Size"))
-        self.byContentAction.setCheckable(True)
-        self.byNameAction.setCheckable(True)
-        self.bySizeAction.setCheckable(True)
-        search_by_group = QActionGroup(self)
-        search_by_group.addAction(self.byContentAction)
-        search_by_group.addAction(self.byNameAction)
-        search_by_group.addAction(self.bySizeAction)
-        search_by_group.setExclusive(True)
-        self.byContentAction.setChecked(True)
-        # Algorithms
-        self.aHashAction = QAction("a&Hash", self)
-        self.aHashAction.setStatusTip("Use aHash comparison algorithm")
-        self.aHashAction.triggered.connect(lambda: self.options_manager.set_option("algorithm", "aHash"))
-        self.pHashAction = QAction("p&Hash", self)
-        self.pHashAction.setStatusTip("Use pHash comparison algorithm")
-        self.pHashAction.triggered.connect(lambda: self.options_manager.set_option("algorithm", "pHash"))
-        self.orbAction = QAction("&ORB", self)
-        self.orbAction.setStatusTip("Use ORB comparison algorithm")
-        self.orbAction.triggered.connect(lambda: self.options_manager.set_option("algorithm", "ORB"))
-        self.aHashAction.setCheckable(True)
-        self.pHashAction.setCheckable(True)
-        self.orbAction.setCheckable(True)
-        self.algorithms_group = QActionGroup(self)
-        self.algorithms_group.addAction(self.aHashAction)
-        self.algorithms_group.addAction(self.pHashAction)
-        self.algorithms_group.addAction(self.orbAction)
-        self.algorithms_group.setExclusive(True)
-        self.aHashAction.setChecked(True)
-        # More
-        self.openSettingsAction = QAction(QIcon("static/settings.png"), "&More...", self)
-        self.openSettingsAction.setShortcut('Ctrl+Alt+S')
-        self.openSettingsAction.setStatusTip("Open detailed settings")
-        self.openSettingsAction.triggered.connect(self.open_options_dialog)
-
-        # Help
-        self.helpContentAction = QAction(QIcon("static/readme.png"), "&Help Content", self)
-        self.helpContentAction.setStatusTip("Launch the Help manual")
-        self.aboutAction = QAction(QIcon("static/about.png"), "&About", self)
-        self.aboutAction.setStatusTip("Show the Img Duplicates Finder's About box")
-        self.aboutAction.triggered.connect(self.about)
+        create_actions(self)
 
     def _createToolbar(self):
-        toolbar = self.addToolBar('Tools')
-        toolbar.setFloatable(False)
-        # Edit
-        toolbar.addAction(self.addFolderAction)
-        toolbar.addAction(self.removeSelAction)
-        toolbar.addSeparator()
-        # Folders
-        toolbar.addAction(self.recursiveSearchAction)
-        toolbar.addAction(self.currentSearchAction)
-        toolbar.addSeparator()
-        # Search by
-        search_by_menu = QMenu(self)
-        search_by_menu.addActions([self.byContentAction, self.byNameAction, self.bySizeAction])
-        search_by_tool = QToolButton(self)
-        search_by_tool.setToolTip("Search by")
-        search_by_tool.setIcon(QIcon("static/search_by.png"))
-        search_by_tool.setPopupMode(QToolButton.InstantPopup)
-        search_by_tool.setMenu(search_by_menu)
-        toolbar.addWidget(search_by_tool)
-        toolbar.addSeparator()
-        # Algorithms
-        algorithms_menu = QMenu(self)
-        algorithms_menu.addActions([self.aHashAction, self.pHashAction, self.orbAction])
-        algorithms_tool = QToolButton(self)
-        algorithms_tool.setToolTip("Algorithm")
-        algorithms_tool.setIcon(QIcon("static/algorithm.png"))
-        algorithms_tool.setPopupMode(QToolButton.InstantPopup)
-        algorithms_tool.setMenu(algorithms_menu)
-        toolbar.addWidget(algorithms_tool)
+        self.addToolBar(create_toolbar(self))
 
     def _createMenuBar(self):
-        menubar = self.menuBar()
-        # File
-        file_menu = menubar.addMenu("&File")
-        open_recent_menu = file_menu.addMenu("&Open Recent")
-        file_menu.addAction(self.exitAction)
-        # Edit
-        edit_menu = menubar.addMenu("&Edit")
-        edit_menu.addAction(self.undoAction)
-        edit_menu.addAction(self.redoAction)
-        edit_menu.addAction(self.addFolderAction)
-        edit_menu.addAction(self.removeSelAction)
-        edit_menu.addAction(self.clearFoldersAction)
-        # *** Options
-        options_menu = menubar.addMenu("&Options")
-        # Folders
-        folders_menu = options_menu.addMenu("&Folders")
-        folders_menu.addAction(self.recursiveSearchAction)
-        folders_menu.addAction(self.currentSearchAction)
-        # Search by
-        search_by_menu = options_menu.addMenu("&Search by")
-        search_by_menu.addActions([self.byContentAction, self.byNameAction, self.bySizeAction])
-        # Algorithms
-        algorithms_menu = options_menu.addMenu("&Algorithm")
-        algorithms_menu.addActions([self.aHashAction, self.pHashAction, self.orbAction])
-        # More
-        more_menu = options_menu.addAction(self.openSettingsAction)
-        # Help
-        help_menu = menubar.addMenu("&Help")
-        help_menu.addAction(self.helpContentAction)
-        help_menu.addAction(self.aboutAction)
+        self.setMenuBar(create_menubar(self))
 
     def _createStatusBar(self):
-        statusbar = self.statusBar()
-        # постоянное сообщение
-        constant_message = "Constant"
-        constant_message_label = QLabel(f"{constant_message}")
-        statusbar.addPermanentWidget(constant_message_label)
+        self.setStatusBar(create_status_bar(self))
 
     def contextMenuEvent(self, event):
-        context_menu = QMenu(self.central_widget)
-        separator = QAction(self)
-        separator.setSeparator(True)
-        context_menu.addAction(self.recursiveSearchAction)
-        context_menu.addAction(self.currentSearchAction)
-        context_menu.addAction(separator)
-        context_menu.addAction(self.aHashAction)
-        context_menu.addAction(self.pHashAction)
-        context_menu.addAction(self.orbAction)
-        context_menu.exec(event.globalPos())
+        create_context_menu(self, event)
 
     def initUI(self):
         self.resize(800, 600)
