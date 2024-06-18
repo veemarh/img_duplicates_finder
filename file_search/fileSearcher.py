@@ -1,12 +1,14 @@
 import os
 from datetime import datetime
 
-# var 'folders_for_search': array of strings - folder paths
-# var 'file_formats': array of strings - formats, e.g. '.png'
+# var 'folders_for_search': array of str - folder paths
+# var 'excluded_folders': array of str - folder paths that are not included for search
+# var 'file_formats': array of str - formats, e.g. '.png'
 class FileSearcher:
     def __init__(self):
         self.search_in_subfolders = False
         self.folders_for_search = []
+        self.excluded_folders = []
         self.file_formats = []
         self.__limit_file_creating_time = False
         self.__file_creating_time = {'min': None, 'max': None} # datetime
@@ -45,6 +47,7 @@ class FileSearcher:
     def __get_images_in_folder_and_subfolders(self, folder):
         images = []
         for root, subdirs, files in os.walk(folder):
+            if root in self.excluded_folders: continue
             for file in files:
                 if os.path.splitext(file)[1].lower() in self.file_formats:
                         file_path = os.path.join(root, file)
@@ -55,6 +58,7 @@ class FileSearcher:
     def __get_images_in_folder(self, folder):
         images = []
         for file in os.listdir(folder):
+            if folder in self.excluded_folders: break
             if os.path.splitext(file)[1].lower() in self.file_formats:
                 file_path = os.path.join(folder, file)
                 if not self.__check_limits(file_path): continue  
