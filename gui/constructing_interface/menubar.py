@@ -11,9 +11,14 @@ def create_menubar(main_window):
     edit_menu = menubar.addMenu("&Edit")
     edit_menu.addAction(main_window.undoAction)
     edit_menu.addAction(main_window.redoAction)
+    edit_menu.addSeparator()
     edit_menu.addAction(main_window.addFolderAction)
     edit_menu.addAction(main_window.removeSelAction)
     edit_menu.addAction(main_window.clearFoldersAction)
+    edit_menu.addSeparator()
+    edit_menu.addAction(main_window.addExcludedFolderAction)
+    edit_menu.addAction(main_window.removeSelExcludedAction)
+    edit_menu.addAction(main_window.clearExcludedAction)
     # *** Options
     options_menu = menubar.addMenu("&Options")
     # Folders
