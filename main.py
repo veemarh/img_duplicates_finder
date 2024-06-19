@@ -4,10 +4,8 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButto
     QUndoStack, QToolButton, QDialog
 from PyQt5.QtGui import QIcon, QFont, QCursor
 from PyQt5.QtCore import Qt, QFileInfo, QRect
-from gui.undo_commands import AddFolderCommand, ClearSearchListCommand, RemoveSelFolderCommand
 from gui.options_manager import OptionsManager
 from file_search.fileSearcher import FileSearcher
-from duplicates_finder.duplicatesFinder import DuplicatesFinder
 from duplicates_finder.comparisonMethod import ComparisonMethod
 from gui.constructing_interface.toolbar import create_toolbar
 from gui.constructing_interface.menubar import create_menubar
@@ -15,6 +13,7 @@ from gui.constructing_interface.context_menu import create_context_menu
 from gui.constructing_interface.statusbar import create_status_bar
 from gui.constructing_interface.actions import create_actions
 from gui.drag_drop import dragEnterEvent, dropEvent
+from gui.search_event_handlers import browse_folder, start_search, display_results, remove_sel_folder, clear_search_list
 
 
 class ImgDuplicatesFinder(QMainWindow):
@@ -101,39 +100,6 @@ class ImgDuplicatesFinder(QMainWindow):
 
         self.show()
 
-    # выбор папки для поиска
-    def browse_folder(self):
-        folder_path = QFileDialog.getExistingDirectory(self, "Select Folder")
-        if folder_path and folder_path not in self.search_list:
-            command = AddFolderCommand(folder_path, self.dnd_space, self.search_list)
-            self.undo_stack.push(command)
-
-    # обработчик кнопки поиска
-    def start_search(self):
-        if not self.search_list:
-            QMessageBox.warning(self, "Empty Folder Path", "Please select a folder for search.")
-            return
-
-        self.file_searcher.file_formats = ['.png', '.jpg', '.jpeg']
-        # img params
-        images = self.file_searcher.search()
-        # method params
-        dupl_finder = DuplicatesFinder(self.method)
-        dupl_finder.files = images[0]
-        # finder params
-        dupl_finder.find()
-
-        # self.display_results(dups)
-
-    # вывод результатов
-    def display_results(self, duplicates):
-        self.result_listbox.clear()
-        if duplicates:
-            for dup in duplicates:
-                self.result_listbox.addItem(f"{dup[0]} and {dup[1]}")
-        else:
-            self.result_listbox.addItem("No duplicate images found.")
-
     # подтверждение выхода
     # def closeEvent(self, event):
     #     reply = QMessageBox.question(self, 'Confirm Quit', "Are you sure to quit?",
@@ -155,28 +121,32 @@ class ImgDuplicatesFinder(QMainWindow):
         QMessageBox.about(self, "About Img Duplicates Finder", "<h3>About Img Duplicates Finder</h3>"
                                                                "<a href='https://github.com/soneXgo/img_duplicates_finder'>GitHub</a>")
 
+    def browse_folder(self):
+        browse_folder(self)
+
+    def start_search(self):
+        start_search(self)
+
+    def display_results(self, duplicates):
+        display_results(self, duplicates)
+
+    def remove_sel_folder(self):
+        remove_sel_folder(self)
+
+    def clear_search_list(self):
+        clear_search_list(self)
+
     def dragEnterEvent(self, event):
         dragEnterEvent(self, event)
 
     def dropEvent(self, event):
         dropEvent(self, event)
 
-    def clear_search_list(self):
-        if self.search_list:
-            command = ClearSearchListCommand(self.dnd_space, self.search_list)
-            self.undo_stack.push(command)
-
     def undo_action(self):
         self.undo_stack.undo()
 
     def redo_action(self):
         self.undo_stack.redo()
-
-    def remove_sel_folder(self):
-        sel_item = self.dnd_space.currentItem()
-        if sel_item:
-            command = RemoveSelFolderCommand(sel_item.text(), self.dnd_space, self.search_list)
-            self.undo_stack.push(command)
 
 
 if __name__ == '__main__':
