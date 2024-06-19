@@ -14,6 +14,7 @@ from gui.constructing_interface.menubar import create_menubar
 from gui.constructing_interface.context_menu import create_context_menu
 from gui.constructing_interface.statusbar import create_status_bar
 from gui.constructing_interface.actions import create_actions
+from gui.drag_drop import dragEnterEvent, dropEvent
 
 
 class ImgDuplicatesFinder(QMainWindow):
@@ -154,22 +155,11 @@ class ImgDuplicatesFinder(QMainWindow):
         QMessageBox.about(self, "About Img Duplicates Finder", "<h3>About Img Duplicates Finder</h3>"
                                                                "<a href='https://github.com/soneXgo/img_duplicates_finder'>GitHub</a>")
 
-    # drag'n'drop
     def dragEnterEvent(self, event):
-        if event.mimeData().hasUrls():
-            event.accept()
-        else:
-            event.ignore()
+        dragEnterEvent(self, event)
 
     def dropEvent(self, event):
-        dnd_rect = self.dnd_space.rect()
-        mouse_pos = self.dnd_space.mapFromGlobal(QCursor.pos())
-        if dnd_rect.contains(mouse_pos):
-            paths = set([u.toLocalFile() for u in event.mimeData().urls()])
-            for path in paths:
-                if QFileInfo(path).isDir() and path not in self.search_list:
-                    command = AddFolderCommand(path, self.dnd_space, self.search_list)
-                    self.undo_stack.push(command)
+        dropEvent(self, event)
 
     def clear_search_list(self):
         if self.search_list:
