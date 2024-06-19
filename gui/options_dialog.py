@@ -26,6 +26,8 @@ class OptionsDialog(QDialog):
         self.create_algorithm_options()
         self.add_separator("<b>Image properties</b>")
         self.create_image_property_options()
+        self.add_separator("<b>File formats</b>")
+        self.create_file_format_options()
 
         self.scroll_area.setWidget(self.scroll_widget)
         dlg_layout.addWidget(self.scroll_area)
@@ -90,14 +92,26 @@ class OptionsDialog(QDialog):
         self.limit_creation_date.setChecked(self.options.get("limit_creation_date", False))
         self.limit_changing_date.setChecked(self.options.get("limit_changing_date", False))
 
+    def create_file_format_options(self):
+        self.file_format_checkboxes = {}
+        file_formats = self.options.get("file_formats", {})
+        for format_name, checked in file_formats.items():
+            checkbox = QCheckBox(format_name.upper())
+            checkbox.setChecked(checked)
+            self.file_format_checkboxes[format_name] = checkbox
+            self.form_layout.addRow(checkbox)
+
     def get_options(self):
+        file_formats = {format_name: checkbox.isChecked() for format_name, checkbox in
+                        self.file_format_checkboxes.items()}
         return {
             "recursive_search": self.folder_combo.currentIndex() == 0,
             "search_by": self.search_by_combo.currentText(),
             "algorithm": self.algorithm_combo.currentText(),
             "limit_size": self.limit_size.isChecked(),
             "limit_creation_date": self.limit_creation_date.isChecked(),
-            "limit_changing_date": self.limit_changing_date.isChecked()
+            "limit_changing_date": self.limit_changing_date.isChecked(),
+            "file_formats": file_formats
         }
 
     def add_separator(self, text):
