@@ -67,15 +67,13 @@ class OptionsDialog(QDialog):
     def create_algorithm_options(self):
         self.algorithm_combo = QComboBox()
         self.algorithm_combo.setMaximumWidth(200)
-        self.algorithm_combo.addItems(["aHash", "pHash", "ORB"])
+        algorithms = ["aHash", "bHash", "dHash", "mHash", "pHash", "MD5", "SHA-1, 160 bit", "SHA-2, 256 bit",
+                      "SHA-2, 384 bit", "SHA-2, 512 bit", "ORB"]
+        self.algorithm_combo.addItems(algorithms)
 
         selected_algorithm = self.options.get("algorithm")
-        if selected_algorithm == "aHash":
-            self.algorithm_combo.setCurrentIndex(0)
-        elif selected_algorithm == "pHash":
-            self.algorithm_combo.setCurrentIndex(1)
-        elif selected_algorithm == "ORB":
-            self.algorithm_combo.setCurrentIndex(2)
+        if selected_algorithm in algorithms:
+            self.algorithm_combo.setCurrentIndex(algorithms.index(selected_algorithm))
 
         self.form_layout.addRow("Algorithm:", self.algorithm_combo)
 
@@ -183,9 +181,4 @@ def update_options(main_window):
         main_window.bySizeAction.setChecked(True)
 
     algorithm = main_window.options_manager.options.get("algorithm")
-    if algorithm == "aHash":
-        main_window.aHashAction.setChecked(True)
-    elif algorithm == "pHash":
-        main_window.pHashAction.setChecked(True)
-    elif algorithm == "ORB":
-        main_window.orbAction.setChecked(True)
+    main_window.algorithm_actions[algorithm].setChecked(True)

@@ -30,7 +30,8 @@ def create_menubar(main_window):
     search_by_menu.addActions([main_window.byContentAction, main_window.byNameAction, main_window.bySizeAction])
     # Algorithms
     algorithms_menu = options_menu.addMenu("&Algorithm")
-    algorithms_menu.addActions([main_window.aHashAction, main_window.pHashAction, main_window.orbAction])
+    for action in main_window.algorithm_actions.values():
+        algorithms_menu.addAction(action)
     # More
     more_menu = options_menu.addAction(main_window.openSettingsAction)
     # Help

@@ -77,24 +77,20 @@ def create_actions(main_window):
     search_by_group.setExclusive(True)
     main_window.byContentAction.setChecked(True)
     # Algorithms
-    main_window.aHashAction = QAction("a&Hash", main_window)
-    main_window.aHashAction.setStatusTip("Use aHash comparison algorithm")
-    main_window.aHashAction.triggered.connect(lambda: main_window.options_manager.set_option("algorithm", "aHash"))
-    main_window.pHashAction = QAction("p&Hash", main_window)
-    main_window.pHashAction.setStatusTip("Use pHash comparison algorithm")
-    main_window.pHashAction.triggered.connect(lambda: main_window.options_manager.set_option("algorithm", "pHash"))
-    main_window.orbAction = QAction("&ORB", main_window)
-    main_window.orbAction.setStatusTip("Use ORB comparison algorithm")
-    main_window.orbAction.triggered.connect(lambda: main_window.options_manager.set_option("algorithm", "ORB"))
-    main_window.aHashAction.setCheckable(True)
-    main_window.pHashAction.setCheckable(True)
-    main_window.orbAction.setCheckable(True)
-    main_window.algorithms_group = QActionGroup(main_window)
-    main_window.algorithms_group.addAction(main_window.aHashAction)
-    main_window.algorithms_group.addAction(main_window.pHashAction)
-    main_window.algorithms_group.addAction(main_window.orbAction)
-    main_window.algorithms_group.setExclusive(True)
-    main_window.aHashAction.setChecked(True)
+    algorithms = ["aHash", "bHash", "dHash", "mHash", "pHash", "MD5", "SHA-1, 160 bit", "SHA-2, 256 bit",
+                  "SHA-2, 384 bit", "SHA-2, 512 bit", "ORB"]
+    algorithms_group = QActionGroup(main_window)
+    algorithms_group.setExclusive(True)
+    main_window.algorithm_actions = {}
+    for algorithm in algorithms:
+        action = QAction(f"&{algorithm}", main_window)
+        action.setStatusTip(f"Use {algorithm} comparison algorithm")
+        action.triggered.connect(lambda checked, alg=algorithm: set_algorithm(main_window, alg))
+        action.setCheckable(True)
+        algorithms_group.addAction(action)
+        main_window.algorithm_actions[algorithm] = action
+    default_algorithm = main_window.options_manager.options.get("algorithm", "aHash")
+    main_window.algorithm_actions[default_algorithm].setChecked(True)
     # More
     main_window.openSettingsAction = QAction(QIcon("static/settings.png"), "&More...", main_window)
     main_window.openSettingsAction.setShortcut("Ctrl+Alt+S")
@@ -107,3 +103,7 @@ def create_actions(main_window):
     main_window.aboutAction = QAction(QIcon("static/about.png"), "&About", main_window)
     main_window.aboutAction.setStatusTip("Show the Img Duplicates Finder's About box")
     main_window.aboutAction.triggered.connect(main_window.about)
+
+
+def set_algorithm(main_window, algorithm):
+    main_window.options_manager.set_option("algorithm", algorithm)

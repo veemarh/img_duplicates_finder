@@ -25,7 +25,8 @@ def create_toolbar(main_window):
     toolbar.addSeparator()
     # Algorithms
     algorithms_menu = QMenu(main_window)
-    algorithms_menu.addActions([main_window.aHashAction, main_window.pHashAction, main_window.orbAction])
+    for action in main_window.algorithm_actions.values():
+        algorithms_menu.addAction(action)
     algorithms_tool = QToolButton(main_window)
     algorithms_tool.setToolTip("Algorithm")
     algorithms_tool.setIcon(QIcon("static/algorithm.png"))
