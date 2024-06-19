@@ -13,7 +13,8 @@ from gui.constructing_interface.context_menu import create_context_menu
 from gui.constructing_interface.statusbar import create_status_bar
 from gui.constructing_interface.actions import create_actions
 from gui.drag_drop import dragEnterEvent, dropEvent
-from gui.search_event_handlers import browse_folder, start_search, display_results, remove_sel_folder, clear_search_list
+from gui.search_event_handlers import browse_folder, start_search, display_results, remove_sel_folder, \
+    clear_search_list, browse_excluded_folder, remove_sel_excluded_folder, clear_excluded_list
 
 
 class ImgDuplicatesFinder(QMainWindow):
@@ -83,6 +84,28 @@ class ImgDuplicatesFinder(QMainWindow):
         buttons_layout.addWidget(clear_button)
         folder_layout.addLayout(buttons_layout)
 
+        # папки, в которых не нужно искать
+        excluded_folder_label = QLabel("Specify the folders in which you do not need to search")
+        excluded_browse_button = QPushButton("Browse")
+        excluded_browse_button.clicked.connect(self.browse_excluded_folder)
+        self.excluded_dnd_space = QListWidget()
+        self.excluded_dnd_space.setWordWrap(True)
+        excluded_remove_button = QPushButton("Remove")
+        excluded_remove_button.clicked.connect(self.remove_sel_excluded_folder)
+        excluded_clear_button = QPushButton("Clear")
+        excluded_clear_button.clicked.connect(self.clear_excluded_list)
+
+        # блок выбора папкок, в которых не нужно искать
+        excluded_folder_layout = QVBoxLayout()
+        excluded_folder_layout.addWidget(excluded_folder_label, alignment=Qt.AlignCenter)
+        excluded_folder_layout.addWidget(self.excluded_dnd_space)
+        excluded_buttons_layout = QHBoxLayout()
+        excluded_buttons_layout.addStretch(1)
+        excluded_buttons_layout.addWidget(excluded_browse_button)
+        excluded_buttons_layout.addWidget(excluded_remove_button)
+        excluded_buttons_layout.addWidget(excluded_clear_button)
+        excluded_folder_layout.addLayout(excluded_buttons_layout)
+
         # кнопка начала поиска
         search_button = QPushButton("Search")
         search_button.clicked.connect(self.start_search)
@@ -94,6 +117,7 @@ class ImgDuplicatesFinder(QMainWindow):
         # установка макетов
         main_layout = QVBoxLayout(self.central_widget)
         main_layout.addLayout(folder_layout)
+        main_layout.addLayout(excluded_folder_layout)
         main_layout.addWidget(search_button)
         main_layout.addWidget(result_label)
         main_layout.addWidget(self.result_listbox)
@@ -124,6 +148,9 @@ class ImgDuplicatesFinder(QMainWindow):
     def browse_folder(self):
         browse_folder(self)
 
+    def browse_excluded_folder(self):
+        browse_excluded_folder(self)
+
     def start_search(self):
         start_search(self)
 
@@ -133,11 +160,17 @@ class ImgDuplicatesFinder(QMainWindow):
     def remove_sel_folder(self):
         remove_sel_folder(self)
 
+    def remove_sel_excluded_folder(self):
+        remove_sel_excluded_folder(self)
+
     def clear_search_list(self):
         clear_search_list(self)
 
+    def clear_excluded_list(self):
+        clear_excluded_list(self)
+
     def dragEnterEvent(self, event):
-        dragEnterEvent(self, event)
+        dragEnterEvent(event)
 
     def dropEvent(self, event):
         dropEvent(self, event)
