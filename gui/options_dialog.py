@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QDialog, QFormLayout, QCheckBox, QDialogButtonBox, QVBoxLayout, \
-    QFrame, QLabel, QSpacerItem, QSizePolicy, QComboBox, QScrollArea, QWidget
+    QFrame, QLabel, QSpacerItem, QSizePolicy, QComboBox, QScrollArea, QWidget, QDateEdit
 from PyQt5.QtGui import QFont
 
 
@@ -81,16 +81,50 @@ class OptionsDialog(QDialog):
 
     def create_image_property_options(self):
         self.limit_size = QCheckBox("Limit Size")
-        self.limit_creation_date = QCheckBox("Limit Creation Date")
-        self.limit_changing_date = QCheckBox("Limit Changing Date")
-
+        self.limit_size.setChecked(self.options.get("limit_size", False))
         self.form_layout.addRow(self.limit_size)
+
+        self.limit_creation_date = QCheckBox("Limit Creation Date")
+        self.limit_creation_date.setChecked(self.options.get("limit_creation_date", False))
+        self.limit_creation_date.toggled.connect(self.toggle_creation_date_limits)
         self.form_layout.addRow(self.limit_creation_date)
+
+        self.creation_date_from = QDateEdit()
+        self.creation_date_from.setCalendarPopup(True)
+        self.creation_date_from.setDate(self.options.get("creation_date_from"))
+        self.creation_date_from.setEnabled(self.limit_creation_date.isChecked())
+        self.form_layout.addRow("From:", self.creation_date_from)
+
+        self.creation_date_to = QDateEdit()
+        self.creation_date_to.setCalendarPopup(True)
+        self.creation_date_to.setDate(self.options.get("creation_date_to"))
+        self.creation_date_to.setEnabled(self.limit_creation_date.isChecked())
+        self.form_layout.addRow("To:", self.creation_date_to)
+
+        self.limit_changing_date = QCheckBox("Limit Changing Date")
+        self.limit_changing_date.setChecked(self.options.get("limit_changing_date", False))
+        self.limit_changing_date.toggled.connect(self.toggle_changing_date_limits)
         self.form_layout.addRow(self.limit_changing_date)
 
-        self.limit_size.setChecked(self.options.get("limit_size", False))
-        self.limit_creation_date.setChecked(self.options.get("limit_creation_date", False))
-        self.limit_changing_date.setChecked(self.options.get("limit_changing_date", False))
+        self.changing_date_from = QDateEdit()
+        self.changing_date_from.setCalendarPopup(True)
+        self.changing_date_from.setDate(self.options.get("changing_date_from"))
+        self.changing_date_from.setEnabled(self.limit_changing_date.isChecked())
+        self.form_layout.addRow("From:", self.changing_date_from)
+
+        self.changing_date_to = QDateEdit()
+        self.changing_date_to.setCalendarPopup(True)
+        self.changing_date_to.setDate(self.options.get("changing_date_to"))
+        self.changing_date_to.setEnabled(self.limit_changing_date.isChecked())
+        self.form_layout.addRow("To:", self.changing_date_to)
+
+    def toggle_creation_date_limits(self, checked):
+        self.creation_date_from.setEnabled(checked)
+        self.creation_date_to.setEnabled(checked)
+
+    def toggle_changing_date_limits(self, checked):
+        self.changing_date_from.setEnabled(checked)
+        self.changing_date_to.setEnabled(checked)
 
     def create_file_format_options(self):
         self.file_format_checkboxes = {}
@@ -110,7 +144,11 @@ class OptionsDialog(QDialog):
             "algorithm": self.algorithm_combo.currentText(),
             "limit_size": self.limit_size.isChecked(),
             "limit_creation_date": self.limit_creation_date.isChecked(),
+            "creation_date_from": self.creation_date_from.date(),
+            "creation_date_to": self.creation_date_to.date(),
             "limit_changing_date": self.limit_changing_date.isChecked(),
+            "changing_date_from": self.changing_date_from.date(),
+            "changing_date_to": self.changing_date_to.date(),
             "file_formats": file_formats
         }
 
