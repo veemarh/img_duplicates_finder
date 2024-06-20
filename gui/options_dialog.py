@@ -32,6 +32,8 @@ class OptionsDialog(QDialog):
         self.create_image_property_options()
         self.add_separator("<b>File formats</b>")
         self.create_file_format_options()
+        self.add_separator("<b>Modifications</b>")
+        self.create_modified_options()
 
         self.scroll_area.setWidget(self.scroll_widget)
         dlg_layout.addWidget(self.scroll_area)
@@ -173,6 +175,15 @@ class OptionsDialog(QDialog):
         self.max_duplicates_spinbox.setValue(self.options.get("max_duplicates", 1000))
         self.form_layout.addRow("Max duplicates:", self.max_duplicates_spinbox)
 
+    def create_modified_options(self):
+        self.modified_checkboxes = {}
+        modified = self.options.get("modified", {})
+        for mod_name, checked in modified.items():
+            checkbox = QCheckBox(mod_name)
+            checkbox.setChecked(checked)
+            self.modified_checkboxes[mod_name] = checkbox
+            self.form_layout.addRow(checkbox)
+
     def update_algorithm_specific_options(self, algorithm):
         is_b_or_m_hash = algorithm not in ["bHash", "mHash"]
         self.quick_search_checkbox.setDisabled(is_b_or_m_hash)
@@ -189,6 +200,8 @@ class OptionsDialog(QDialog):
             "Format": self.search_by_format.isChecked(),
             "Size": self.search_by_size.isChecked()
         }
+        modified = {mod_name: checkbox.isChecked() for mod_name, checkbox in
+                    self.modified_checkboxes.items()}
         return {
             "recursive_search": self.folder_combo.currentIndex() == 0,
             "search_by": search_by,
@@ -204,7 +217,8 @@ class OptionsDialog(QDialog):
             "similarity_threshold": self.similarity_threshold_slider.value(),
             "quick_search": self.quick_search_checkbox.isChecked(),
             "comparison_size": self.comparison_size_spinbox.value(),
-            "max_duplicates": self.max_duplicates_spinbox.value()
+            "max_duplicates": self.max_duplicates_spinbox.value(),
+            "modified": modified
         }
 
     def add_separator(self, text):
