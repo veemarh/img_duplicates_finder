@@ -21,7 +21,8 @@ class OptionsManager:
             },
             "similarity_threshold": 90,
             "quick_search": False,
-            "comparison_size": 16
+            "comparison_size": 16,
+            "max_duplicates": 1000
         }
 
     def set_option(self, option_name, value):

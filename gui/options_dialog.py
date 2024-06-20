@@ -27,6 +27,7 @@ class OptionsDialog(QDialog):
         self.create_algorithm_options()
         self.create_algorithm_specific_options()
         self.create_similarity_threshold_options()
+        self.create_max_duplicates_option()
         self.add_separator("<b>Image properties</b>")
         self.create_image_property_options()
         self.add_separator("<b>File formats</b>")
@@ -166,6 +167,13 @@ class OptionsDialog(QDialog):
 
         self.update_algorithm_specific_options(self.algorithm_combo.currentText())
 
+    def create_max_duplicates_option(self):
+        self.max_duplicates_spinbox = QSpinBox()
+        self.max_duplicates_spinbox.setMaximumWidth(200)
+        self.max_duplicates_spinbox.setRange(1, 100000)
+        self.max_duplicates_spinbox.setValue(self.options.get("max_duplicates", 1000))
+        self.form_layout.addRow("Max duplicates:", self.max_duplicates_spinbox)
+
     def update_algorithm_specific_options(self, algorithm):
         is_b_or_m_hash = algorithm not in ["bHash", "mHash"]
         self.quick_search_checkbox.setDisabled(is_b_or_m_hash)
@@ -191,7 +199,8 @@ class OptionsDialog(QDialog):
             "file_formats": file_formats,
             "similarity_threshold": self.similarity_threshold_slider.value(),
             "quick_search": self.quick_search_checkbox.isChecked(),
-            "comparison_size": self.comparison_size_spinbox.value()
+            "comparison_size": self.comparison_size_spinbox.value(),
+            "max_duplicates": self.max_duplicates_spinbox.value()
         }
 
     def add_separator(self, text):
