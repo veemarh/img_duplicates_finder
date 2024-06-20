@@ -28,6 +28,8 @@ class OptionsDialog(QDialog):
         self.create_algorithm_specific_options()
         self.create_similarity_threshold_options()
         self.create_max_duplicates_option()
+        self.add_separator("<b>Specific File</b>")
+        self.create_specific_file_option()
         self.add_separator("<b>Image properties</b>")
         self.create_image_property_options()
         self.add_separator("<b>File formats</b>")
@@ -42,6 +44,11 @@ class OptionsDialog(QDialog):
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
         dlg_layout.addWidget(buttons)
+
+    def create_specific_file_option(self):
+        self.specific_file_checkbox = QCheckBox("Search for duplicates of a specific file")
+        self.specific_file_checkbox.setChecked(self.options.get("search_specific_file", False))
+        self.form_layout.addRow(self.specific_file_checkbox)
 
     def create_folder_options(self):
         self.folder_combo = QComboBox()
@@ -218,7 +225,9 @@ class OptionsDialog(QDialog):
             "quick_search": self.quick_search_checkbox.isChecked(),
             "comparison_size": self.comparison_size_spinbox.value(),
             "max_duplicates": self.max_duplicates_spinbox.value(),
-            "modified": modified
+            "modified": modified,
+            "search_specific_file": self.specific_file_checkbox.isChecked(),
+            "specific_file_path": self.options.get("specific_file_path")
         }
 
     def add_separator(self, text):
@@ -250,3 +259,6 @@ def update_options(main_window):
 
     algorithm = main_window.options_manager.options.get("algorithm")
     main_window.algorithm_actions[algorithm].setChecked(True)
+
+    search_specific_file = main_window.options_manager.options.get("search_specific_file")
+    main_window.search_specific_file_checkbox.setChecked(search_specific_file)

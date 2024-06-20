@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QRadioButton, QVBoxLayout, \
-    QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow, QAction, QMenu, QActionGroup, \
+    QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow, QCheckBox, QMenu, QActionGroup, \
     QUndoStack, QToolButton, QDialog
 from PyQt5.QtGui import QIcon, QFont, QCursor
 from PyQt5.QtCore import Qt, QFileInfo, QRect
@@ -106,6 +106,24 @@ class ImgDuplicatesFinder(QMainWindow):
         excluded_buttons_layout.addWidget(excluded_clear_button)
         excluded_folder_layout.addLayout(excluded_buttons_layout)
 
+        # Опция поиска конкретного файла
+        self.search_specific_file_checkbox = QCheckBox("Search for duplicates of a specific file")
+        self.search_specific_file_checkbox.stateChanged.connect(self.toggle_specific_file_search)
+        self.specific_file_path_edit = QLineEdit()
+        self.specific_file_path_edit.setPlaceholderText("Enter file path")
+        self.specific_file_path_edit.setEnabled(False)
+        self.specific_file_path_edit.textChanged.connect(self.set_specific_file)
+
+        self.file_browse_button = QPushButton("Browse")
+        self.file_browse_button.clicked.connect(self.browse_file)
+        self.file_browse_button.setEnabled(False)
+
+        # Макет для поиска конкретного файла
+        specific_file_layout = QHBoxLayout()
+        specific_file_layout.addWidget(self.search_specific_file_checkbox)
+        specific_file_layout.addWidget(self.specific_file_path_edit)
+        specific_file_layout.addWidget(self.file_browse_button)
+
         # кнопка начала поиска
         search_button = QPushButton("Search")
         search_button.clicked.connect(self.start_search)
@@ -116,6 +134,7 @@ class ImgDuplicatesFinder(QMainWindow):
 
         # установка макетов
         main_layout = QVBoxLayout(self.central_widget)
+        main_layout.addLayout(specific_file_layout)
         main_layout.addLayout(folder_layout)
         main_layout.addLayout(excluded_folder_layout)
         main_layout.addWidget(search_button)
@@ -180,6 +199,20 @@ class ImgDuplicatesFinder(QMainWindow):
 
     def redo_action(self):
         self.undo_stack.redo()
+
+    def toggle_specific_file_search(self, state):
+        enabled = state == Qt.Checked
+        self.specific_file_path_edit.setEnabled(enabled)
+        self.file_browse_button.setEnabled(enabled)
+        self.options_manager.set_option("search_specific_file", enabled)
+
+    def set_specific_file(self, text):
+        self.options_manager.set_option("specific_file_path", text)
+
+    def browse_file(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select File")
+        if file_path:
+            self.specific_file_path_edit.setText(file_path)
 
 
 if __name__ == '__main__':

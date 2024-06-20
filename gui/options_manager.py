@@ -28,7 +28,9 @@ class OptionsManager:
                 "reflected horizontally": False, "reflected vertically": False,
                 "reflected horizontally and rotated 90 degrees to the right": False,
                 "reflected vertically and rotated 90 degrees to the right": False
-            }
+            },
+            "search_specific_file": False,
+            "specific_file_path": ""
         }
 
     def set_option(self, option_name, value):
