@@ -57,25 +57,18 @@ def create_actions(main_window):
     folder_options_group.setExclusive(True)
     main_window.recursiveSearchAction.setChecked(True)
     # Search by
-    main_window.byContentAction = QAction("&Content", main_window)
-    main_window.byContentAction.setStatusTip("Search for similar images")
-    main_window.byContentAction.triggered.connect(
-        lambda: main_window.options_manager.set_option("search_by", "Content"))
     main_window.byNameAction = QAction("&Name", main_window)
     main_window.byNameAction.setStatusTip("Search for images with the same name")
-    main_window.byNameAction.triggered.connect(lambda: main_window.options_manager.set_option("search_by", "Name"))
+    main_window.byNameAction.setCheckable(True)
+    main_window.byNameAction.toggled.connect(lambda checked: update_search_by_option(main_window, "Name", checked))
+    main_window.byFormatAction = QAction("&Format", main_window)
+    main_window.byFormatAction.setStatusTip("Search for similar images by format")
+    main_window.byFormatAction.setCheckable(True)
+    main_window.byFormatAction.toggled.connect(lambda checked: update_search_by_option(main_window, "Format", checked))
     main_window.bySizeAction = QAction("&Size", main_window)
     main_window.bySizeAction.setStatusTip("Search for images of the same size")
-    main_window.bySizeAction.triggered.connect(lambda: main_window.options_manager.set_option("search_by", "Size"))
-    main_window.byContentAction.setCheckable(True)
-    main_window.byNameAction.setCheckable(True)
     main_window.bySizeAction.setCheckable(True)
-    search_by_group = QActionGroup(main_window)
-    search_by_group.addAction(main_window.byContentAction)
-    search_by_group.addAction(main_window.byNameAction)
-    search_by_group.addAction(main_window.bySizeAction)
-    search_by_group.setExclusive(True)
-    main_window.byContentAction.setChecked(True)
+    main_window.bySizeAction.toggled.connect(lambda checked: update_search_by_option(main_window, "Size", checked))
     # Algorithms
     algorithms = ["aHash", "bHash", "dHash", "mHash", "pHash", "MD5", "SHA-1, 160 bit", "SHA-2, 256 bit",
                   "SHA-2, 384 bit", "SHA-2, 512 bit", "ORB"]
@@ -107,3 +100,9 @@ def create_actions(main_window):
 
 def set_algorithm(main_window, algorithm):
     main_window.options_manager.set_option("algorithm", algorithm)
+
+
+def update_search_by_option(main_window, key, checked):
+    search_by = main_window.options_manager.get_option("search_by")
+    search_by[key] = checked
+    main_window.options_manager.set_option("search_by", search_by)

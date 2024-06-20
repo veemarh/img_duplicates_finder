@@ -23,7 +23,7 @@ class OptionsDialog(QDialog):
 
         self.add_separator("<b>When searching for duplicates</b>")
         self.create_folder_options()
-        self.search_by_options()
+        self.create_search_by_options()
         self.create_algorithm_options()
         self.create_algorithm_specific_options()
         self.create_similarity_threshold_options()
@@ -53,20 +53,19 @@ class OptionsDialog(QDialog):
 
         self.form_layout.addRow("Folders for search:", self.folder_combo)
 
-    def search_by_options(self):
-        self.search_by_combo = QComboBox()
-        self.search_by_combo.setMaximumWidth(200)
-        self.search_by_combo.addItems(["Content", "Name", "Size"])
+    def create_search_by_options(self):
+        self.search_by_name = QCheckBox("Search by Name")
+        self.search_by_format = QCheckBox("Search by Format")
+        self.search_by_size = QCheckBox("Search by Size")
 
-        selected_search_by = self.options.get("search_by")
-        if selected_search_by == "Content":
-            self.search_by_combo.setCurrentIndex(0)
-        elif selected_search_by == "Name":
-            self.search_by_combo.setCurrentIndex(1)
-        elif selected_search_by == "Size":
-            self.search_by_combo.setCurrentIndex(2)
+        search_by = self.options.get("search_by", {})
+        self.search_by_name.setChecked(search_by.get("Name", False))
+        self.search_by_format.setChecked(search_by.get("Format", False))
+        self.search_by_size.setChecked(search_by.get("Size", False))
 
-        self.form_layout.addRow("Search by:", self.search_by_combo)
+        self.form_layout.addRow(self.search_by_name)
+        self.form_layout.addRow(self.search_by_format)
+        self.form_layout.addRow(self.search_by_size)
 
     def create_algorithm_options(self):
         self.algorithm_combo = QComboBox()
@@ -185,9 +184,14 @@ class OptionsDialog(QDialog):
     def get_options(self):
         file_formats = {format_name: checkbox.isChecked() for format_name, checkbox in
                         self.file_format_checkboxes.items()}
+        search_by = {
+            "Name": self.search_by_name.isChecked(),
+            "Format": self.search_by_format.isChecked(),
+            "Size": self.search_by_size.isChecked()
+        }
         return {
             "recursive_search": self.folder_combo.currentIndex() == 0,
-            "search_by": self.search_by_combo.currentText(),
+            "search_by": search_by,
             "algorithm": self.algorithm_combo.currentText(),
             "limit_size": self.limit_size.isChecked(),
             "limit_creation_date": self.limit_creation_date.isChecked(),
@@ -225,13 +229,10 @@ def update_options(main_window):
     main_window.recursiveSearchAction.setChecked(main_window.options_manager.options["recursive_search"])
     main_window.currentSearchAction.setChecked(not main_window.options_manager.options["recursive_search"])
 
-    search_by = main_window.options_manager.options.get("search_by")
-    if search_by == "Content":
-        main_window.byContentAction.setChecked(True)
-    elif search_by == "Name":
-        main_window.byNameAction.setChecked(True)
-    elif search_by == "Size":
-        main_window.bySizeAction.setChecked(True)
+    search_by = main_window.options_manager.options.get("search_by", {})
+    main_window.byNameAction.setChecked(search_by.get("Name", False))
+    main_window.byFormatAction.setChecked(search_by.get("Format", False))
+    main_window.bySizeAction.setChecked(search_by.get("Size", False))
 
     algorithm = main_window.options_manager.options.get("algorithm")
     main_window.algorithm_actions[algorithm].setChecked(True)

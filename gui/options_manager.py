@@ -5,7 +5,7 @@ class OptionsManager:
     def __init__(self):
         self.options = {
             "recursive_search": True,
-            "search_by": "Content",
+            "search_by": {"Name": False, "Format": False, "Size": False},
             "algorithm": "aHash",
             "limit_size": False,
             "limit_creation_date": False,

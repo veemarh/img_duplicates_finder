@@ -27,7 +27,7 @@ def create_menubar(main_window):
     folders_menu.addAction(main_window.currentSearchAction)
     # Search by
     search_by_menu = options_menu.addMenu("&Search by")
-    search_by_menu.addActions([main_window.byContentAction, main_window.byNameAction, main_window.bySizeAction])
+    search_by_menu.addActions([main_window.byNameAction, main_window.byFormatAction, main_window.bySizeAction])
     # Algorithms
     algorithms_menu = options_menu.addMenu("&Algorithm")
     for action in main_window.algorithm_actions.values():
