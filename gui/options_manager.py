@@ -18,7 +18,8 @@ class OptionsManager:
                 'png': True, 'jpg': True, 'jpeg': True, 'bmp': False, 'dds': False, 'dib': False,
                 'eps': False, 'gif': False, 'icns': False, 'ico': False, 'pcx': False, 'ppm': False,
                 'psd': False, 'tga': False, 'tif': False, 'tiff': False, 'webp': False, 'wmf': False
-            }
+            },
+            "similarity_threshold": 90
         }
 
     def set_option(self, option_name, value):

@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QDialog, QFormLayout, QCheckBox, QDialogButtonBox, QVBoxLayout, \
-    QFrame, QLabel, QSpacerItem, QSizePolicy, QComboBox, QScrollArea, QWidget, QDateEdit
+    QFrame, QLabel, QSpacerItem, QSizePolicy, QComboBox, QScrollArea, QWidget, QDateEdit, QSlider
 from PyQt5.QtGui import QFont
+from PyQt5.QtCore import Qt
 
 
 class OptionsDialog(QDialog):
@@ -24,6 +25,7 @@ class OptionsDialog(QDialog):
         self.create_folder_options()
         self.search_by_options()
         self.create_algorithm_options()
+        self.create_similarity_threshold_options()
         self.add_separator("<b>Image properties</b>")
         self.create_image_property_options()
         self.add_separator("<b>File formats</b>")
@@ -88,12 +90,14 @@ class OptionsDialog(QDialog):
         self.form_layout.addRow(self.limit_creation_date)
 
         self.creation_date_from = QDateEdit()
+        self.creation_date_from.setMaximumWidth(200)
         self.creation_date_from.setCalendarPopup(True)
         self.creation_date_from.setDate(self.options.get("creation_date_from"))
         self.creation_date_from.setEnabled(self.limit_creation_date.isChecked())
         self.form_layout.addRow("From:", self.creation_date_from)
 
         self.creation_date_to = QDateEdit()
+        self.creation_date_to.setMaximumWidth(200)
         self.creation_date_to.setCalendarPopup(True)
         self.creation_date_to.setDate(self.options.get("creation_date_to"))
         self.creation_date_to.setEnabled(self.limit_creation_date.isChecked())
@@ -105,12 +109,14 @@ class OptionsDialog(QDialog):
         self.form_layout.addRow(self.limit_changing_date)
 
         self.changing_date_from = QDateEdit()
+        self.changing_date_from.setMaximumWidth(200)
         self.changing_date_from.setCalendarPopup(True)
         self.changing_date_from.setDate(self.options.get("changing_date_from"))
         self.changing_date_from.setEnabled(self.limit_changing_date.isChecked())
         self.form_layout.addRow("From:", self.changing_date_from)
 
         self.changing_date_to = QDateEdit()
+        self.changing_date_to.setMaximumWidth(200)
         self.changing_date_to.setCalendarPopup(True)
         self.changing_date_to.setDate(self.options.get("changing_date_to"))
         self.changing_date_to.setEnabled(self.limit_changing_date.isChecked())
@@ -133,6 +139,21 @@ class OptionsDialog(QDialog):
             self.file_format_checkboxes[format_name] = checkbox
             self.form_layout.addRow(checkbox)
 
+    def create_similarity_threshold_options(self):
+        self.similarity_threshold_slider = QSlider(Qt.Horizontal)
+        self.similarity_threshold_slider.setMaximumWidth(200)
+        self.similarity_threshold_slider.setRange(0, 100)
+        self.similarity_threshold_slider.setValue(self.options.get("similarity_threshold"))
+        self.similarity_threshold_slider.setTickPosition(QSlider.TicksBelow)
+        self.similarity_threshold_slider.setTickInterval(10)
+
+        self.similarity_threshold_label = QLabel(f"Similarity: {self.similarity_threshold_slider.value()}%")
+        self.similarity_threshold_slider.valueChanged.connect(self.update_similarity_threshold_label)
+        self.form_layout.addRow(self.similarity_threshold_label, self.similarity_threshold_slider)
+
+    def update_similarity_threshold_label(self, value):
+        self.similarity_threshold_label.setText(f"Similarity: {value}%")
+
     def get_options(self):
         file_formats = {format_name: checkbox.isChecked() for format_name, checkbox in
                         self.file_format_checkboxes.items()}
@@ -147,7 +168,8 @@ class OptionsDialog(QDialog):
             "limit_changing_date": self.limit_changing_date.isChecked(),
             "changing_date_from": self.changing_date_from.date(),
             "changing_date_to": self.changing_date_to.date(),
-            "file_formats": file_formats
+            "file_formats": file_formats,
+            "similarity_threshold": self.similarity_threshold_slider.value()
         }
 
     def add_separator(self, text):
