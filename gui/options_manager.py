@@ -19,7 +19,9 @@ class OptionsManager:
                 'eps': False, 'gif': False, 'icns': False, 'ico': False, 'pcx': False, 'ppm': False,
                 'psd': False, 'tga': False, 'tif': False, 'tiff': False, 'webp': False, 'wmf': False
             },
-            "similarity_threshold": 90
+            "similarity_threshold": 90,
+            "quick_search": False,
+            "comparison_size": 16
         }
 
     def set_option(self, option_name, value):

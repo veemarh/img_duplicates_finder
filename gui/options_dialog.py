@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QDialog, QFormLayout, QCheckBox, QDialogButtonBox, QVBoxLayout, \
-    QFrame, QLabel, QSpacerItem, QSizePolicy, QComboBox, QScrollArea, QWidget, QDateEdit, QSlider
+    QFrame, QLabel, QSpacerItem, QSizePolicy, QComboBox, QScrollArea, QWidget, QDateEdit, QSlider, QSpinBox
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 
@@ -25,6 +25,7 @@ class OptionsDialog(QDialog):
         self.create_folder_options()
         self.search_by_options()
         self.create_algorithm_options()
+        self.create_algorithm_specific_options()
         self.create_similarity_threshold_options()
         self.add_separator("<b>Image properties</b>")
         self.create_image_property_options()
@@ -77,6 +78,7 @@ class OptionsDialog(QDialog):
         if selected_algorithm in algorithms:
             self.algorithm_combo.setCurrentIndex(algorithms.index(selected_algorithm))
 
+        self.algorithm_combo.currentTextChanged.connect(self.update_algorithm_specific_options)
         self.form_layout.addRow("Algorithm:", self.algorithm_combo)
 
     def create_image_property_options(self):
@@ -151,6 +153,24 @@ class OptionsDialog(QDialog):
         self.similarity_threshold_slider.valueChanged.connect(self.update_similarity_threshold_label)
         self.form_layout.addRow(self.similarity_threshold_label, self.similarity_threshold_slider)
 
+    def create_algorithm_specific_options(self):
+        self.comparison_size_spinbox = QSpinBox()
+        self.comparison_size_spinbox.setMaximumWidth(200)
+        self.comparison_size_spinbox.setRange(1, 100)
+        self.comparison_size_spinbox.setValue(self.options.get("comparison_size", 16))
+        self.form_layout.addRow("Comparison Size:", self.comparison_size_spinbox)
+
+        self.quick_search_checkbox = QCheckBox("Quick Search")
+        self.quick_search_checkbox.setChecked(self.options.get("quick_search", False))
+        self.form_layout.addRow(self.quick_search_checkbox)
+
+        self.update_algorithm_specific_options(self.algorithm_combo.currentText())
+
+    def update_algorithm_specific_options(self, algorithm):
+        is_b_or_m_hash = algorithm not in ["bHash", "mHash"]
+        self.quick_search_checkbox.setDisabled(is_b_or_m_hash)
+        self.comparison_size_spinbox.setDisabled(is_b_or_m_hash)
+
     def update_similarity_threshold_label(self, value):
         self.similarity_threshold_label.setText(f"Similarity: {value}%")
 
@@ -169,7 +189,9 @@ class OptionsDialog(QDialog):
             "changing_date_from": self.changing_date_from.date(),
             "changing_date_to": self.changing_date_to.date(),
             "file_formats": file_formats,
-            "similarity_threshold": self.similarity_threshold_slider.value()
+            "similarity_threshold": self.similarity_threshold_slider.value(),
+            "quick_search": self.quick_search_checkbox.isChecked(),
+            "comparison_size": self.comparison_size_spinbox.value()
         }
 
     def add_separator(self, text):
