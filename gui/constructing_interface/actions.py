@@ -42,11 +42,11 @@ def create_actions(main_window):
     # *** Search options
     # Folders
     main_window.recursiveSearchAction = QAction(QIcon("static/recursive.png"), "&Recursive Search", main_window)
-    main_window.recursiveSearchAction.setStatusTip("Search only in the specified folders")
+    main_window.recursiveSearchAction.setStatusTip("Search in folders and their subfolders")
     main_window.recursiveSearchAction.triggered.connect(
         lambda: main_window.options_manager.set_option("recursive_search", True))
     main_window.currentSearchAction = QAction(QIcon("static/current.png"), "In the &Current Folder", main_window)
-    main_window.currentSearchAction.setStatusTip("Search in folders and their subfolders")
+    main_window.currentSearchAction.setStatusTip("Search only in the specified folders")
     main_window.currentSearchAction.triggered.connect(
         lambda: main_window.options_manager.set_option("recursive_search", False))
     main_window.recursiveSearchAction.setCheckable(True)
