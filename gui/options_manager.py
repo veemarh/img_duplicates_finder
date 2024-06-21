@@ -8,6 +8,8 @@ class OptionsManager:
             "search_by": {"Name": False, "Format": False, "Size": False},
             "algorithm": "aHash",
             "limit_size": False,
+            "size_value": "1024",
+            "size_unit": "bytes",
             "limit_creation_date": False,
             "creation_date_from": QDate.addDays(QDate.currentDate(), -7),
             "creation_date_to": QDate.currentDate(),

@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QDialog, QFormLayout, QCheckBox, QDialogButtonBox, QVBoxLayout, \
-    QFrame, QLabel, QSpacerItem, QSizePolicy, QComboBox, QScrollArea, QWidget, QDateEdit, QSlider, QSpinBox
+    QFrame, QLabel, QSpacerItem, QSizePolicy, QComboBox, QScrollArea, QWidget, QDateEdit, QSlider, QSpinBox, QLineEdit, \
+    QHBoxLayout
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 
@@ -94,7 +95,26 @@ class OptionsDialog(QDialog):
     def create_image_property_options(self):
         self.limit_size = QCheckBox("Limit Size")
         self.limit_size.setChecked(self.options.get("limit_size", False))
-        self.form_layout.addRow(self.limit_size)
+        self.limit_size.toggled.connect(self.toggle_size_limits)
+
+        self.size_value = QLineEdit()
+        self.size_value.setMaximumWidth(128)
+        self.size_value.setText(self.options.get("size_value"))
+        self.size_value.setEnabled(self.limit_size.isChecked())
+
+        self.size_unit = QComboBox()
+        self.size_unit.setMaximumWidth(96)
+        size_units = ["bytes", "kb", "mb"]
+        self.size_unit.addItems(size_units)
+        selected_unit = self.options.get("size_unit")
+        self.size_unit.setCurrentIndex(size_units.index(selected_unit))
+        self.size_unit.setEnabled(self.limit_size.isChecked())
+
+        limit_size_hbox = QHBoxLayout()
+        limit_size_hbox.addWidget(self.size_value)
+        limit_size_hbox.addWidget(self.size_unit)
+        limit_size_hbox.addStretch()
+        self.form_layout.addRow(self.limit_size, limit_size_hbox)
 
         self.limit_creation_date = QCheckBox("Limit Creation Date")
         self.limit_creation_date.setChecked(self.options.get("limit_creation_date", False))
@@ -133,6 +153,10 @@ class OptionsDialog(QDialog):
         self.changing_date_to.setDate(self.options.get("changing_date_to"))
         self.changing_date_to.setEnabled(self.limit_changing_date.isChecked())
         self.form_layout.addRow("To:", self.changing_date_to)
+
+    def toggle_size_limits(self, checked):
+        self.size_value.setEnabled(checked)
+        self.size_unit.setEnabled(checked)
 
     def toggle_creation_date_limits(self, checked):
         self.creation_date_from.setEnabled(checked)
@@ -228,7 +252,9 @@ class OptionsDialog(QDialog):
             "max_duplicates": self.max_duplicates_spinbox.value(),
             "modified": modified,
             "search_specific_file": self.specific_file_checkbox.isChecked(),
-            "specific_file_path": self.options.get("specific_file_path")
+            "specific_file_path": self.options.get("specific_file_path"),
+            "size_value": self.size_value.text(),
+            "size_unit": self.size_unit.currentText()
         }
 
     def add_separator(self, text):
