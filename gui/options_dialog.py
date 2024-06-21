@@ -34,6 +34,8 @@ class OptionsDialog(QDialog):
         self.add_separator("<b>When searching for duplicates</b>")
         self.create_max_duplicates_option()
         self.create_search_by_options()
+        self.add_separator("<b>When duplicates are found</b>")
+        self.create_uploading_folder_option()
         self.add_separator("<b>Modifications</b>")
         self.create_modified_options()
         self.add_separator("<b>File formats</b>")
@@ -51,6 +53,11 @@ class OptionsDialog(QDialog):
         self.specific_file_checkbox = QCheckBox("Search for duplicates of a specific file")
         self.specific_file_checkbox.setChecked(self.options.get("search_specific_file", False))
         self.form_layout.addRow(self.specific_file_checkbox)
+
+    def create_uploading_folder_option(self):
+        self.uploading_folder_checkbox = QCheckBox("Upload found duplicates to a folder")
+        self.uploading_folder_checkbox.setChecked(self.options.get("select_uploading_folder", False))
+        self.form_layout.addRow(self.uploading_folder_checkbox)
 
     def create_folder_options(self):
         self.folder_combo = QComboBox()
@@ -239,6 +246,8 @@ class OptionsDialog(QDialog):
             "search_by": search_by,
             "algorithm": self.algorithm_combo.currentText(),
             "limit_size": self.limit_size.isChecked(),
+            "size_value": self.size_value.text(),
+            "size_unit": self.size_unit.currentText(),
             "limit_creation_date": self.limit_creation_date.isChecked(),
             "creation_date_from": self.creation_date_from.date(),
             "creation_date_to": self.creation_date_to.date(),
@@ -253,8 +262,8 @@ class OptionsDialog(QDialog):
             "modified": modified,
             "search_specific_file": self.specific_file_checkbox.isChecked(),
             "specific_file_path": self.options.get("specific_file_path"),
-            "size_value": self.size_value.text(),
-            "size_unit": self.size_unit.currentText()
+            "select_uploading_folder": self.uploading_folder_checkbox.isChecked(),
+            "uploading_folder_path": self.options.get("uploading_folder_path")
         }
 
     def add_separator(self, text):
@@ -289,3 +298,6 @@ def update_options(main_window):
 
     search_specific_file = main_window.options_manager.options.get("search_specific_file")
     main_window.search_specific_file_checkbox.setChecked(search_specific_file)
+
+    select_uploading_folder = main_window.options_manager.options.get("select_uploading_folder")
+    main_window.select_uploading_folder_checkbox.setChecked(select_uploading_folder)

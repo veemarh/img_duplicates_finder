@@ -32,7 +32,9 @@ class OptionsManager:
                 "reflected vertically and rotated 90 degrees to the right": False
             },
             "search_specific_file": False,
-            "specific_file_path": ""
+            "specific_file_path": "",
+            "select_uploading_folder": False,
+            "uploading_folder_path": ""
         }
 
     def set_option(self, option_name, value):

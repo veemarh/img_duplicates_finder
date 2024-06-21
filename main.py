@@ -16,6 +16,7 @@ from gui.drag_drop import dragEnterEvent, dropEvent
 from gui.search_event_handlers import browse_folder, start_search, display_results, remove_sel_folder, \
     clear_search_list, browse_excluded_folder, remove_sel_excluded_folder, clear_excluded_list
 from gui.specific_file_manager import toggle_specific_file_search, set_specific_file, browse_file
+from gui.uploading_folder_manager import toggle_uploading_folder_search, set_uploading_folder, browse_uploading_folder
 
 
 class ImgDuplicatesFinder(QMainWindow):
@@ -125,6 +126,24 @@ class ImgDuplicatesFinder(QMainWindow):
         specific_file_layout.addWidget(self.specific_file_path_edit)
         specific_file_layout.addWidget(self.file_browse_button)
 
+        # Опция выбора папки для загрузки
+        self.select_uploading_folder_checkbox = QCheckBox("Upload found duplicates to a folder")
+        self.select_uploading_folder_checkbox.stateChanged.connect(self.toggle_uploading_folder_search)
+        self.uploading_folder_path_edit = QLineEdit()
+        self.uploading_folder_path_edit.setPlaceholderText("Enter folder path")
+        self.uploading_folder_path_edit.setEnabled(False)
+        self.uploading_folder_path_edit.textChanged.connect(self.set_uploading_folder)
+
+        self.uploading_folder_browse_button = QPushButton("Browse")
+        self.uploading_folder_browse_button.clicked.connect(self.browse_uploading_folder)
+        self.uploading_folder_browse_button.setEnabled(False)
+
+        # Макет для выбора папки для загрузки
+        uploading_folder_layout = QHBoxLayout()
+        uploading_folder_layout.addWidget(self.select_uploading_folder_checkbox)
+        uploading_folder_layout.addWidget(self.uploading_folder_path_edit)
+        uploading_folder_layout.addWidget(self.uploading_folder_browse_button)
+
         # кнопка начала поиска
         search_button = QPushButton("Search")
         search_button.clicked.connect(self.start_search)
@@ -138,6 +157,7 @@ class ImgDuplicatesFinder(QMainWindow):
         main_layout.addLayout(specific_file_layout)
         main_layout.addLayout(folder_layout)
         main_layout.addLayout(excluded_folder_layout)
+        main_layout.addLayout(uploading_folder_layout)
         main_layout.addWidget(search_button)
         main_layout.addWidget(result_label)
         main_layout.addWidget(self.result_listbox)
@@ -209,6 +229,15 @@ class ImgDuplicatesFinder(QMainWindow):
 
     def browse_file(self):
         browse_file(self)
+
+    def toggle_uploading_folder_search(self, state):
+        toggle_uploading_folder_search(self, state)
+
+    def set_uploading_folder(self, text):
+        set_uploading_folder(self, text)
+
+    def browse_uploading_folder(self):
+        browse_uploading_folder(self)
 
 
 if __name__ == '__main__':
