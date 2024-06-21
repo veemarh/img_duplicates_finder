@@ -58,15 +58,15 @@ def create_actions(main_window):
     main_window.recursiveSearchAction.setChecked(True)
     # Search by
     main_window.byNameAction = QAction("&Name", main_window)
-    main_window.byNameAction.setStatusTip("Search for images with the same name")
+    main_window.byNameAction.setStatusTip("Compare only with the same name")
     main_window.byNameAction.setCheckable(True)
     main_window.byNameAction.toggled.connect(lambda checked: update_search_by_option(main_window, "Name", checked))
     main_window.byFormatAction = QAction("&Format", main_window)
-    main_window.byFormatAction.setStatusTip("Search for similar images by format")
+    main_window.byFormatAction.setStatusTip("Compare only with the same format")
     main_window.byFormatAction.setCheckable(True)
     main_window.byFormatAction.toggled.connect(lambda checked: update_search_by_option(main_window, "Format", checked))
     main_window.bySizeAction = QAction("&Size", main_window)
-    main_window.bySizeAction.setStatusTip("Search for images of the same size")
+    main_window.bySizeAction.setStatusTip("Compare only with the same size")
     main_window.bySizeAction.setCheckable(True)
     main_window.bySizeAction.toggled.connect(lambda checked: update_search_by_option(main_window, "Size", checked))
     # Algorithms

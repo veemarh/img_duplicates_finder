@@ -72,18 +72,18 @@ class OptionsDialog(QDialog):
         self.form_layout.addRow("Folders for search:", self.folder_combo)
 
     def create_search_by_options(self):
-        self.search_by_name = QCheckBox("Search by Name")
-        self.search_by_format = QCheckBox("Search by Format")
-        self.search_by_size = QCheckBox("Search by Size")
+        self.search_by_name = QCheckBox("Name")
+        self.search_by_format = QCheckBox("Format")
+        self.search_by_size = QCheckBox("Size")
 
         search_by = self.options.get("search_by", {})
         self.search_by_name.setChecked(search_by.get("Name", False))
         self.search_by_format.setChecked(search_by.get("Format", False))
         self.search_by_size.setChecked(search_by.get("Size", False))
 
-        self.form_layout.addRow(self.search_by_name)
-        self.form_layout.addRow(self.search_by_format)
-        self.form_layout.addRow(self.search_by_size)
+        self.form_layout.addRow("Same properties:", self.search_by_name)
+        self.form_layout.addWidget(self.search_by_format)
+        self.form_layout.addWidget(self.search_by_size)
 
     def create_algorithm_options(self):
         self.algorithm_combo = QComboBox()

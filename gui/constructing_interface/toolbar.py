@@ -17,7 +17,7 @@ def create_toolbar(main_window):
     search_by_menu = QMenu(main_window)
     search_by_menu.addActions([main_window.byNameAction, main_window.byFormatAction, main_window.bySizeAction])
     search_by_tool = QToolButton(main_window)
-    search_by_tool.setToolTip("Search by")
+    search_by_tool.setToolTip("Same properties")
     search_by_tool.setIcon(QIcon("static/search_by.png"))
     search_by_tool.setPopupMode(QToolButton.InstantPopup)
     search_by_tool.setMenu(search_by_menu)

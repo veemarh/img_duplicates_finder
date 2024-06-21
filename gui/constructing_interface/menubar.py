@@ -26,7 +26,7 @@ def create_menubar(main_window):
     folders_menu.addAction(main_window.recursiveSearchAction)
     folders_menu.addAction(main_window.currentSearchAction)
     # Search by
-    search_by_menu = options_menu.addMenu("&Search by")
+    search_by_menu = options_menu.addMenu("&Same properties")
     search_by_menu.addActions([main_window.byNameAction, main_window.byFormatAction, main_window.bySizeAction])
     # Algorithms
     algorithms_menu = options_menu.addMenu("&Algorithm")
