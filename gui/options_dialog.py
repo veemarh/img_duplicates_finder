@@ -195,11 +195,9 @@ class OptionsDialog(QDialog):
         self.form_layout.addRow(self.similarity_threshold_label, self.similarity_threshold_slider)
 
     def create_algorithm_specific_options(self):
-        self.comparison_size_spinbox = QSpinBox()
-        self.comparison_size_spinbox.setMaximumWidth(200)
-        self.comparison_size_spinbox.setRange(1, 100)
-        self.comparison_size_spinbox.setValue(self.options.get("comparison_size", 16))
-        self.form_layout.addRow("Comparison Size:", self.comparison_size_spinbox)
+        self.comparison_size_combobox = QComboBox()
+        self.comparison_size_combobox.setMaximumWidth(200)
+        self.form_layout.addRow("Comparison Size:", self.comparison_size_combobox)
 
         self.quick_search_checkbox = QCheckBox("Quick Search")
         self.quick_search_checkbox.setChecked(self.options.get("quick_search", False))
@@ -224,9 +222,26 @@ class OptionsDialog(QDialog):
             self.form_layout.addRow(checkbox)
 
     def update_algorithm_specific_options(self, algorithm):
-        is_b_or_m_hash = algorithm not in ["bHash", "mHash"]
-        self.quick_search_checkbox.setDisabled(is_b_or_m_hash)
-        self.comparison_size_spinbox.setDisabled(is_b_or_m_hash)
+        self.comparison_size_combobox.clear()
+        self.quick_search_checkbox.setDisabled(algorithm not in ["bHash", "mHash"])
+        self.comparison_size_combobox.setDisabled(algorithm not in ["bHash", "mHash"])
+
+        if algorithm == "bHash":
+            self.comparison_size_combobox.addItems(["128", "256", "512"])
+            current_value = str(self.options.get("comparison_size", "256"))
+            if current_value in ["128", "256", "512"]:
+                self.comparison_size_combobox.setCurrentText(current_value)
+            else:
+                self.comparison_size_combobox.setCurrentIndex(1)
+        elif algorithm == "mHash":
+            self.comparison_size_combobox.addItems(["8", "16"])
+            current_value = str(self.options.get("comparison_size", "16"))
+            if current_value in ["8", "16"]:
+                self.comparison_size_combobox.setCurrentText(current_value)
+            else:
+                self.comparison_size_combobox.setCurrentIndex(1)
+        else:
+            self.comparison_size_combobox.setCurrentText("")
 
     def update_similarity_threshold_label(self, value):
         self.similarity_threshold_label.setText(f"Similarity: {value}%")
@@ -257,7 +272,7 @@ class OptionsDialog(QDialog):
             "file_formats": file_formats,
             "similarity_threshold": self.similarity_threshold_slider.value(),
             "quick_search": self.quick_search_checkbox.isChecked(),
-            "comparison_size": self.comparison_size_spinbox.value(),
+            "comparison_size": self.comparison_size_combobox.currentText(),
             "max_duplicates": self.max_duplicates_spinbox.value(),
             "modified": modified,
             "search_specific_file": self.specific_file_checkbox.isChecked(),

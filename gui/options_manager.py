@@ -23,7 +23,7 @@ class OptionsManager:
             },
             "similarity_threshold": 90,
             "quick_search": False,
-            "comparison_size": 16,
+            "comparison_size": "",
             "max_duplicates": 1000,
             "modified": {
                 "rotated 90 deg to the right": False, "rotated 180 deg": False, "rotated 90 deg to the left": False,

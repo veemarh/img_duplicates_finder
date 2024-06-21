@@ -99,7 +99,17 @@ def create_actions(main_window):
 
 
 def set_algorithm(main_window, algorithm):
-    main_window.options_manager.set_option("algorithm", algorithm)
+    if main_window.options_manager.get_option("algorithm") != algorithm:
+        main_window.options_manager.set_option("algorithm", algorithm)
+        if algorithm == "bHash":
+            main_window.options_manager.set_option("comparison_size", "256")
+        elif algorithm == "mHash":
+            main_window.options_manager.set_option("comparison_size", "16")
+        else:
+            main_window.options_manager.set_option("comparison_size", "")
+
+        if hasattr(main_window, 'options_dialog'):
+            main_window.options_dialog.update_algorithm_specific_options(algorithm)
 
 
 def update_search_by_option(main_window, key, checked):
