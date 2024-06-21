@@ -103,25 +103,45 @@ class OptionsDialog(QDialog):
         self.limit_size = QCheckBox("Limit Size")
         self.limit_size.setChecked(self.options.get("limit_size", False))
         self.limit_size.toggled.connect(self.toggle_size_limits)
+        self.form_layout.addRow(self.limit_size)
 
-        self.size_value = QLineEdit()
-        self.size_value.setMaximumWidth(128)
-        self.size_value.setText(self.options.get("size_value"))
-        self.size_value.setEnabled(self.limit_size.isChecked())
+        self.size_value_from = QLineEdit()
+        self.size_value_from.setMaximumWidth(128)
+        self.size_value_from.setText(self.options.get("size_value_from"))
+        self.size_value_from.setEnabled(self.limit_size.isChecked())
 
-        self.size_unit = QComboBox()
-        self.size_unit.setMaximumWidth(96)
+        self.size_unit_from = QComboBox()
+        self.size_unit_from.setMaximumWidth(96)
         size_units = ["bytes", "kb", "mb"]
-        self.size_unit.addItems(size_units)
-        selected_unit = self.options.get("size_unit")
-        self.size_unit.setCurrentIndex(size_units.index(selected_unit))
-        self.size_unit.setEnabled(self.limit_size.isChecked())
+        self.size_unit_from.addItems(size_units)
+        selected_unit = self.options.get("size_unit_from")
+        self.size_unit_from.setCurrentIndex(size_units.index(selected_unit))
+        self.size_unit_from.setEnabled(self.limit_size.isChecked())
 
-        limit_size_hbox = QHBoxLayout()
-        limit_size_hbox.addWidget(self.size_value)
-        limit_size_hbox.addWidget(self.size_unit)
-        limit_size_hbox.addStretch()
-        self.form_layout.addRow(self.limit_size, limit_size_hbox)
+        limit_size_hbox_from = QHBoxLayout()
+        limit_size_hbox_from.addWidget(self.size_value_from)
+        limit_size_hbox_from.addWidget(self.size_unit_from)
+        limit_size_hbox_from.addStretch()
+        self.form_layout.addRow("from:", limit_size_hbox_from)
+
+        self.size_value_to = QLineEdit()
+        self.size_value_to.setMaximumWidth(128)
+        self.size_value_to.setText(self.options.get("size_value_to"))
+        self.size_value_to.setEnabled(self.limit_size.isChecked())
+
+        self.size_unit_to = QComboBox()
+        self.size_unit_to.setMaximumWidth(96)
+        size_units = ["bytes", "kb", "mb"]
+        self.size_unit_to.addItems(size_units)
+        selected_unit = self.options.get("size_unit_to")
+        self.size_unit_to.setCurrentIndex(size_units.index(selected_unit))
+        self.size_unit_to.setEnabled(self.limit_size.isChecked())
+
+        limit_size_hbox_to = QHBoxLayout()
+        limit_size_hbox_to.addWidget(self.size_value_to)
+        limit_size_hbox_to.addWidget(self.size_unit_to)
+        limit_size_hbox_to.addStretch()
+        self.form_layout.addRow("to:", limit_size_hbox_to)
 
         self.limit_creation_date = QCheckBox("Limit Creation Date")
         self.limit_creation_date.setChecked(self.options.get("limit_creation_date", False))
@@ -133,14 +153,14 @@ class OptionsDialog(QDialog):
         self.creation_date_from.setCalendarPopup(True)
         self.creation_date_from.setDate(self.options.get("creation_date_from"))
         self.creation_date_from.setEnabled(self.limit_creation_date.isChecked())
-        self.form_layout.addRow("From:", self.creation_date_from)
+        self.form_layout.addRow("from:", self.creation_date_from)
 
         self.creation_date_to = QDateEdit()
         self.creation_date_to.setMaximumWidth(200)
         self.creation_date_to.setCalendarPopup(True)
         self.creation_date_to.setDate(self.options.get("creation_date_to"))
         self.creation_date_to.setEnabled(self.limit_creation_date.isChecked())
-        self.form_layout.addRow("To:", self.creation_date_to)
+        self.form_layout.addRow("to:", self.creation_date_to)
 
         self.limit_changing_date = QCheckBox("Limit Changing Date")
         self.limit_changing_date.setChecked(self.options.get("limit_changing_date", False))
@@ -152,18 +172,20 @@ class OptionsDialog(QDialog):
         self.changing_date_from.setCalendarPopup(True)
         self.changing_date_from.setDate(self.options.get("changing_date_from"))
         self.changing_date_from.setEnabled(self.limit_changing_date.isChecked())
-        self.form_layout.addRow("From:", self.changing_date_from)
+        self.form_layout.addRow("from:", self.changing_date_from)
 
         self.changing_date_to = QDateEdit()
         self.changing_date_to.setMaximumWidth(200)
         self.changing_date_to.setCalendarPopup(True)
         self.changing_date_to.setDate(self.options.get("changing_date_to"))
         self.changing_date_to.setEnabled(self.limit_changing_date.isChecked())
-        self.form_layout.addRow("To:", self.changing_date_to)
+        self.form_layout.addRow("to:", self.changing_date_to)
 
     def toggle_size_limits(self, checked):
-        self.size_value.setEnabled(checked)
-        self.size_unit.setEnabled(checked)
+        self.size_value_from.setEnabled(checked)
+        self.size_unit_from.setEnabled(checked)
+        self.size_value_to.setEnabled(checked)
+        self.size_unit_to.setEnabled(checked)
 
     def toggle_creation_date_limits(self, checked):
         self.creation_date_from.setEnabled(checked)
@@ -261,8 +283,10 @@ class OptionsDialog(QDialog):
             "search_by": search_by,
             "algorithm": self.algorithm_combo.currentText(),
             "limit_size": self.limit_size.isChecked(),
-            "size_value": self.size_value.text(),
-            "size_unit": self.size_unit.currentText(),
+            "size_value_from": self.size_value_from.text(),
+            "size_unit_from": self.size_unit_from.currentText(),
+            "size_value_to": self.size_value_to.text(),
+            "size_unit_to": self.size_unit_to.currentText(),
             "limit_creation_date": self.limit_creation_date.isChecked(),
             "creation_date_from": self.creation_date_from.date(),
             "creation_date_to": self.creation_date_to.date(),
