@@ -25,6 +25,8 @@ class OptionsDialog(QDialog):
         self.add_separator("<b>Search options</b>")
         self.create_folder_options()
         self.create_specific_file_option()
+        self.add_separator("<b>File formats</b>")
+        self.create_file_format_options()
         self.add_separator("<b>Image properties</b>")
         self.create_image_property_options()
         self.add_separator("<b>Comparison parameters</b>")
@@ -38,8 +40,6 @@ class OptionsDialog(QDialog):
         self.create_uploading_folder_option()
         self.add_separator("<b>Modifications</b>")
         self.create_modified_options()
-        self.add_separator("<b>File formats</b>")
-        self.create_file_format_options()
 
         self.scroll_area.setWidget(self.scroll_widget)
         dlg_layout.addWidget(self.scroll_area)
@@ -198,11 +198,20 @@ class OptionsDialog(QDialog):
     def create_file_format_options(self):
         self.file_format_checkboxes = {}
         file_formats = self.options.get("file_formats", {})
+
+        row_layout = None
+        counter = 0
+
         for format_name, checked in file_formats.items():
+            if counter % 6 == 0:
+                row_layout = QHBoxLayout()
+                self.form_layout.addRow(row_layout)
+
             checkbox = QCheckBox(format_name.upper())
             checkbox.setChecked(checked)
             self.file_format_checkboxes[format_name] = checkbox
-            self.form_layout.addRow(checkbox)
+            row_layout.addWidget(checkbox)
+            counter += 1
 
     def create_similarity_threshold_options(self):
         self.similarity_threshold_slider = QSlider(Qt.Horizontal)
