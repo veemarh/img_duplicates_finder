@@ -15,6 +15,7 @@ from gui.constructing_interface.actions import create_actions
 from gui.drag_drop import dragEnterEvent, dropEvent
 from gui.search_event_handlers import browse_folder, start_search, display_results, remove_sel_folder, \
     clear_search_list, browse_excluded_folder, remove_sel_excluded_folder, clear_excluded_list
+from gui.specific_file_manager import toggle_specific_file_search, set_specific_file, browse_file
 
 
 class ImgDuplicatesFinder(QMainWindow):
@@ -201,18 +202,13 @@ class ImgDuplicatesFinder(QMainWindow):
         self.undo_stack.redo()
 
     def toggle_specific_file_search(self, state):
-        enabled = state == Qt.Checked
-        self.specific_file_path_edit.setEnabled(enabled)
-        self.file_browse_button.setEnabled(enabled)
-        self.options_manager.set_option("search_specific_file", enabled)
+        toggle_specific_file_search(self, state)
 
     def set_specific_file(self, text):
-        self.options_manager.set_option("specific_file_path", text)
+        set_specific_file(self, text)
 
     def browse_file(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Select File")
-        if file_path:
-            self.specific_file_path_edit.setText(file_path)
+        browse_file(self)
 
 
 if __name__ == '__main__':
