@@ -35,12 +35,13 @@ def start_search(self):
     self.file_searcher.file_formats = formats
     # search images
     images = self.file_searcher.search()
+    # comparison params
     self.method.name = options["algorithm"]
     self.method.similarity = options["similarity_threshold"]
-# # для bНash и mHash также можно задать след. параметры
-# # в интерфейсе их можно что-то типо подключать или делать активными для выбора
-# method.bhash_quick = True # по умолчанию False
-# method.comparison_size = 16 
+    
+    self.method.bhash_quick = options["quick_search"]
+    self.method.comparison_size = int(options["comparison_size"])
+
     dupl_finder = DuplicatesFinder(self.method)
     dupl_finder.files = images[0]
     
