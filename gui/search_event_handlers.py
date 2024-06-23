@@ -38,7 +38,17 @@ def start_search(self):
         min_val = translate_in_bytes(int(options["size_value_from"]), options["size_unit_from"])
         max_val = translate_in_bytes(int(options["size_value_to"]), options["size_unit_to"])
         self.file_searcher.set_limit_file_size(min_val, max_val)
-    
+        
+    if options["limit_creation_date"]:
+        min_val = options["creation_date_from"]
+        max_val = options["creation_date_to"]
+        self.file_searcher.set_limit_file_creating_time(min_val, max_val)
+        
+    if options["limit_changing_date"]:
+        min_val = options["changing_date_from"]
+        max_val = options["changing_date_to"]
+        self.file_searcher.set_limit_file_modifying_time(min_val, max_val)
+        
     # search images
     images = self.file_searcher.search()
     # comparison params
