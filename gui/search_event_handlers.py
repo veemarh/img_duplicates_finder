@@ -40,7 +40,8 @@ def start_search(self):
     self.method.similarity = options["similarity_threshold"]
     
     self.method.bhash_quick = options["quick_search"]
-    self.method.comparison_size = int(options["comparison_size"])
+    if options["comparison_size"]:
+        self.method.comparison_size = int(options["comparison_size"])
 
     dupl_finder = DuplicatesFinder(self.method)
     dupl_finder.files = images[0]
@@ -52,7 +53,20 @@ def start_search(self):
         dupl_finder.folder_for_move = options["uploading_folder_path"]
         
     dupl_finder.max_num_duplicates = options["max_duplicates"]
-    
+    # same properties
+    same_props = options["search_by"] # {"Name": bool, "Format": bool, "Size": bool}
+    dupl_finder.set_identical_properties(same_props["Name"], same_props["Format"], same_props["Size"])
+    # modifications
+    mod_props = options["modified"]
+    dupl_finder.set_modified_properties(
+        mod_props["rotated 90 deg to the right"],
+        mod_props["rotated 180 deg"],
+        mod_props["rotated 90 deg to the left"],
+        mod_props["reflected horizontally"],
+        mod_props["reflected vertically"],
+        mod_props["reflected horizontally and rotated 90 deg to the right"],
+        mod_props["reflected vertically and rotated 90 deg to the right"]
+    )
     # output result
     dups, dups_num = dupl_finder.find()
     display_results(self, dups, dups_num)
