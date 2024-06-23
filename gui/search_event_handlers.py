@@ -21,20 +21,27 @@ def browse_excluded_folder(self):
 def start_search(self):
     if not self.search_list:
         QMessageBox.warning(self, "Empty Folder Path", "Please select a folder for search.")
-        return
+        return  
+     
+    options = self.options_manager.options
+    # turn on/off recursive search
+    self.file_searcher.search_in_subfolders = options["recursive_search"]
     # get array of file formats
     formats = []
-    formats_dict = self.options_manager.options["file_formats"]
+    formats_dict = options["file_formats"]
     for f in formats_dict:
         if formats_dict[f]:
             formats.append(f)
     self.file_searcher.file_formats = formats
-    # img params
+    # search images
     images = self.file_searcher.search()
-    # method params
+
     dupl_finder = DuplicatesFinder(self.method)
     dupl_finder.files = images[0]
-    # finder params
+    
+    if options["search_specific_file"]:
+        dupl_finder.specified_file = options["specific_file_path"]
+    # output result
     dups, dups_num = dupl_finder.find()
     display_results(self, dups, dups_num)
 
