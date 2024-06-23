@@ -33,6 +33,12 @@ def start_search(self):
         if formats_dict[f]:
             formats.append(f)
     self.file_searcher.file_formats = formats
+    # image limits
+    if options["limit_size"]:
+        min_val = translate_in_bytes(int(options["size_value_from"]), options["size_unit_from"])
+        max_val = translate_in_bytes(int(options["size_value_to"]), options["size_unit_to"])
+        self.file_searcher.set_limit_file_size(min_val, max_val)
+    
     # search images
     images = self.file_searcher.search()
     # comparison params
@@ -107,3 +113,15 @@ def clear_excluded_list(self):
     if self.excluded_list:
         command = ClearExcludedSearchListCommand(self.excluded_dnd_space, self.excluded_list)
         self.undo_stack.push(command)
+        
+def translate_in_bytes(val: int, unit: str):
+    match unit:
+        case "bytes":
+            res = val
+        case "kb":
+            res = val * 1024
+        case "mb":
+            res = val * 1048576
+        case _:
+            raise Exception("Invalid unit value")
+    return res
