@@ -7,7 +7,6 @@ from algorithms.orb import get_orb_similarity
 from duplicates_finder.comparisonMethod import ComparisonMethod
 from duplicates_finder.comparisonObject import ComparisonObject
 
-
 # var 'files': array of strings - file paths
 # var 'specified_file': str
 # var 'folder_for_move': str

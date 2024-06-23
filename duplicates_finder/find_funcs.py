@@ -2,23 +2,25 @@ import os
 import cv2
 import imagehash
 from PIL import Image
+from program_constants.constants import MethodNames
 from algorithms.hash import get_hash
 from duplicates_finder.comparisonMethod import ComparisonMethod
 
 def get_data(file_path: str, method: ComparisonMethod):
     name = method.name
-    match name:
-        case 'ORB':
+    if name in MethodNames.USING_DESCRIPTORS:
             img = cv2.imread(file_path)
             return img, img
-        case _:
-            hash_size = method.hash_size
-            quick = method.bhash_quick
-            size = method.comparison_size
-            img = Image.open(file_path)
-            hash = get_hash(img, name, hash_size, quick, size)
-            return img, hash
-        
+    elif name in MethodNames.USING_HASH:
+        hash_size = method.hash_size
+        quick = method.bhash_quick
+        size = method.comparison_size
+        img = Image.open(file_path)
+        hash = get_hash(img, name, hash_size, quick, size)
+        return img, hash
+    else:
+        raise Exception('Invalid method name')
+    
 def get_data_obj(obj, method: ComparisonMethod):
     name = method.name
     if isinstance(obj, Image.Image):
