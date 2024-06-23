@@ -18,11 +18,11 @@ def browse_excluded_folder(self):
         self.undo_stack.push(command)
 
 
-def start_search(self):
+def start_search(self): 
     if not self.search_list:
         QMessageBox.warning(self, "Empty Folder Path", "Please select a folder for search.")
         return  
-     
+    
     options = self.options_manager.options
     # turn on/off recursive search
     self.file_searcher.search_in_subfolders = options["recursive_search"]
@@ -35,7 +35,12 @@ def start_search(self):
     self.file_searcher.file_formats = formats
     # search images
     images = self.file_searcher.search()
-
+    self.method.name = options["algorithm"]
+    self.method.similarity = options["similarity_threshold"]
+# # для bНash и mHash также можно задать след. параметры
+# # в интерфейсе их можно что-то типо подключать или делать активными для выбора
+# method.bhash_quick = True # по умолчанию False
+# method.comparison_size = 16 
     dupl_finder = DuplicatesFinder(self.method)
     dupl_finder.files = images[0]
     
@@ -44,6 +49,9 @@ def start_search(self):
         
     if options["select_uploading_folder"]:
         dupl_finder.folder_for_move = options["uploading_folder_path"]
+        
+    dupl_finder.max_num_duplicates = options["max_duplicates"]
+    
     # output result
     dups, dups_num = dupl_finder.find()
     display_results(self, dups, dups_num)
