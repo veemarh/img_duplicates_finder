@@ -30,15 +30,18 @@ def start_search(self):
     dupl_finder = DuplicatesFinder(self.method)
     dupl_finder.files = images[0]
     # finder params
-    dupl_finder.find()
-    # self.display_results(dups)
+    dups = dupl_finder.find()
+    self.display_results(dups)
 
 
 def display_results(self, duplicates):
     self.result_listbox.clear()
     if duplicates:
-        for duplicate in duplicates:
-            self.result_listbox.addItem(f"{duplicate[0]} and {duplicate[1]}")
+        for i in duplicates:
+            self.result_listbox.addItem(f"{i}:")
+            for duplicate in duplicates[i]:
+                self.result_listbox.addItem(f"- {duplicate}")
+            self.result_listbox.addItem("")
     else:
         self.result_listbox.addItem("No duplicate images found.")
 

@@ -33,6 +33,7 @@ class DuplicatesFinder:
     def find(self):
         start = time.monotonic()
 
+        duplicates = {}
         file_is_specified = False
         check_i = 0
 
@@ -75,6 +76,12 @@ class DuplicatesFinder:
 
                 if self.__is_duplicates(checked_obj.comparison_data, curr_obj.comparison_data) or \
                         (self.__search_modified_images and self.__check_modified(checked_obj, curr_obj)):
+                    # add duplicates
+                    if path_check_img in duplicates:
+                        duplicates[path_check_img].append(path_curr_img)
+                    else:
+                        duplicates[path_check_img] = [path_curr_img]
+                        
                     self.__action_with_duplicates(checked_obj, curr_obj)
                     if file_is_specified:
                         curr_i += 1
@@ -91,6 +98,7 @@ class DuplicatesFinder:
 
         print(duplicate_count, 'duplicates found')
         print(f'Script running time: {time.monotonic() - start}')
+        return duplicates
 
     def set_identical_properties(self, name: bool = False, format: bool = False, size: bool = False):
         self.__require_identical_properties = True
@@ -152,7 +160,7 @@ class DuplicatesFinder:
 
     def __action_with_duplicates(self, checked_obj: ComparisonObject, curr_obj: ComparisonObject):
         path_curr_img = curr_obj.file_path
-        print(f"{checked_obj.file_path} - {path_curr_img}")
+        # print(f"{checked_obj.file_path} - {path_curr_img}")
         name_curr_img = os.path.basename(path_curr_img)
         if self.folder_for_move:
             Path(path_curr_img).rename(f"{self.folder_for_move}/{name_curr_img}")
