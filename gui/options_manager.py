@@ -19,16 +19,17 @@ class OptionsManager:
             "changing_date_from": QDate.addDays(QDate.currentDate(), -7),
             "changing_date_to": QDate.currentDate(),
             "file_formats": {
-                'png': True, 'jpg': True, 'jpeg': True, 'bmp': False, 'dds': False, 'dib': False,
-                'eps': False, 'gif': False, 'icns': False, 'ico': False, 'pcx': False, 'ppm': False,
-                'psd': False, 'tga': False, 'tif': False, 'tiff': False, 'webp': False, 'wmf': False
+                '.png': True, '.jpg': True, '.jpeg': True, '.bmp': False, '.dds': False, '.dib': False,
+                '.eps': False, '.gif': False, '.icns': False, '.ico': False, '.pcx': False, '.ppm': False,
+                '.psd': False, '.tga': False, '.tif': False, '.tiff': False, '.webp': False, '.wmf': False
             },
             "similarity_threshold": 90,
             "quick_search": False,
             "comparison_size": "",
             "max_duplicates": 1000,
             "modified": {
-                "rotated 90 deg to the right": False, "rotated 180 deg": False, "rotated 90 deg to the left": False,
+                "rotated 90 deg to the right": False, "rotated 180 deg": False, 
+                "rotated 90 deg to the left": False,
                 "reflected horizontally": False, "reflected vertically": False,
                 "reflected horizontally and rotated 90 degrees to the right": False,
                 "reflected vertically and rotated 90 degrees to the right": False

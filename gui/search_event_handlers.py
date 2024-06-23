@@ -22,28 +22,32 @@ def start_search(self):
     if not self.search_list:
         QMessageBox.warning(self, "Empty Folder Path", "Please select a folder for search.")
         return
-
-    self.file_searcher.file_formats = [".png", ".jpg", ".jpeg"]
+    # get array of file formats
+    formats = []
+    formats_dict = self.options_manager.options["file_formats"]
+    for f in formats_dict:
+        if formats_dict[f]:
+            formats.append(f)
+    self.file_searcher.file_formats = formats
     # img params
     images = self.file_searcher.search()
     # method params
     dupl_finder = DuplicatesFinder(self.method)
     dupl_finder.files = images[0]
     # finder params
-    dups = dupl_finder.find()
-    self.display_results(dups)
+    dups, dups_num = dupl_finder.find()
+    display_results(self, dups, dups_num)
 
 
-def display_results(self, duplicates):
+def display_results(self, duplicates, num):
     self.result_listbox.clear()
-    if duplicates:
-        for i in duplicates:
-            self.result_listbox.addItem(f"{i}:")
-            for duplicate in duplicates[i]:
-                self.result_listbox.addItem(f"- {duplicate}")
-            self.result_listbox.addItem("")
-    else:
-        self.result_listbox.addItem("No duplicate images found.")
+    self.result_listbox.addItem(f"{num} duplicates found")
+    for i in duplicates:
+        self.result_listbox.addItem(f"{i}:")
+        for duplicate in duplicates[i]:
+            self.result_listbox.addItem(f"- {duplicate}")
+        self.result_listbox.addItem("")
+        
 
 
 def remove_sel_folder(self):

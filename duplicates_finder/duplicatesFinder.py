@@ -96,9 +96,8 @@ class DuplicatesFinder:
             check_i += 1
             curr_i = check_i + 1
 
-        print(duplicate_count, 'duplicates found')
         print(f'Script running time: {time.monotonic() - start}')
-        return duplicates
+        return duplicates, duplicate_count
 
     def set_identical_properties(self, name: bool = False, format: bool = False, size: bool = False):
         self.__require_identical_properties = True
