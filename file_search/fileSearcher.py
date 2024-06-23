@@ -1,7 +1,6 @@
 import os
 from datetime import datetime
 
-
 # var 'folders_for_search': array of str - folder paths
 # var 'excluded_folders': array of str - folder paths that are not included for search
 # var 'file_formats': array of str - formats, e.g. '.png'

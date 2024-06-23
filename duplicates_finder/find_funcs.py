@@ -9,18 +9,24 @@ from duplicates_finder.comparisonMethod import ComparisonMethod
 def get_data(file_path: str, method: ComparisonMethod):
     name = method.name
     if name in MethodNames.USING_DESCRIPTORS:
+        try:
             img = cv2.imread(file_path)
-            return img, img
+        except:
+            raise Exception(f'The image {file_path} could not be read')
+        return img, img
     elif name in MethodNames.USING_HASH:
         hash_size = method.hash_size
         quick = method.bhash_quick
         size = method.comparison_size
-        img = Image.open(file_path)
+        try:
+            img = Image.open(file_path)
+        except:
+            raise Exception(f'The image {file_path} could not be read')
         hash = get_hash(img, name, hash_size, quick, size)
         return img, hash
     else:
         raise Exception('Invalid method name')
-    
+   
 def get_data_obj(obj, method: ComparisonMethod):
     name = method.name
     if isinstance(obj, Image.Image):
@@ -33,6 +39,8 @@ def get_data_obj(obj, method: ComparisonMethod):
 
 # find the percentage difference
 def get_difference(hash1: imagehash.ImageHash, hash2: imagehash.ImageHash, hash_size: int):
+    if hash_size <= 0: 
+        raise Exception('Invalid hash size value')
     hamming_distance = hash1 - hash2
     return hamming_distance / (hash_size**2) * 100
 
@@ -53,14 +61,14 @@ def check_identical_properties(file1: str, file2: str, properties={'name': False
         if not size1 == size2:
             return False
     return True
-    
+
 def modify_img(img, option: int):
     if isinstance(img, Image.Image):
         img = modify_img_with_Image(img, option)
     else:
         img = modify_img_with_cv2(img, option)
     return img
-    
+
 def modify_img_with_Image(img: Image, option: int):
     match option:
         case 1:

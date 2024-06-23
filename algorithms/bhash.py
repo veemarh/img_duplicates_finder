@@ -34,7 +34,6 @@ def translate_blocks_to_bits(blocks, pixels_per_block):
         m = median(blocks[i * bandsize : (i + 1) * bandsize])
         for j in range(i * bandsize, (i + 1) * bandsize):
             v = blocks[j]
-
             # Output a 1 if the block is brighter than the median.
             # With images dominated by black or white, the median may
             # end up being 0 or the max value, and thus having a lot
@@ -46,7 +45,6 @@ def translate_blocks_to_bits(blocks, pixels_per_block):
 
 def bits_to_hexhash(bits):
     return '{0:0={width}x}'.format(int(''.join([str(x) for x in bits]), 2), width = len(bits) // 4)
-
 
 def blockhash_even(img, hash_size):
     if img.mode == 'RGBA':
@@ -156,6 +154,8 @@ def bhash(img: Image, quick: bool = False, hash_size: int = 16, size: int = 256)
     #     help='Create hash of size N^2 bits. Default: 16')
     # 'size': int
     #     help='Resize image to specified size before hashing, e.g. 256x256')
+    if hash_size <= 0 or size <= 0: 
+        raise Exception('Invalid size value')
   
     if quick:
         method = blockhash_even
@@ -168,8 +168,7 @@ def bhash(img: Image, quick: bool = False, hash_size: int = 16, size: int = 256)
     elif img.mode == 'LA':
         img = img.convert('RGBA')
     # resize the image
-    if size:
-        img = img.resize((size, size), Image.BILINEAR)
+    img = img.resize((size, size), Image.BILINEAR)
 
     hash = method(img, hash_size)
     return imagehash.hex_to_hash(hash)

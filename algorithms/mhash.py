@@ -12,9 +12,11 @@ def bin_str_to_hex(str):
 def mhash(img: Image, size: int = 16):
     # 'size': int
     #     help='Resize image to specified size before hashing, e.g. 16x16')
+    if size <= 0: 
+        raise Exception('Invalid size value')
+    
     grey_img = img.convert('L')
-    if size:
-        grey_img = grey_img.resize((size, size), Image.BILINEAR)
+    grey_img = grey_img.resize((size, size), Image.BILINEAR)
     pixels = list(grey_img.getdata())
     median_pixel = sorted(pixels)[len(pixels) // 2]
     bin_hash_str = ''.join(['1' if p > median_pixel else '0' for p in pixels])
