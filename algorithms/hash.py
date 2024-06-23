@@ -38,4 +38,4 @@ def get_hash(
         case "SHA-2 (512-bit)":
             return hashlib.sha512(img.tobytes()).hexdigest()
         case _:
-            raise Exception("Invalid name value")
+            raise Exception("Invalid method name value")
