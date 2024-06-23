@@ -41,6 +41,9 @@ def start_search(self):
     
     if options["search_specific_file"]:
         dupl_finder.specified_file = options["specific_file_path"]
+        
+    if options["select_uploading_folder"]:
+        dupl_finder.folder_for_move = options["uploading_folder_path"]
     # output result
     dups, dups_num = dupl_finder.find()
     display_results(self, dups, dups_num)

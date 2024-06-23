@@ -1,4 +1,5 @@
 import os
+import random
 import time
 from copy import copy
 from pathlib import Path
@@ -161,5 +162,11 @@ class DuplicatesFinder:
         path_curr_img = curr_obj.file_path
         # print(f"{checked_obj.file_path} - {path_curr_img}")
         name_curr_img = os.path.basename(path_curr_img)
+        folder_for_move = self.folder_for_move
         if self.folder_for_move:
-            Path(path_curr_img).rename(f"{self.folder_for_move}/{name_curr_img}")
+            try:
+                Path(path_curr_img).rename(f"{self.folder_for_move}/{name_curr_img}")
+            except FileExistsError:
+                prefix = str(random.randint(1, 100))
+                new_path = os.path.join(folder_for_move, f"{prefix}_{name_curr_img}")
+                Path(path_curr_img).rename(new_path)
