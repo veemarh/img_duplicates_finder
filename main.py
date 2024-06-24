@@ -53,7 +53,7 @@ class ImgDuplicatesFinder(QMainWindow):
         create_context_menu(self, event)
 
     def initUI(self):
-        self.resize(800, 600)
+        self.resize(1200, 600)
         self.center()
         self.setWindowTitle("Image Duplicates Finder")
         self.setWindowIcon(QIcon("static/icon.ico"))
@@ -153,14 +153,18 @@ class ImgDuplicatesFinder(QMainWindow):
         self.result_listbox = QListWidget()
 
         # установка макетов
-        main_layout = QVBoxLayout(self.central_widget)
-        main_layout.addLayout(specific_file_layout)
-        main_layout.addLayout(folder_layout)
-        main_layout.addLayout(excluded_folder_layout)
-        main_layout.addLayout(uploading_folder_layout)
-        main_layout.addWidget(search_button)
-        main_layout.addWidget(result_label)
-        main_layout.addWidget(self.result_listbox)
+        main_layout = QHBoxLayout(self.central_widget)
+        settings_layout = QVBoxLayout()
+        result_layout = QVBoxLayout()
+        settings_layout.addLayout(specific_file_layout)
+        settings_layout.addLayout(folder_layout)
+        settings_layout.addLayout(excluded_folder_layout)
+        settings_layout.addLayout(uploading_folder_layout)
+        settings_layout.addWidget(search_button)
+        result_layout.addWidget(result_label)
+        result_layout.addWidget(self.result_listbox)
+        main_layout.addLayout(settings_layout)
+        main_layout.addLayout(result_layout)
 
         self.show()
 

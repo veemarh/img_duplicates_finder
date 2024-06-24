@@ -28,10 +28,10 @@ class OptionsManager:
             "comparison_size": "",
             "max_duplicates": 1000,
             "modified": {
-                "rotated 90 deg to the right": False, 
-                "rotated 180 deg": False, 
+                "rotated 90 deg to the right": False,
+                "rotated 180 deg": False,
                 "rotated 90 deg to the left": False,
-                "reflected horizontally": False, 
+                "reflected horizontally": False,
                 "reflected vertically": False,
                 "reflected horizontally and rotated 90 deg to the right": False,
                 "reflected vertically and rotated 90 deg to the right": False

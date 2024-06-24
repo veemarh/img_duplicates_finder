@@ -88,8 +88,8 @@ class OptionsDialog(QDialog):
     def create_algorithm_options(self):
         self.algorithm_combo = QComboBox()
         self.algorithm_combo.setMaximumWidth(200)
-        algorithms = ["aHash", "bHash", "dHash", "mHash", "pHash", "MD5", "SHA-1, 160 bit", "SHA-2, 256 bit",
-                      "SHA-2, 384 bit", "SHA-2, 512 bit", "ORB"]
+        algorithms = ["aHash", "bHash", "dHash", "mHash", "pHash", "MD5", "SHA-1 (160-bit)", "SHA-2 (256-bit)",
+                      "SHA-2 (384-bit)", "SHA-2 (512-bit)", "ORB"]
         self.algorithm_combo.addItems(algorithms)
 
         selected_algorithm = self.options.get("algorithm")

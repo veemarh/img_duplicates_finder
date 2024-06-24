@@ -70,8 +70,8 @@ def create_actions(main_window):
     main_window.bySizeAction.setCheckable(True)
     main_window.bySizeAction.toggled.connect(lambda checked: update_search_by_option(main_window, "Size", checked))
     # Algorithms
-    algorithms = ["aHash", "bHash", "dHash", "mHash", "pHash", "MD5", "SHA-1, 160 bit", "SHA-2, 256 bit",
-                  "SHA-2, 384 bit", "SHA-2, 512 bit", "ORB"]
+    algorithms = ["aHash", "bHash", "dHash", "mHash", "pHash", "MD5", "SHA-1 (160-bit)", "SHA-2 (256-bit)",
+                  "SHA-2 (384-bit)", "SHA-2 (512-bit)", "ORB"]
     algorithms_group = QActionGroup(main_window)
     algorithms_group.setExclusive(True)
     main_window.algorithm_actions = {}

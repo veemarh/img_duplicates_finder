@@ -18,11 +18,11 @@ def browse_excluded_folder(self):
         self.undo_stack.push(command)
 
 
-def start_search(self): 
+def start_search(self):
     if not self.search_list:
         QMessageBox.warning(self, "Empty Folder Path", "Please select a folder for search.")
-        return  
-    
+        return
+
     options = self.options_manager.options
     # turn on/off recursive search
     self.file_searcher.search_in_subfolders = options["recursive_search"]
@@ -38,39 +38,51 @@ def start_search(self):
         min_val = translate_in_bytes(int(options["size_value_from"]), options["size_unit_from"])
         max_val = translate_in_bytes(int(options["size_value_to"]), options["size_unit_to"])
         self.file_searcher.set_limit_file_size(min_val, max_val)
-        
+    else:
+        self.file_searcher.set_limit_file_size(None, None)
+
     if options["limit_creation_date"]:
         min_val = options["creation_date_from"]
         max_val = options["creation_date_to"]
         self.file_searcher.set_limit_file_creating_time(min_val, max_val)
-        
+    else:
+        self.file_searcher.set_limit_file_creating_time(None, None)
+
     if options["limit_changing_date"]:
         min_val = options["changing_date_from"]
         max_val = options["changing_date_to"]
         self.file_searcher.set_limit_file_modifying_time(min_val, max_val)
-        
+    else:
+        self.file_searcher.set_limit_file_modifying_time(None, None)
+
     # search images
     images = self.file_searcher.search()
     # comparison params
     self.method.name = options["algorithm"]
     self.method.similarity = options["similarity_threshold"]
-    
+
     self.method.bhash_quick = options["quick_search"]
     if options["comparison_size"]:
         self.method.comparison_size = int(options["comparison_size"])
+    else:
+        self.method.comparison_size = 16
 
     dupl_finder = DuplicatesFinder(self.method)
     dupl_finder.files = images[0]
-    
+
     if options["search_specific_file"]:
         dupl_finder.specified_file = options["specific_file_path"]
-        
+    else:
+        dupl_finder.specified_file = None
+
     if options["select_uploading_folder"]:
         dupl_finder.folder_for_move = options["uploading_folder_path"]
-        
+    else:
+        dupl_finder.folder_for_move = None
+
     dupl_finder.max_num_duplicates = options["max_duplicates"]
     # same properties
-    same_props = options["search_by"] # {"Name": bool, "Format": bool, "Size": bool}
+    same_props = options["search_by"]  # {"Name": bool, "Format": bool, "Size": bool}
     dupl_finder.set_identical_properties(same_props["Name"], same_props["Format"], same_props["Size"])
     # modifications
     mod_props = options["modified"]
@@ -96,7 +108,6 @@ def display_results(self, duplicates, num):
         for duplicate in duplicates[i]:
             self.result_listbox.addItem(f"- {duplicate}")
         self.result_listbox.addItem("")
-        
 
 
 def remove_sel_folder(self):
@@ -123,7 +134,8 @@ def clear_excluded_list(self):
     if self.excluded_list:
         command = ClearExcludedSearchListCommand(self.excluded_dnd_space, self.excluded_list)
         self.undo_stack.push(command)
-        
+
+
 def translate_in_bytes(val: int, unit: str):
     match unit:
         case "bytes":
