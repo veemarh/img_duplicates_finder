@@ -198,8 +198,8 @@ class ImgDuplicatesFinder(QMainWindow):
     def start_search(self):
         start_search(self)
 
-    def display_results(self, duplicates):
-        display_results(self, duplicates)
+    def display_results(self, duplicates, num):
+        display_results(self, duplicates, num)
 
     def remove_sel_folder(self):
         remove_sel_folder(self)

@@ -2,6 +2,8 @@ from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from gui.undo_commands import AddFolderCommand, ClearSearchListCommand, RemoveSelFolderCommand, \
     AddExcludedFolderCommand, ClearExcludedSearchListCommand, RemoveExcludedSelFolderCommand
 from duplicates_finder.duplicatesFinder import DuplicatesFinder
+from gui.constructing_interface.progressWindow import ProgressWindow
+from PyQt5.QtCore import QThread, pyqtSignal
 
 
 def browse_folder(self):
@@ -18,10 +20,27 @@ def browse_excluded_folder(self):
         self.undo_stack.push(command)
 
 
+class FindDuplicatesThread(QThread):
+    progress = pyqtSignal(int, int, int)
+    finished = pyqtSignal(dict, int)
+
+    def __init__(self, dupl_finder):
+        super().__init__()
+        self.dupl_finder = dupl_finder
+        self.dupl_finder.set_progress_callback(self.progress.emit)
+
+    def run(self):
+        duplicates, count = self.dupl_finder.find()
+        self.finished.emit(duplicates, count)
+
+
 def start_search(self):
     if not self.search_list:
         QMessageBox.warning(self, "Empty Folder Path", "Please select a folder for search.")
         return
+
+    self.progress_window = ProgressWindow(self)
+    self.progress_window.show()
 
     options = self.options_manager.options
     # turn on/off recursive search
@@ -95,9 +114,19 @@ def start_search(self):
         mod_props["reflected horizontally and rotated 90 deg to the right"],
         mod_props["reflected vertically and rotated 90 deg to the right"]
     )
-    # output result
-    dups, dups_num = dupl_finder.find()
-    display_results(self, dups, dups_num)
+
+    # Creating and starting the thread
+    self.thread = FindDuplicatesThread(dupl_finder)
+    self.thread.progress.connect(self.progress_window.update_progress)
+    self.thread.finished.connect(
+        lambda duplicates, duplicates_count: on_search_finished(self, duplicates, duplicates_count))
+    self.thread.finished.connect(self.thread.deleteLater)
+    self.thread.start()
+
+
+def on_search_finished(self, duplicates, duplicates_count):
+    self.progress_window.close()
+    display_results(self, duplicates, duplicates_count)
 
 
 def display_results(self, duplicates, num):

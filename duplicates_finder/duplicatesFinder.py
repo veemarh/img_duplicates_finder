@@ -8,13 +8,14 @@ from algorithms.orb import get_orb_similarity
 from duplicates_finder.comparisonMethod import ComparisonMethod
 from duplicates_finder.comparisonObject import ComparisonObject
 
+
 # var 'files': array of strings - file paths
 # var 'specified_file': str
 # var 'folder_for_move': str
 # var 'modified_images_properties' has keys:
 # 1 - rotated 90 deg to the right,
 # 2 - rotated 180 deg,
-# 3 - rotated 90 deg to the left, 
+# 3 - rotated 90 deg to the left,
 # 4 - reflected horizontally,
 # 5 - reflected vertically,
 # 6 - reflected horizontally and rotated 90 degrees to the right,
@@ -30,6 +31,7 @@ class DuplicatesFinder:
         self.__search_modified_images = False
         self.__modified_properties = {1: False, 2: False, 3: False, 4: False, 5: False, 6: False, 7: False}
         self.__comparison_method = comparison_method
+        self.progress_callback = None
 
     def find(self):
         start = time.monotonic()
@@ -49,6 +51,9 @@ class DuplicatesFinder:
         comparison_method = self.__comparison_method
 
         duplicate_count = 0
+        total_images = len(paths_images)
+        if self.progress_callback:
+            self.progress_callback(total_images, 0, 0)
 
         while check_i < len(paths_images):
             if not file_is_specified:
@@ -82,7 +87,7 @@ class DuplicatesFinder:
                         duplicates[path_check_img].append(path_curr_img)
                     else:
                         duplicates[path_check_img] = [path_curr_img]
-                        
+
                     self.__action_with_duplicates(checked_obj, curr_obj)
                     if file_is_specified:
                         curr_i += 1
@@ -97,8 +102,15 @@ class DuplicatesFinder:
             check_i += 1
             curr_i = check_i + 1
 
+            if self.progress_callback:
+                progress = int((check_i / len(paths_images)) * 100)
+                self.progress_callback(total_images, check_i, progress)
+
         print(f'Script running time: {time.monotonic() - start}')
         return duplicates, duplicate_count
+
+    def set_progress_callback(self, callback):
+        self.progress_callback = callback
 
     def set_identical_properties(self, name: bool = False, format: bool = False, size: bool = False):
         self.__require_identical_properties = True
