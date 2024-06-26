@@ -1,3 +1,5 @@
+import os
+from datetime import datetime
 from PyQt5.QtWidgets import QFileDialog, QMessageBox, QTableWidgetItem
 from gui.undo_commands import AddFolderCommand, ClearSearchListCommand, RemoveSelFolderCommand, \
     AddExcludedFolderCommand, ClearExcludedSearchListCommand, RemoveExcludedSelFolderCommand
@@ -55,6 +57,9 @@ def start_search(self):
     options = self.options_manager.options
     # turn on/off recursive search
     self.file_searcher.search_in_subfolders = options["recursive_search"]
+    # exclude folders
+    self.file_searcher.excluded_folders = self.excluded_list
+    print(self.file_searcher.excluded_folders)
     # get array of file formats
     formats = []
     formats_dict = options["file_formats"]
@@ -150,8 +155,8 @@ def display_results(self, duplicates, num):
     self.result_table.setRowCount(0)
     row = 0
     for one_file in duplicates:
-        file_name = one_file.split("\\")[-1]
-        creation_date = "N/A"
+        file_name = os.path.basename(one_file)
+        creation_date = datetime.fromtimestamp(os.path.getctime(one_file)).strftime('%d/%m/%y %H:%M:%S')
         duplicate_count = len(duplicates[one_file])
 
         self.result_table.insertRow(row)
