@@ -22,12 +22,14 @@ def browse_excluded_folder(self):
 
 class FindDuplicatesThread(QThread):
     progress = pyqtSignal(int, int, int)
+    found_duplicates = pyqtSignal(dict, int)
     finished = pyqtSignal(dict, int)
 
     def __init__(self, dupl_finder):
         super().__init__()
         self.dupl_finder = dupl_finder
         self.dupl_finder.set_progress_callback(self.progress.emit)
+        self.dupl_finder.set_found_duplicates_callback(self.found_duplicates.emit)
 
     def run(self):
         duplicates, count = self.dupl_finder.find()
@@ -42,6 +44,7 @@ def start_search(self):
         QMessageBox.warning(self, "Empty Folder Path", "Please select a folder for search.")
         return
 
+    self.result_listbox.clear()
     self.progress_window = ProgressWindow(self)
     self.progress_window.show()
 
@@ -121,11 +124,17 @@ def start_search(self):
     # Creating and starting the thread
     self.thread = FindDuplicatesThread(dupl_finder)
     self.thread.progress.connect(self.progress_window.update_progress)
+    self.thread.found_duplicates.connect(
+        lambda duplicates, duplicates_count: update_real_time_duplicates(self, duplicates, duplicates_count))
     self.thread.finished.connect(
         lambda duplicates, duplicates_count: on_search_finished(self, duplicates, duplicates_count))
     self.thread.finished.connect(self.thread.deleteLater)
     self.progress_window.thread = self.thread
     self.thread.start()
+
+
+def update_real_time_duplicates(self, duplicates, duplicates_count):
+    display_results(self, duplicates, duplicates_count)
 
 
 def on_search_finished(self, duplicates, duplicates_count):

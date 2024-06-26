@@ -32,6 +32,7 @@ class DuplicatesFinder:
         self.__modified_properties = {1: False, 2: False, 3: False, 4: False, 5: False, 6: False, 7: False}
         self.__comparison_method = comparison_method
         self.progress_callback = None
+        self.found_duplicates_callback = None
         self._stop = False
 
     def find(self):
@@ -101,6 +102,10 @@ class DuplicatesFinder:
                     else:
                         del paths_images[curr_i]
                     duplicate_count += 1
+
+                    if self.found_duplicates_callback:
+                        self.found_duplicates_callback(duplicates, duplicate_count)
+
                     if duplicate_count >= self.max_num_duplicates: break
                 else:
                     curr_i += 1
@@ -118,6 +123,9 @@ class DuplicatesFinder:
 
     def set_progress_callback(self, callback):
         self.progress_callback = callback
+
+    def set_found_duplicates_callback(self, callback):
+        self.found_duplicates_callback = callback
 
     def stop(self):
         self._stop = True
