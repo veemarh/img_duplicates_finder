@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QFileDialog, QMessageBox, QTableWidgetItem
 from gui.undo_commands import AddFolderCommand, ClearSearchListCommand, RemoveSelFolderCommand, \
     AddExcludedFolderCommand, ClearExcludedSearchListCommand, RemoveExcludedSelFolderCommand
 from duplicates_finder.duplicatesFinder import DuplicatesFinder
@@ -44,7 +44,8 @@ def start_search(self):
         QMessageBox.warning(self, "Empty Folder Path", "Please select a folder for search.")
         return
 
-    self.result_listbox.clear()
+    self.result_table.clearContents()
+    self.result_table.setRowCount(1)
     self.progress_window = ProgressWindow(self)
     self.progress_window.show()
 
@@ -139,17 +140,22 @@ def update_real_time_duplicates(self, duplicates, duplicates_count):
 
 def on_search_finished(self, duplicates, duplicates_count):
     self.progress_window.close()
-    display_results(self, duplicates, duplicates_count)
 
 
 def display_results(self, duplicates, num):
-    self.result_listbox.clear()
-    self.result_listbox.addItem(f"{num} duplicates found")
-    for i in duplicates:
-        self.result_listbox.addItem(f"{i}:")
-        for duplicate in duplicates[i]:
-            self.result_listbox.addItem(f"- {duplicate}")
-        self.result_listbox.addItem("")
+    self.result_table.setRowCount(0)
+    row = 0
+    for one_file in duplicates:
+        file_name = one_file.split("\\")[-1]
+        creation_date = "N/A"
+        duplicate_count = len(duplicates[one_file])
+
+        self.result_table.insertRow(row)
+        self.result_table.setItem(row, 0, QTableWidgetItem(file_name))
+        self.result_table.setItem(row, 1, QTableWidgetItem(creation_date))
+        self.result_table.setItem(row, 2, QTableWidgetItem(str(duplicate_count)))
+        self.result_table.setItem(row, 3, QTableWidgetItem(one_file))
+        row += 1
 
 
 def remove_sel_folder(self):

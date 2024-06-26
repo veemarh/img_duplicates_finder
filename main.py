@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QRadioButton, QVBoxLayout, \
     QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow, QCheckBox, QMenu, QActionGroup, \
-    QUndoStack, QToolButton, QDialog
+    QUndoStack, QToolButton, QDialog, QTableWidget, QHeaderView
 from PyQt5.QtGui import QIcon, QFont, QCursor
 from PyQt5.QtCore import Qt, QFileInfo, QRect
 from gui.options_manager import OptionsManager
@@ -150,7 +150,11 @@ class ImgDuplicatesFinder(QMainWindow):
 
         # дисплей результатов поиска
         result_label = QLabel("Results:")
-        self.result_listbox = QListWidget()
+        self.result_table = QTableWidget()
+        self.result_table.setColumnCount(4)
+        self.result_table.setHorizontalHeaderLabels(["Name", "Creation Date", "Duplicate Count", "Path"])
+        self.result_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.result_table.setRowCount(1)
 
         # установка макетов
         main_layout = QHBoxLayout(self.central_widget)
@@ -162,7 +166,7 @@ class ImgDuplicatesFinder(QMainWindow):
         settings_layout.addLayout(uploading_folder_layout)
         settings_layout.addWidget(search_button)
         result_layout.addWidget(result_label)
-        result_layout.addWidget(self.result_listbox)
+        result_layout.addWidget(self.result_table)
         main_layout.addLayout(settings_layout)
         main_layout.addLayout(result_layout)
 
