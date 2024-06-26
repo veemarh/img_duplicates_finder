@@ -33,6 +33,9 @@ class FindDuplicatesThread(QThread):
         duplicates, count = self.dupl_finder.find()
         self.finished.emit(duplicates, count)
 
+    def stop(self):
+        self.dupl_finder.stop()
+
 
 def start_search(self):
     if not self.search_list:
@@ -121,6 +124,7 @@ def start_search(self):
     self.thread.finished.connect(
         lambda duplicates, duplicates_count: on_search_finished(self, duplicates, duplicates_count))
     self.thread.finished.connect(self.thread.deleteLater)
+    self.progress_window.thread = self.thread
     self.thread.start()
 
 

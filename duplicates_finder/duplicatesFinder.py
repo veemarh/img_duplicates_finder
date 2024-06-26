@@ -32,6 +32,7 @@ class DuplicatesFinder:
         self.__modified_properties = {1: False, 2: False, 3: False, 4: False, 5: False, 6: False, 7: False}
         self.__comparison_method = comparison_method
         self.progress_callback = None
+        self._stop = False
 
     def find(self):
         start = time.monotonic()
@@ -56,6 +57,9 @@ class DuplicatesFinder:
             self.progress_callback(total_images, 0, 0)
 
         while check_i < len(paths_images):
+            if self._stop:
+                break
+
             if not file_is_specified:
                 path_check_img = paths_images[check_i]
 
@@ -66,6 +70,9 @@ class DuplicatesFinder:
                 continue
 
             while curr_i < len(paths_images):
+                if self._stop:
+                    break
+
                 path_curr_img = paths_images[curr_i]
 
                 if (path_check_img == path_curr_img) or (path_curr_img is None):
@@ -102,7 +109,7 @@ class DuplicatesFinder:
             check_i += 1
             curr_i = check_i + 1
 
-            if self.progress_callback:
+            if self.progress_callback and not self._stop:
                 progress = int((check_i / len(paths_images)) * 100)
                 self.progress_callback(total_images, check_i, progress)
 
@@ -111,6 +118,9 @@ class DuplicatesFinder:
 
     def set_progress_callback(self, callback):
         self.progress_callback = callback
+
+    def stop(self):
+        self._stop = True
 
     def set_identical_properties(self, name: bool = False, format: bool = False, size: bool = False):
         self.__require_identical_properties = True

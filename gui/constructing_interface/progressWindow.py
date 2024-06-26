@@ -6,6 +6,7 @@ class ProgressWindow(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.initUI()
+        self.thread = None
 
     def initUI(self):
         self.setWindowTitle("Searching for duplicates")
@@ -36,3 +37,8 @@ class ProgressWindow(QDialog):
         self.total_images_label.setText(f"Total images: {total}")
         self.checked_images_label.setText(f"Checked images: {checked}")
         self.progress_bar.setValue(progress)
+
+    def closeEvent(self, event):
+        if self.thread:
+            self.thread.stop()
+        event.accept()
