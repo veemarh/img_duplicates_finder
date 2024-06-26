@@ -1,13 +1,11 @@
 import os
 import random
-import time
 from copy import copy
 from pathlib import Path
 from duplicates_finder.find_funcs import *
 from algorithms.orb import get_orb_similarity
 from duplicates_finder.comparisonMethod import ComparisonMethod
 from duplicates_finder.comparisonObject import ComparisonObject
-
 
 # var 'files': array of strings - file paths
 # var 'specified_file': str
@@ -36,8 +34,6 @@ class DuplicatesFinder:
         self._stop = False
 
     def find(self):
-        start = time.monotonic()
-
         duplicates = {}
         file_is_specified = False
         check_i = 0
@@ -118,7 +114,6 @@ class DuplicatesFinder:
                 progress = int((check_i / len(paths_images)) * 100)
                 self.progress_callback(total_images, check_i, progress)
 
-        print(f'Script running time: {time.monotonic() - start}')
         return duplicates, duplicate_count
 
     def set_progress_callback(self, callback):
@@ -190,7 +185,6 @@ class DuplicatesFinder:
 
     def __action_with_duplicates(self, checked_obj: ComparisonObject, curr_obj: ComparisonObject):
         path_curr_img = curr_obj.file_path
-        # print(f"{checked_obj.file_path} - {path_curr_img}")
         name_curr_img = os.path.basename(path_curr_img)
         folder_for_move = self.folder_for_move
         if self.folder_for_move:

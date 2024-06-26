@@ -47,6 +47,7 @@ class FileSearcher:
     def __get_images_in_folder_and_subfolders(self, folder):
         images = []
         for root, subdirs, files in os.walk(folder):
+            root = root.replace('\\', '/')
             if root in self.excluded_folders: continue
             for file in files:
                 if os.path.splitext(file)[1].lower() in self.file_formats:
