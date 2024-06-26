@@ -4,6 +4,7 @@ from gui.undo_commands import AddFolderCommand, ClearSearchListCommand, RemoveSe
 from duplicates_finder.duplicatesFinder import DuplicatesFinder
 from gui.constructing_interface.progressWindow import ProgressWindow
 from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import Qt
 
 
 def browse_folder(self):
@@ -47,6 +48,8 @@ def start_search(self):
     self.result_table.clearContents()
     self.result_table.setRowCount(1)
     self.progress_window = ProgressWindow(self)
+    self.progress_window.setWindowModality(Qt.ApplicationModal)
+    disable_sorting(self)
     self.progress_window.show()
 
     options = self.options_manager.options
@@ -140,6 +143,7 @@ def update_real_time_duplicates(self, duplicates, duplicates_count):
 
 def on_search_finished(self, duplicates, duplicates_count):
     self.progress_window.close()
+    enable_sorting(self)
 
 
 def display_results(self, duplicates, num):
@@ -156,6 +160,14 @@ def display_results(self, duplicates, num):
         self.result_table.setItem(row, 2, QTableWidgetItem(str(duplicate_count)))
         self.result_table.setItem(row, 3, QTableWidgetItem(one_file))
         row += 1
+
+
+def enable_sorting(self):
+    self.result_table.setSortingEnabled(True)
+
+
+def disable_sorting(self):
+    self.result_table.setSortingEnabled(False)
 
 
 def remove_sel_folder(self):

@@ -152,7 +152,7 @@ class ImgDuplicatesFinder(QMainWindow):
         result_label = QLabel("Results:")
         self.result_table = QTableWidget()
         self.result_table.setColumnCount(4)
-        self.result_table.setHorizontalHeaderLabels(["Name", "Creation Date", "Duplicate Count", "Path"])
+        self.result_table.setHorizontalHeaderLabels(["Name", "Creation Date", "Duplicates", "Path"])
         self.result_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.result_table.setRowCount(1)
 
