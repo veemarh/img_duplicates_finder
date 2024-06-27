@@ -205,6 +205,7 @@ class ImgDuplicatesFinder(QMainWindow):
             start_search(self)
         except Exception as e:
             QMessageBox.warning(self, "Oops!",
+                                "<h3>Error occurred</h3>"
                                 "Something went wrong. Please check the entered data.<br/><br/>"
                                 f"<b>Error:</b><br/>{type(e).__name__}<br/>"
                                 f"<b>Details:</b><br/>{str(e)}")

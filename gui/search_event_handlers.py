@@ -45,7 +45,7 @@ class FindDuplicatesThread(QThread):
 
 def start_search(self):
     if not self.search_list:
-        raise FolderNotSpecifiedError("Please select a folder for search.")
+        raise FolderNotSpecifiedError("No folders are selected for search.")
 
     options = self.options_manager.options
     # turn on/off recursive search
