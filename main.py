@@ -1,4 +1,5 @@
 import sys
+import faulthandler
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QRadioButton, QVBoxLayout, \
     QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow, QCheckBox, QMenu, QActionGroup, \
     QUndoStack, QToolButton, QDialog, QTableWidget, QHeaderView
@@ -200,7 +201,13 @@ class ImgDuplicatesFinder(QMainWindow):
         browse_excluded_folder(self)
 
     def start_search(self):
-        start_search(self)
+        try:
+            start_search(self)
+        except Exception as e:
+            QMessageBox.warning(self, "Oops!",
+                                "Something went wrong. Please check the entered data.<br/><br/>"
+                                f"<b>Error:</b><br/>{type(e).__name__}<br/>"
+                                f"<b>Details:</b><br/>{str(e)}")
 
     def display_results(self, duplicates, num):
         display_results(self, duplicates, num)

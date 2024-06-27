@@ -7,6 +7,7 @@ from duplicates_finder.duplicatesFinder import DuplicatesFinder
 from gui.constructing_interface.progressWindow import ProgressWindow
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtCore import Qt
+from gui.custom_exceptions import FolderNotSpecifiedError
 
 
 def browse_folder(self):
@@ -44,15 +45,7 @@ class FindDuplicatesThread(QThread):
 
 def start_search(self):
     if not self.search_list:
-        QMessageBox.warning(self, "Empty Folder Path", "Please select a folder for search.")
-        return
-
-    self.result_table.clearContents()
-    self.result_table.setRowCount(1)
-    self.progress_window = ProgressWindow(self)
-    self.progress_window.setWindowModality(Qt.ApplicationModal)
-    disable_sorting(self)
-    self.progress_window.show()
+        raise FolderNotSpecifiedError("Please select a folder for search.")
 
     options = self.options_manager.options
     # turn on/off recursive search
@@ -105,12 +98,18 @@ def start_search(self):
     dupl_finder.files = images[0]
 
     if options["search_specific_file"]:
-        dupl_finder.specified_file = options["specific_file_path"]
+        if os.path.isabs(options["specific_file_path"]) and os.path.isfile(options["specific_file_path"]):
+            dupl_finder.specified_file = options["specific_file_path"]
+        else:
+            raise FileNotFoundError(f"File not found: {options['specific_file_path']}.")
     else:
         dupl_finder.specified_file = None
 
     if options["select_uploading_folder"]:
-        dupl_finder.folder_for_move = options["uploading_folder_path"]
+        if os.path.isabs(options["uploading_folder_path"]) and os.path.isdir(options["uploading_folder_path"]):
+            dupl_finder.folder_for_move = options["uploading_folder_path"]
+        else:
+            raise NotADirectoryError(f"Folder not found: {options['uploading_folder_path']}.")
     else:
         dupl_finder.folder_for_move = None
 
@@ -131,6 +130,13 @@ def start_search(self):
     )
 
     # Creating and starting the thread
+    self.result_table.clearContents()
+    self.result_table.setRowCount(1)
+    self.progress_window = ProgressWindow(self)
+    self.progress_window.setWindowModality(Qt.ApplicationModal)
+    disable_sorting(self)
+    self.progress_window.show()
+
     self.thread = FindDuplicatesThread(dupl_finder)
     self.thread.progress.connect(self.progress_window.update_progress)
     self.thread.found_duplicates.connect(
