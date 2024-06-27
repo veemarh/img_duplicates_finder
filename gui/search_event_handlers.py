@@ -52,7 +52,6 @@ def start_search(self):
     self.file_searcher.search_in_subfolders = options["recursive_search"]
     # exclude folders
     self.file_searcher.excluded_folders = self.excluded_list
-    print(self.file_searcher.excluded_folders)
     # get array of file formats
     formats = []
     formats_dict = options["file_formats"]
