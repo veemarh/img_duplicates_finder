@@ -48,7 +48,7 @@ class FileSearcher:
         images = []
         for root, subdirs, files in os.walk(folder):
             root = root.replace('\\', '/')
-            if root in self.excluded_folders: continue
+            if not self.__check_excluded_folders(root): continue
             for file in files:
                 if os.path.splitext(file)[1].lower() in self.file_formats:
                     file_path = os.path.join(root, file)
@@ -96,5 +96,11 @@ class FileSearcher:
             min_time = self.__file_modifying_time['min']
             max_time = self.__file_modifying_time['max']
             if (min_time and time < min_time) or (max_time and time > max_time):
+                return False
+        return True
+    
+    def __check_excluded_folders(self, folder):
+        for path in self.excluded_folders:
+            if path in folder:
                 return False
         return True
