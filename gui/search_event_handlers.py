@@ -154,6 +154,9 @@ def update_real_time_duplicates(self, duplicates, duplicates_count):
 
 def on_search_finished(self, duplicates, duplicates_count):
     self.progress_window.close()
+    QMessageBox.information(self, "Success",
+                            "<h3>Search completed</h3>"
+                            f"{duplicates_count} duplicates found for {len(duplicates)} images.")
     enable_sorting(self)
 
 
