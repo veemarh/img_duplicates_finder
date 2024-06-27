@@ -14,8 +14,8 @@ def median(data):
         return (data[length // 2 - 1] + data[length // 2]) / 2.0
     return data[length // 2]
 
-def total_value_rgba(im, data, x, y):
-    r, g, b, a = data[y * im.size[0] + x]
+def total_value_rgba(img, data, x, y):
+    r, g, b, a = data[y * img.size[0] + x]
     if a == 0:
         return 765
     else:
@@ -27,7 +27,6 @@ def total_value_rgb(img, data, x, y):
 
 def translate_blocks_to_bits(blocks, pixels_per_block):
     half_block_value = pixels_per_block * 256 * 3 / 2
-
     # Compare medians across four horizontal bands
     bandsize = len(blocks) // 4
     for i in range(4):
@@ -42,18 +41,20 @@ def translate_blocks_to_bits(blocks, pixels_per_block):
             # 0 if the median is in the lower value space, 1 otherwise
             blocks[j] = int(v > m or (abs(v - m) < 1 and m > half_block_value))
 
-
 def bits_to_hexhash(bits):
     return '{0:0={width}x}'.format(int(''.join([str(x) for x in bits]), 2), width = len(bits) // 4)
 
-def blockhash_even(img, hash_size):
+def total_value_method(img):
     if img.mode == 'RGBA':
-        total_value = total_value_rgba
+        return total_value_rgba
     elif img.mode == 'RGB':
-        total_value = total_value_rgb
+        return total_value_rgb
     else:
         raise RuntimeError('Unsupported image mode: {}'.format(img.mode))
 
+def blockhash_even(img, hash_size):
+    total_value = total_value_method(img)
+    
     data = img.getdata()
     width, height = img.size
     blocksize_x = width // hash_size
@@ -77,12 +78,7 @@ def blockhash_even(img, hash_size):
     return bits_to_hexhash(result)
 
 def blockhash(img, hash_size):
-    if img.mode == 'RGBA':
-        total_value = total_value_rgba
-    elif img.mode == 'RGB':
-        total_value = total_value_rgb
-    else:
-        raise RuntimeError('Unsupported image mode: {}'.format(img.mode))
+    total_value = total_value_method(img)
 
     data = img.getdata()
     width, height = img.size
@@ -114,13 +110,12 @@ def blockhash(img, hash_size):
                 block_top = block_bottom = int(y // block_height)
             else:
                 block_top = int(y // block_height)
-                block_bottom = int(-(-y // block_height)) # int(math.ceil(float(y) / block_height))
+                block_bottom = int(-(-y // block_height))
 
         for x in range(width):
             value = total_value(img, data, x, y)
 
             if even_x:
-                # don't bother dividing x, if the size evenly divides by bits
                 block_left = block_right = int(x // block_width)
                 weight_left, weight_right = 1, 0
             else:
@@ -134,7 +129,7 @@ def blockhash(img, hash_size):
                     block_left = block_right = int(x // block_width)
                 else:
                     block_left = int(x // block_width)
-                    block_right = int(-(-x // block_width)) # int(math.ceil(float(x) / block_width))
+                    block_right = int(-(-x // block_width))
 
             # add weighted pixel value to relevant blocks
             blocks[block_top][block_left] += value * weight_top * weight_left
@@ -147,13 +142,10 @@ def blockhash(img, hash_size):
     translate_blocks_to_bits(result, block_width * block_height)
     return bits_to_hexhash(result)
 
+# quick: bool - use quick hashing method
+# hash_size: int
+# size: int - resize image to specified size before hashing, e.g. 256x256
 def bhash(img: Image, quick: bool = False, hash_size: int = 16, size: int = 256):
-    # 'quick': type=bool, default=False,
-    #     help='Use quick hashing method. Default: False'
-    # 'hash_size': type=int, default=16,
-    #     help='Create hash of size N^2 bits. Default: 16')
-    # 'size': int
-    #     help='Resize image to specified size before hashing, e.g. 256x256')
     if hash_size <= 0 or size <= 0: 
         raise Exception('Invalid size value')
   
@@ -161,7 +153,6 @@ def bhash(img: Image, quick: bool = False, hash_size: int = 16, size: int = 256)
         method = blockhash_even
     else:
         method = blockhash
-
     # convert indexed/grayscale images to RGB
     if img.mode == '1' or img.mode == 'L' or img.mode == 'P':
         img = img.convert('RGB')
