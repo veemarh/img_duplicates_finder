@@ -8,6 +8,7 @@ from gui.constructing_interface.progressWindow import ProgressWindow
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtCore import Qt
 from gui.custom_exceptions import FolderNotSpecifiedError
+from gui.constructing_interface.DuplicateDetailsDialog import DuplicateDetailsDialog
 
 
 def browse_folder(self):
@@ -173,6 +174,15 @@ def display_results(self, duplicates, num):
         self.result_table.setItem(row, 2, QTableWidgetItem(str(duplicate_count)))
         self.result_table.setItem(row, 3, QTableWidgetItem(one_file))
         row += 1
+
+    self.duplicates_dict = duplicates
+
+
+def show_duplicate_details(self, row):
+    file_path = self.result_table.item(row, 3).text()
+    duplicates = self.duplicates_dict.get(file_path, [])
+    dialog = DuplicateDetailsDialog(file_path, duplicates, self)
+    dialog.exec_()
 
 
 def enable_sorting(self):

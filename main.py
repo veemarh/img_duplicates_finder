@@ -2,7 +2,7 @@ import sys
 import faulthandler
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QRadioButton, QVBoxLayout, \
     QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow, QCheckBox, QMenu, QActionGroup, \
-    QUndoStack, QToolButton, QDialog, QTableWidget, QHeaderView
+    QUndoStack, QToolButton, QDialog, QTableWidget, QHeaderView, QAbstractItemView
 from PyQt5.QtGui import QIcon, QFont, QCursor
 from PyQt5.QtCore import Qt, QFileInfo, QRect
 from gui.options_manager import OptionsManager
@@ -15,7 +15,7 @@ from gui.constructing_interface.statusbar import create_status_bar
 from gui.constructing_interface.actions import create_actions
 from gui.drag_drop import dragEnterEvent, dropEvent
 from gui.search_event_handlers import browse_folder, start_search, display_results, remove_sel_folder, \
-    clear_search_list, browse_excluded_folder, remove_sel_excluded_folder, clear_excluded_list
+    clear_search_list, browse_excluded_folder, remove_sel_excluded_folder, clear_excluded_list, show_duplicate_details
 from gui.specific_file_manager import toggle_specific_file_search, set_specific_file, browse_file
 from gui.uploading_folder_manager import toggle_uploading_folder_search, set_uploading_folder, browse_uploading_folder
 
@@ -156,6 +156,8 @@ class ImgDuplicatesFinder(QMainWindow):
         self.result_table.setHorizontalHeaderLabels(["Name", "Creation Date", "Duplicates", "Path"])
         self.result_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.result_table.setRowCount(1)
+        self.result_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.result_table.cellDoubleClicked.connect(self.show_duplicate_details)
 
         # установка макетов
         main_layout = QHBoxLayout(self.central_widget)
@@ -254,6 +256,12 @@ class ImgDuplicatesFinder(QMainWindow):
 
     def browse_uploading_folder(self):
         browse_uploading_folder(self)
+
+    def show_duplicate_details(self, row):
+        try:
+            show_duplicate_details(self, row)
+        except Exception:
+            pass
 
 
 if __name__ == '__main__':
