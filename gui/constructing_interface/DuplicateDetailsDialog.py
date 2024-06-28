@@ -43,8 +43,19 @@ class DuplicateDetailsDialog(QDialog):
         right_layout.addWidget(path_label)
         right_layout.addWidget(creation_date_label)
 
+        # кнопки
+        main_button_box = QVBoxLayout()
+        main_button_box.setAlignment(Qt.AlignVCenter)
+        main_move_button = QPushButton("Move")
+        main_move_button.clicked.connect(lambda _, p=self.file_path: self.move_file(p))
+        main_delete_button = QPushButton("Delete")
+        main_delete_button.clicked.connect(lambda _, p=self.file_path: self.delete_file(p))
+        main_button_box.addWidget(main_move_button)
+        main_button_box.addWidget(main_delete_button)
+
         main_layout.addLayout(left_layout)
         main_layout.addLayout(right_layout, 1)
+        main_layout.addLayout(main_button_box)
         layout.addLayout(main_layout)
 
         # список дубликатов
