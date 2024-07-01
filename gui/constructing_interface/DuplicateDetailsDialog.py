@@ -4,9 +4,8 @@ from PyQt5.QtGui import QPixmap, QFont
 from PyQt5.QtCore import Qt
 from datetime import datetime
 import os
-from pathlib import Path
-from random import randint
 from send2trash import send2trash
+
 
 class DuplicateDetailsDialog(QDialog):
     def __init__(self, file_path, duplicates, parent=None):
