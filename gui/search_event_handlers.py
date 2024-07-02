@@ -8,7 +8,7 @@ from gui.constructing_interface.progressWindow import ProgressWindow
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtCore import Qt
 from gui.custom_exceptions import FolderNotSpecifiedError
-from gui.constructing_interface.DuplicateDetailsDialog import DuplicateDetailsDialog
+from gui.constructing_interface.duplicateDetailsDialog import DuplicateDetailsDialog
 
 
 def browse_folder(self):

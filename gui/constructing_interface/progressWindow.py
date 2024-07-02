@@ -29,10 +29,6 @@ class ProgressWindow(QDialog):
         self.progress_bar.setRange(0, 100)
         layout.addWidget(self.progress_bar)
 
-        # self.button_box = QDialogButtonBox(QDialogButtonBox.Cancel)
-        # self.button_box.rejected.connect(self.reject)
-        # layout.addWidget(self.button_box)
-
     def update_progress(self, total, checked, progress):
         self.total_images_label.setText(f"Total images: {total}")
         self.checked_images_label.setText(f"Checked images: {checked}")

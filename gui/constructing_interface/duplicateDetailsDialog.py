@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QListWidget, QWidget, \
-    QListWidgetItem, QToolTip
+    QListWidgetItem
 from PyQt5.QtGui import QPixmap, QFont
-from PyQt5.QtCore import Qt, QEvent
+from PyQt5.QtCore import Qt
 from datetime import datetime
 import os
 

@@ -329,7 +329,6 @@ def open_options_dialog(main_window):
     if dialog.exec_() == QDialog.Accepted:
         main_window.options_manager.options = dialog.get_options()
         update_options(main_window)
-        print(main_window.options_manager.options)
 
 
 def update_options(main_window):

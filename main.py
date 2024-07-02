@@ -1,10 +1,9 @@
 import sys
-import faulthandler
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QRadioButton, QVBoxLayout, \
-    QHBoxLayout, QFileDialog, QListWidget, QMessageBox, QDesktopWidget, QMainWindow, QCheckBox, QMenu, QActionGroup, \
-    QUndoStack, QToolButton, QDialog, QTableWidget, QHeaderView, QAbstractItemView
-from PyQt5.QtGui import QIcon, QFont, QCursor
-from PyQt5.QtCore import Qt, QFileInfo, QRect
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, \
+    QListWidget, QMessageBox, QDesktopWidget, QMainWindow, QCheckBox, QUndoStack, QTableWidget, QHeaderView, \
+    QAbstractItemView
+from PyQt5.QtGui import QIcon, QFont
+from PyQt5.QtCore import Qt
 from gui.options_manager import OptionsManager
 from file_search.fileSearcher import FileSearcher
 from duplicates_finder.comparisonMethod import ComparisonMethod
@@ -109,7 +108,7 @@ class ImgDuplicatesFinder(QMainWindow):
         excluded_buttons_layout.addWidget(excluded_clear_button)
         excluded_folder_layout.addLayout(excluded_buttons_layout)
 
-        # Опция поиска конкретного файла
+        # опция поиска конкретного файла
         self.search_specific_file_checkbox = QCheckBox("Search for duplicates of a specific file")
         self.search_specific_file_checkbox.stateChanged.connect(self.toggle_specific_file_search)
         self.specific_file_path_edit = QLineEdit()
@@ -121,13 +120,13 @@ class ImgDuplicatesFinder(QMainWindow):
         self.file_browse_button.clicked.connect(self.browse_file)
         self.file_browse_button.setEnabled(False)
 
-        # Макет для поиска конкретного файла
+        # макет для поиска конкретного файла
         specific_file_layout = QHBoxLayout()
         specific_file_layout.addWidget(self.search_specific_file_checkbox)
         specific_file_layout.addWidget(self.specific_file_path_edit)
         specific_file_layout.addWidget(self.file_browse_button)
 
-        # Опция выбора папки для загрузки
+        # опция выбора папки для загрузки
         self.select_uploading_folder_checkbox = QCheckBox("Upload found duplicates to a folder")
         self.select_uploading_folder_checkbox.stateChanged.connect(self.toggle_uploading_folder_search)
         self.uploading_folder_path_edit = QLineEdit()
@@ -139,7 +138,7 @@ class ImgDuplicatesFinder(QMainWindow):
         self.uploading_folder_browse_button.clicked.connect(self.browse_uploading_folder)
         self.uploading_folder_browse_button.setEnabled(False)
 
-        # Макет для выбора папки для загрузки
+        # макет для выбора папки для загрузки
         uploading_folder_layout = QHBoxLayout()
         uploading_folder_layout.addWidget(self.select_uploading_folder_checkbox)
         uploading_folder_layout.addWidget(self.uploading_folder_path_edit)
@@ -176,13 +175,13 @@ class ImgDuplicatesFinder(QMainWindow):
         self.show()
 
     # подтверждение выхода
-    # def closeEvent(self, event):
-    #     reply = QMessageBox.question(self, 'Confirm Quit', "Are you sure to quit?",
-    #                                  QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-    #     if reply == QMessageBox.Yes:
-    #         event.accept()
-    #     else:
-    #         event.ignore()
+    def closeEvent(self, event):
+        reply = QMessageBox.question(self, 'Confirm Quit', "Are you sure to quit?",
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            event.accept()
+        else:
+            event.ignore()
 
     # центрирование окна
     def center(self):
@@ -193,8 +192,9 @@ class ImgDuplicatesFinder(QMainWindow):
 
     # о приложении
     def about(self):
-        QMessageBox.about(self, "About Img Duplicates Finder", "<h3>About Img Duplicates Finder</h3>"
-                                                               "<a href='https://github.com/soneXgo/img_duplicates_finder'>GitHub</a>")
+        QMessageBox.about(self, "About Img Duplicates Finder",
+                          "<h3>About Img Duplicates Finder</h3>"
+                          "<a href='https://github.com/soneXgo/img_duplicates_finder'>GitHub</a>")
 
     def browse_folder(self):
         browse_folder(self)
