@@ -51,18 +51,18 @@ class DuplicateDetailsDialog(QDialog):
         right_layout.addWidget(creation_date_label)
 
         # кнопки
-        main_button_box = QVBoxLayout()
-        main_button_box.setAlignment(Qt.AlignVCenter)
-        main_move_button = QPushButton("Move")
-        main_move_button.clicked.connect(lambda _, p=self.file_path: self.move_file(p))
-        main_delete_button = QPushButton("Delete")
-        main_delete_button.clicked.connect(lambda _, p=self.file_path: self.delete_file(p))
-        main_button_box.addWidget(main_move_button)
-        main_button_box.addWidget(main_delete_button)
+        # main_button_box = QVBoxLayout()
+        # main_button_box.setAlignment(Qt.AlignVCenter)
+        # main_move_button = QPushButton("Move")
+        # main_move_button.clicked.connect(lambda _, p=self.file_path: self.move_file(p))
+        # main_delete_button = QPushButton("Delete")
+        # main_delete_button.clicked.connect(lambda _, p=self.file_path, b=main_delete_button: self.delete_file(p, b))
+        # main_button_box.addWidget(main_move_button)
+        # main_button_box.addWidget(main_delete_button)
 
         main_layout.addLayout(left_layout)
         main_layout.addLayout(right_layout, 1)
-        main_layout.addLayout(main_button_box)
+        # main_layout.addLayout(main_button_box)
         layout.addLayout(main_layout)
 
         # список дубликатов
@@ -71,6 +71,8 @@ class DuplicateDetailsDialog(QDialog):
 
         self.duplicates_list = QListWidget()
         for duplicate_path in self.duplicates:
+            if not os.path.isfile(duplicate_path):
+                continue
             item = QListWidgetItem()
             item.setToolTip(get_file_info(duplicate_path))
             widget = QWidget()
@@ -96,7 +98,7 @@ class DuplicateDetailsDialog(QDialog):
 
             # кнопка удаления
             delete_button = QPushButton("Delete")
-            delete_button.clicked.connect(lambda _, p=duplicate_path: self.delete_file(p))
+            delete_button.clicked.connect(lambda _, p=duplicate_path, b=delete_button: self.delete_file(p, b))
             widget_layout.addWidget(delete_button)
 
             item.setSizeHint(widget.sizeHint())
@@ -108,11 +110,16 @@ class DuplicateDetailsDialog(QDialog):
     def move_file(self, file_path):
         pass
 
-    def delete_file(self, file_path):
+    def delete_file(self, file_path, delete_button):
         if os.path.isfile(file_path):
-            path_to_delete = file_path.replace("/", "\\")
-            send2trash(path_to_delete)
+            reply = QMessageBox.question(self, "Confirm Deletion",
+                                         f"<h3>Are you sure?</h3>You want to delete the file:<br/>{file_path}",
+                                         QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                path_to_delete = file_path.replace("/", "\\")
+                send2trash(path_to_delete)
+                delete_button.setEnabled(False)
         else:
-            QMessageBox.warning(self, "Error occurred",
-                                "<h3>File doesn\'t exist</h3>"
-                                "The file may have already been deleted.<br/><br/>")  
+            QMessageBox.warning(self, "Error Occurred",
+                                "<h3>File doesn't exist</h3>"
+                                "The file may have already been deleted.<br/><br/>")

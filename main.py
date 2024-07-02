@@ -177,7 +177,7 @@ class ImgDuplicatesFinder(QMainWindow):
 
     # подтверждение выхода
     def closeEvent(self, event):
-        reply = QMessageBox.question(self, 'Confirm Quit', "Are you sure to quit?",
+        reply = QMessageBox.question(self, "Quit", "<h3>Confirm quit</h3>Are you sure you want to quit?",
                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             event.accept()
