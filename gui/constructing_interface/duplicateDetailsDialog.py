@@ -1,10 +1,11 @@
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QListWidget, QWidget, \
-    QListWidgetItem, QMessageBox
+    QListWidgetItem, QMessageBox, QFileDialog
 from PyQt5.QtGui import QPixmap, QFont
 from PyQt5.QtCore import Qt
 from datetime import datetime
 import os
 from send2trash import send2trash
+import shutil
 
 
 def get_file_info(file_path):
@@ -91,14 +92,14 @@ class DuplicateDetailsDialog(QDialog):
             duplicate_name_label.setWordWrap(True)
             widget_layout.addWidget(duplicate_name_label, 1)
 
-            # кнопка перемещения
+            # кнопки перемещения и удаления
             move_button = QPushButton("Move")
-            move_button.clicked.connect(lambda _, p=duplicate_path: self.move_file(p))
-            widget_layout.addWidget(move_button)
-
-            # кнопка удаления
             delete_button = QPushButton("Delete")
-            delete_button.clicked.connect(lambda _, p=duplicate_path, b=delete_button: self.delete_file(p, b))
+            move_button.clicked.connect(
+                lambda _, p=duplicate_path, m=move_button, d=delete_button: self.move_file(p, m, d))
+            delete_button.clicked.connect(
+                lambda _, p=duplicate_path, m=move_button, d=delete_button: self.delete_file(p, m, d))
+            widget_layout.addWidget(move_button)
             widget_layout.addWidget(delete_button)
 
             item.setSizeHint(widget.sizeHint())
@@ -107,10 +108,36 @@ class DuplicateDetailsDialog(QDialog):
 
         layout.addWidget(self.duplicates_list)
 
-    def move_file(self, file_path):
-        pass
+    def move_file(self, file_path, move_button, delete_button):
+        if os.path.isfile(file_path):
+            options = QFileDialog.Options()
+            options |= QFileDialog.ShowDirsOnly
+            directory = QFileDialog.getExistingDirectory(self, "Select Directory", options=options)
+            if directory:
+                reply = QMessageBox.question(self, "Confirm Move",
+                                             f"<h3>Are you sure?</h3>"
+                                             f"You want to move the file:<br/>{os.path.basename(file_path)}<br/><br/>"
+                                             f"from:<br/>{os.path.dirname(file_path)}<br/><br/>"
+                                             f"to:<br/>{directory}",
+                                             QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+                if reply == QMessageBox.Yes:
+                    try:
+                        new_path = os.path.join(directory, os.path.basename(file_path))
+                        shutil.move(file_path, new_path)
+                        QMessageBox.information(self, "Success", "<h3>File Moved</h3>"
+                                                                 f"File has been moved:<br/>{new_path}")
+                        move_button.setEnabled(False)
+                        delete_button.setEnabled(False)
+                    except Exception as e:
+                        QMessageBox.warning(self, "Error Occurred",
+                                            "<h3>Something went wrong</h3>"
+                                            f"An error occurred while moving the file:<br/>{str(e)}")
+        else:
+            QMessageBox.warning(self, "Error Occurred",
+                                "<h3>File doesn't exist</h3>"
+                                "The file may have been already deleted or removed.<br/><br/>")
 
-    def delete_file(self, file_path, delete_button):
+    def delete_file(self, file_path, move_button, delete_button):
         if os.path.isfile(file_path):
             reply = QMessageBox.question(self, "Confirm Deletion",
                                          f"<h3>Are you sure?</h3>You want to delete the file:<br/>{file_path}",
@@ -118,8 +145,9 @@ class DuplicateDetailsDialog(QDialog):
             if reply == QMessageBox.Yes:
                 path_to_delete = file_path.replace("/", "\\")
                 send2trash(path_to_delete)
+                move_button.setEnabled(False)
                 delete_button.setEnabled(False)
         else:
             QMessageBox.warning(self, "Error Occurred",
                                 "<h3>File doesn't exist</h3>"
-                                "The file may have already been deleted.<br/><br/>")
+                                "The file may have been already deleted or removed.<br/><br/>")
