@@ -1,9 +1,15 @@
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QListWidget, QWidget, \
-    QListWidgetItem
+    QListWidgetItem, QToolTip
 from PyQt5.QtGui import QPixmap, QFont
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QEvent
 from datetime import datetime
 import os
+
+
+def get_file_info(file_path):
+    file_name = os.path.basename(file_path)
+    creation_date = datetime.fromtimestamp(os.path.getctime(file_path)).strftime('%d/%m/%y %H:%M:%S')
+    return f"<b>Name:</b> {file_name}<br/><b>Path:</b> {file_path}<br/><b>Creation Date:</b> {creation_date}"
 
 
 class DuplicateDetailsDialog(QDialog):
@@ -65,6 +71,7 @@ class DuplicateDetailsDialog(QDialog):
         self.duplicates_list = QListWidget()
         for duplicate_path in self.duplicates:
             item = QListWidgetItem()
+            item.setToolTip(get_file_info(duplicate_path))
             widget = QWidget()
             widget_layout = QHBoxLayout(widget)
 
@@ -75,10 +82,11 @@ class DuplicateDetailsDialog(QDialog):
             duplicate_image_label.setPixmap(pixmap.scaled(80, 80, Qt.KeepAspectRatio))
             widget_layout.addWidget(duplicate_image_label)
 
-            # путь к дубликатам
-            duplicate_path_label = QLabel(duplicate_path)
-            duplicate_path_label.setWordWrap(True)
-            widget_layout.addWidget(duplicate_path_label, 1)
+            # дубликаты
+            duplicate_name = os.path.basename(duplicate_path)
+            duplicate_name_label = QLabel(duplicate_name)
+            duplicate_name_label.setWordWrap(True)
+            widget_layout.addWidget(duplicate_name_label, 1)
 
             # кнопка перемещения
             move_button = QPushButton("Move")
