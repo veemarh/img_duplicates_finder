@@ -5,7 +5,6 @@ def create_menubar(main_window):
     menubar = QMenuBar(main_window)
     # File
     file_menu = menubar.addMenu("&File")
-    open_recent_menu = file_menu.addMenu("&Open Recent")
     file_menu.addAction(main_window.exitAction)
     # Edit
     edit_menu = menubar.addMenu("&Edit")

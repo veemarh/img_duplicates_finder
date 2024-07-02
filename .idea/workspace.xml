@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f27f1f75-af0e-45e2-aeb4-81dc16233849" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gui/constructing_interface/duplicateDetailsDialog.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/constructing_interface/duplicateDetailsDialog.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui/constructing_interface/menubar.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/constructing_interface/menubar.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,7 +65,7 @@
     "Python.undo_commands.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "workflow",
     "last_opened_file_path": "C:/Users/Veta/Desktop/DjangoBlockchained/DjangoBlockchained",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -155,7 +153,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="main" />
+                        <option value="workflow" />
                       </list>
                     </value>
                   </entry>
@@ -168,7 +166,7 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/gui_py$main.coverage" NAME="main Coverage Results" MODIFIED="1719921474915" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/gui_py$main.coverage" NAME="main Coverage Results" MODIFIED="1719921715411" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/gui_py$options_dialog.coverage" NAME="options_dialog Coverage Results" MODIFIED="1718862733301" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/gui" />
     <SUITE FILE_PATH="coverage/img_duplicates_finder$duplicatesFinder.coverage" NAME="duplicatesFinder Coverage Results" MODIFIED="1718460728800" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/gui_py$context_menu.coverage" NAME="context_menu Coverage Results" MODIFIED="1718807560538" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/gui/constructing_interface" />
@@ -186,7 +184,7 @@
     <SUITE FILE_PATH="coverage/gui_py$actions.coverage" NAME="actions Coverage Results" MODIFIED="1719917481896" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/gui/constructing_interface" />
     <SUITE FILE_PATH="coverage/img_duplicates_finder$test.coverage" NAME="test Coverage Results" MODIFIED="1718194718393" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/img_duplicates_finder$options_widget.coverage" NAME="options_widget Coverage Results" MODIFIED="1718366590938" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PyQt5" />
-    <SUITE FILE_PATH="coverage/gui_py$duplicateDetailsDialog.coverage" NAME="duplicateDetailsDialog Coverage Results" MODIFIED="1719919596141" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/gui/constructing_interface" />
+    <SUITE FILE_PATH="coverage/gui_py$duplicateDetailsDialog.coverage" NAME="duplicateDetailsDialog Coverage Results" MODIFIED="1719921540499" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/gui/constructing_interface" />
     <SUITE FILE_PATH="coverage/gui_py$menubar.coverage" NAME="menubar Coverage Results" MODIFIED="1718787037802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/gui/constructing_interface" />
     <SUITE FILE_PATH="coverage/gui_py$progressWindow.coverage" NAME="progressWindow Coverage Results" MODIFIED="1719222129435" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/gui/constructing_interface" />
   </component>
