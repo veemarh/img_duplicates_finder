@@ -33,5 +33,8 @@ def create_toolbar(main_window):
     algorithms_tool.setPopupMode(QToolButton.InstantPopup)
     algorithms_tool.setMenu(algorithms_menu)
     toolbar.addWidget(algorithms_tool)
+    toolbar.addSeparator()
+    # Max duplicates
+    toolbar.addAction(main_window.maxDuplicatesAction)
 
     return toolbar

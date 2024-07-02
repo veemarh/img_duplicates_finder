@@ -84,6 +84,11 @@ def create_actions(main_window):
         main_window.algorithm_actions[algorithm] = action
     default_algorithm = main_window.options_manager.options.get("algorithm", "aHash")
     main_window.algorithm_actions[default_algorithm].setChecked(True)
+    # Max duplicates
+    main_window.maxDuplicatesAction = QAction(QIcon("static/max_dups.png"), "&Set max duplicates", main_window)
+    main_window.maxDuplicatesAction.setStatusTip("Set max number of duplicates to show "
+                                                 f"({main_window.options_manager.options['max_duplicates']})")
+    main_window.maxDuplicatesAction.triggered.connect(main_window.show_max_duplicates_dialog)
     # More
     main_window.openSettingsAction = QAction(QIcon("static/settings.png"), "&More...", main_window)
     main_window.openSettingsAction.setShortcut("Ctrl+Alt+S")
