@@ -38,7 +38,6 @@ def create_menubar(main_window):
     more_menu = options_menu.addAction(main_window.openSettingsAction)
     # Help
     help_menu = menubar.addMenu("&Help")
-    help_menu.addAction(main_window.helpContentAction)
     help_menu.addAction(main_window.aboutAction)
 
     return menubar

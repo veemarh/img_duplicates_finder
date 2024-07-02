@@ -96,8 +96,6 @@ def create_actions(main_window):
     main_window.openSettingsAction.triggered.connect(lambda: open_options_dialog(main_window))
 
     # Help
-    main_window.helpContentAction = QAction(QIcon("static/readme.png"), "&Help Content", main_window)
-    main_window.helpContentAction.setStatusTip("Launch the Help manual")
     main_window.aboutAction = QAction(QIcon("static/about.png"), "&About", main_window)
     main_window.aboutAction.setStatusTip("Show the Img Duplicates Finder's About box")
     main_window.aboutAction.triggered.connect(main_window.about)
