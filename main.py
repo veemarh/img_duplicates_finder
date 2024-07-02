@@ -195,7 +195,13 @@ class ImgDuplicatesFinder(QMainWindow):
     def about(self):
         QMessageBox.about(self, "About Img Duplicates Finder",
                           "<h3>About Img Duplicates Finder</h3>"
-                          "<a href='https://github.com/soneXgo/img_duplicates_finder'>GitHub</a>")
+                          "Built on June 4, 2024<br/><br/>"
+                          "For non-commercial use only.<br/><br/>"
+                          "Contributors: <a href='https://github.com/soneXgo'>soneXgo</a> "
+                          "and <a href='https://github.com/veemarh'>veemarh</a>.<br/>"
+                          "To view source code visit "
+                          "<a href='https://github.com/veemarh/img_duplicates_finder'>repository on GitHub</a>.<br/>"
+                          "Copyright ©2024")
 
     def browse_folder(self):
         browse_folder(self)
