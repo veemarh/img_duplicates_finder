@@ -1,9 +1,10 @@
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QListWidget, QWidget, \
-    QListWidgetItem
+    QListWidgetItem, QMessageBox
 from PyQt5.QtGui import QPixmap, QFont
 from PyQt5.QtCore import Qt
 from datetime import datetime
 import os
+from send2trash import send2trash
 
 
 def get_file_info(file_path):
@@ -108,4 +109,10 @@ class DuplicateDetailsDialog(QDialog):
         pass
 
     def delete_file(self, file_path):
-        pass
+        if os.path.isfile(file_path):
+            path_to_delete = file_path.replace("/", "\\")
+            send2trash(path_to_delete)
+        else:
+            QMessageBox.warning(self, "Error occurred",
+                                "<h3>File doesn\'t exist</h3>"
+                                "The file may have already been deleted.<br/><br/>")  
