@@ -56,7 +56,7 @@ class ImgDuplicatesFinder(QMainWindow):
         self.resize(1200, 600)
         self.center()
         self.setWindowTitle("Image Duplicates Finder")
-        self.setWindowIcon(QIcon("static/icon.ico"))
+        self.setWindowIcon(QIcon("static/img/icon.ico"))
         self.setFont(QFont("OpenSans", 10))
         self.setAcceptDrops(True)
 

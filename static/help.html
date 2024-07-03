@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="./img/icon.ico"/>
+    <title>Img Duplicates Finder</title>
+    <style>
+        *, *:after, *:before {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        ul {
+            margin: 1em 0;
+            vertical-align: middle;
+            list-style-position: inside;
+        }
+
+        a {
+            text-decoration: none;
+            outline: none;
+        }
+
+        body {
+            font-family: Roboto, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1;
+
+            color: #333333;
+            background: #f4f4f4;
+        }
+
+        section {
+            margin: auto;
+            padding: 0 16px;
+            max-width: 1140px;
+        }
+
+        section:first-of-type {
+            margin-top: 64px;
+        }
+
+        section:last-of-type {
+            margin-bottom: 64px;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Open Sans', Arial, sans-serif;
+            font-weight: normal;
+            letter-spacing: 1px;
+            line-height: 1.5;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+            font-size: 48px;
+            color: #2E8B57;
+        }
+
+        h2 {
+            margin-bottom: 8px;
+            font-size: 36px;
+            color: rgba(46, 139, 87, 0.75);
+        }
+
+        h3 {
+            margin-bottom: 8px;
+            font-size: 24px;
+        }
+
+        p, ul, dd, dt {
+            font-size: 20px;
+            line-height: 1.5;
+        }
+
+        dt {
+            display: list-item;
+            list-style-position: inside;
+            margin-top: 1em;
+        }
+
+        dd {
+            margin-bottom: 1em;
+        }
+
+        i {
+            opacity: 0.75;
+        }
+
+        .warning {
+            color: indianred;
+        }
+
+        .spacer {
+            height: 48px;
+        }
+
+        @media (max-width: 1140px) {
+            section {
+                max-width: 992px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            section {
+                max-width: 768px;
+            }
+
+            h1 {
+                font-size: 44px;
+            }
+
+            .spacer {
+                height: 32px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            section {
+                max-width: 576px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            h3 {
+                font-size: 20px;
+            }
+
+            p, ul, dd, dt {
+                font-size: 16px;
+            }
+
+            .spacer {
+                height: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <section>
+        <h1>Img Duplicates Finder</h1>
+    </section>
+    <div class="spacer"></div>
+    <section>
+        <h2>Search options</h2>
+        <p>You can choose the search method.</p>
+        <ul>
+            <li>
+                <b class="option">Recursive search</b> – search in the source folder and subfolders.
+            </li>
+            <li>
+                <b class="option">Search in the current folder</b> – search for duplicates only in the original folder.
+            </li>
+        </ul>
+        <p>You can specify the path of the file, then the search for duplicates will be only for it.</p>
+    </section>
+    <div class="spacer"></div>
+    <section>
+        <h2>File formats</h2>
+        <p>You can specify the extension of the files you are looking for.</p>
+        <p>There are 18 different file formats available.<br/><i>.png, .jpg, .jpeg, .bmp, .dds, .dib, .eps, .gif, .icns,
+            .ico, .pcx, .ppm, .psd, .tga, .tif, .tiff, .webp, .wmf</i></p>
+    </section>
+    <div class="spacer"></div>
+    <section>
+        <h2>Image properties</h2>
+        <h3>Limitations</h3>
+        <p>You can limit the size of the file, the time it was created and modified.</p>
+    </section>
+    <div class="spacer"></div>
+    <section>
+        <h2>Сomparison parameters</h2>
+        <h3>Algorithm</h3>
+        <p>Algorithms of different speeds and accuracy are available.</p>
+        <dl>
+            <dt><b>ORB</b></dt>
+            <dd>ORB is the most accurate algorithm, but the slowest. It finds copies of different extensions and is
+                resistant to turns, noise, scaling, cropping, and lighting changes.<br/>Recommendation: use on a small
+                dataset.<br/><a target="_blank"
+                                href="https://www.google.ru/search?q=ORB+for+image+comparison&newwindow=1&sca_esv=be8baa1fe9ceeca3&source=hp&ei=BvuEZqONCKe8wPAP-p-myAI&iflsig=AL9hbdgAAAAAZoUJFslHnfQwEnD0maRy9ZyUlM3qfjAV&ved=0ahUKEwijqMn6qYqHAxUnHhAIHfqPCSkQ4dUDCBU&uact=5&oq=ORB+for+image+comparison&gs_lp=Egdnd3Mtd2l6IhhPUkIgZm9yIGltYWdlIGNvbXBhcmlzb24yBRAhGKABSNkMULkHWLkHcAF4AJABAJgB_AOgAfwDqgEDNS0xuAEDyAEA-AEC-AEBmAICoAKNBKgCCsICEBAAGAMY5QIY6gIYjAMYjwHCAhAQLhgDGOUCGOoCGIwDGI8BmAMMkgcFMS40LTGgB7sB&sclient=gws-wiz">
+                    Learn more about ORB</a>
+            </dd>
+            <dt><b>aHash</b></dt>
+            <dd>aHash is fast, but less resistant to distortion than pHash.<br/><a target="_blank"
+                                                                                   href="https://www.google.ru/search?q=average+hash+for+image+comparison&newwindow=1&sca_esv=be8baa1fe9ceeca3&ei=vfuEZoL6K_nDwPAPyuersAI&ved=0ahUKEwjCzI7SqoqHAxX5IRAIHcrzCiYQ4dUDCA8&uact=5&oq=average+hash+for+image+comparison&gs_lp=Egxnd3Mtd2l6LXNlcnAiIWF2ZXJhZ2UgaGFzaCBmb3IgaW1hZ2UgY29tcGFyaXNvbjIIEAAYgAQYogQyCBAAGIAEGKIEMggQABiABBiiBDIIEAAYgAQYogRIzA9QyQlY3QtwAXgBkAEAmAGOAaABhAKqAQMwLjK4AQPIAQD4AQGYAgOgAo4CwgIKEAAYsAMY1gQYR5gDAIgGAZAGB5IHAzEuMqAH9AQ&sclient=gws-wiz-serp">
+                Learn more about aHash</a></dd>
+            <dt><b>bHash</b></dt>
+            <dd>bHash is resistant to local changes in the image, but less resistant to global
+                transformations.<br/><a target="_blank"
+                                        href="https://www.google.ru/search?q=block+hash+for+image+comparison&newwindow=1&sca_esv=be8baa1fe9ceeca3&ei=xfuEZt7yEMK7wPAPjoG5sAE&oq=bl+hash+for+image+comparison&gs_lp=Egxnd3Mtd2l6LXNlcnAiHGJsIGhhc2ggZm9yIGltYWdlIGNvbXBhcmlzb24qAggCMggQIRigARjDBDIIECEYoAEYwwQyCBAhGKABGMMESJUWUABYqgJwAHgBkAEAmAGqAaABsgKqAQMwLjK4AQHIAQD4AQGYAgKgArcCmAMAkgcDMC4yoAftCQ&sclient=gws-wiz-serp">
+                    Learn more about bHash</a>
+            </dd>
+            <dt><b>dHash</b></dt>
+            <dd>dHash is resistant to brightness changes, but sensitive to image rotation.<br/><a target="_blank"
+                                                                                                  href="https://www.google.ru/search?q=difference+hash+for+image+comparison&newwindow=1&sca_esv=be8baa1fe9ceeca3&ei=_fuEZrbyFcu9wPAP38mb0AM&oq=diff+hash+for+image+comparison&gs_lp=Egxnd3Mtd2l6LXNlcnAiHmRpZmYgaGFzaCBmb3IgaW1hZ2UgY29tcGFyaXNvbioCCAIyChAhGKABGMMEGAoyChAhGKABGMMEGAoyChAhGKABGMMEGAoyChAhGKABGMMEGApI8kpQhBVY4DJwA3gBkAEAmAGeAqAB3AiqAQUwLjQuMrgBAcgBAPgBAZgCB6AChwbCAgoQABiwAxjWBBhHwgIIECEYoAEYwwTCAggQABiABBiiBJgDAIgGAZAGCJIHBTMuMy4xoAeLIg&sclient=gws-wiz-serp">
+                Learn more about dHash</a>
+            </dd>
+            <dt><b>mHash</b></dt>
+            <dd>mHash is more resistant to changes in brightness and contrast than aHash, and is also
+                more resistant to noise and distortion than pHash.<br/><a target="_blank"
+                                                                          href="https://www.google.ru/search?q=median+hash+for+image+comparison&newwindow=1&sca_esv=be8baa1fe9ceeca3&ei=MPyEZrX8HsabwPAPw56VkA8&ved=0ahUKEwi11OyIq4qHAxXGDRAIHUNPBfIQ4dUDCA8&oq=median+hash+for+image+comparison&gs_lp=Egxnd3Mtd2l6LXNlcnAiIG1lZGlhbiBoYXNoIGZvciBpbWFnZSBjb21wYXJpc29uMggQABiABBiiBDIIEAAYgAQYogQyCBAAGIAEGKIEMggQABiABBiiBDIIEAAYgAQYogRI4XNQ-hpY0mZwBngBkAEAmAGrAaABow6qAQQwLjEzuAEMyAEA-AEBmAISoAKbDcICChAAGLADGNYEGEfCAggQIRigARjDBJgDAIgGAZAGCJIHBDYuMTKgB9Mr&sclient=gws-wiz-serp">
+                    Learn more about mHash</a>
+            </dd>
+            <dt><b>pHash</b> (set by default)</dt>
+            <dd>pHash is the most optimal in terms of accuracy and speed.<br/>Recommendation: use these algorithms to
+                find similar images faster and more accurately.<br/><a target="_blank"
+                                                                       href="https://www.google.ru/search?q=perceptual+hash+for+image+comparison&newwindow=1&sca_esv=be8baa1fe9ceeca3&ei=7PyEZp6hBo-B1fIP87e4wAw&ved=0ahUKEwiex6biq4qHAxWPQFUIHfMbDsgQ4dUDCA8&uact=5&oq=perceptual+hash+for+image+comparison&gs_lp=Egxnd3Mtd2l6LXNlcnAiJHBlcmNlcHR1YWwgaGFzaCBmb3IgaW1hZ2UgY29tcGFyaXNvbjIIECEYoAEYwwQyCBAhGKABGMMESJFiUMQZWKVZcAN4AZABAJgBhgGgAeYEqgEDMC41uAEDyAEA-AEBmAIIoAL7BMICChAAGLADGNYEGEfCAggQABiABBiiBMICChAhGKABGMMEGAqYAwCIBgGQBgiSBwMzLjWgB90V&sclient=gws-wiz-serp">
+                    Learn more about pHash</a>
+            </dd>
+            <dt><b>MD5, SHA-1 (160-bit), SHA-2 (256-bit), SHA-2 (384-bit), SHA-2 (512-bit)</b></dt>
+            <dd>MD5, SHA-1 (160-bit),
+                SHA-2 (256-bit), SHA-2 (384-bit), SHA-2 (512-bit) algorithms are arranged in ascending order of
+                computational cost and accuracy.<br/>Recommendation: use on a large amount of data to quickly search for
+                absolutely identical images.<br/><a target="_blank"
+                                                    href="https://www.google.ru/search?q=MD5%2C+SHA-1%28160%29%2C+SHA-256%2C+SHA-384%2C+SHA-512+for+image+comparison&newwindow=1&sca_esv=be8baa1fe9ceeca3&ei=_PyEZtexJq6R1fIPjO6T6Ac&ved=0ahUKEwjXn5fqq4qHAxWuSFUIHQz3BH0Q4dUDCA8&uact=5&oq=MD5%2C+SHA-1%28160%29%2C+SHA-256%2C+SHA-384%2C+SHA-512+for+image+comparison&gs_lp=Egxnd3Mtd2l6LXNlcnAiP01ENSwgU0hBLTEoMTYwKSwgU0hBLTI1NiwgU0hBLTM4NCwgU0hBLTUxMiBmb3IgaW1hZ2UgY29tcGFyaXNvbjIGEAAYBxgeMgYQABgHGB4yBhAAGAcYHjIGEAAYBxgeMgYQABgHGB4yBhAAGAcYHjIGEAAYBxgeMggQABgHGB4YDzIGEAAYBxgeMgYQABgHGB5I8BVQAFiWCnAAeAGQAQCYAXWgAd4BqgEDMC4yuAEDyAEA-AEB-AECmAICoALmAcICCBAAGIAEGKIEmAMAkgcDMC4yoAfyCQ&sclient=gws-wiz-serp">
+                    Learn more</a>
+            </dd>
+        </dl>
+        <br/>
+        <h3>Similarity</h3>
+        <p>You can specify the percentage of similarity of the images, where 100% are identical images. It is not
+            recommended to use values less than 50%.</p>
+        <br/>
+        <h3>Comparison size</h3>
+        <p>The size to which the original image is reduced. The smaller the size, the faster the algorithm works, but
+            the less accurate the search results become.</p>
+        <br/>
+        <h3>Quick Search</h3>
+        <p>If this option is enabled, a faster, but less accurate bHash algorithm will be used.</p>
+    </section>
+    <div class="spacer"></div>
+    <section>
+        <h2>Max duplicates</h2>
+        <p>You can specify the maximum number of duplicates found after which the search will stop.</p>
+    </section>
+    <div class="spacer"></div>
+    <section>
+        <h2>Same properties</h2>
+        <p>You can specify which identical properties the original image and duplicates should have.</p>
+    </section>
+    <div class="spacer"></div>
+    <section>
+        <h2>Modifications</h2>
+        <p>You can specify the properties that a duplicate may have compared to the original image.<br/>
+            <b class="warning">Warning! This slows down the algorithm.</b></p>
+    </section>
+</main>
+</body>
+</html>
+
+

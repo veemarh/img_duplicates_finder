@@ -4,28 +4,30 @@ from gui.optionsDialog import open_options_dialog
 from gui.constructing_interface.maxDuplicatesDialog import open_max_duplicates_dialog
 from gui.algorithmInfoDialog import open_algorithm_info_dialog
 from gui.algorithmsManager import get_algorithm_names
+import webbrowser
+import os
 
 
 def create_actions(main_window):
     # File
-    main_window.exitAction = QAction(QIcon("static/quit.png"), "&Quit", main_window)
+    main_window.exitAction = QAction(QIcon("static/img/quit.png"), "&Quit", main_window)
     main_window.exitAction.setShortcut("Ctrl+Q")
     main_window.exitAction.setStatusTip("Quit application")
     main_window.exitAction.triggered.connect(main_window.close)
     # Edit
-    main_window.undoAction = QAction(QIcon("static/undo.png"), "&Undo", main_window)
+    main_window.undoAction = QAction(QIcon("static/img/undo.png"), "&Undo", main_window)
     main_window.undoAction.setShortcut("Ctrl+Z")
     main_window.undoAction.setStatusTip("Undo")
     main_window.undoAction.triggered.connect(main_window.undo_action)
-    main_window.redoAction = QAction(QIcon("static/redo.png"), "&Redo", main_window)
+    main_window.redoAction = QAction(QIcon("static/img/redo.png"), "&Redo", main_window)
     main_window.redoAction.setShortcut("Ctrl+Shift+Z")
     main_window.redoAction.setStatusTip("Redo")
     main_window.redoAction.triggered.connect(main_window.redo_action)
-    main_window.addFolderAction = QAction(QIcon("static/add.png"), "&Add to Search List", main_window)
+    main_window.addFolderAction = QAction(QIcon("static/img/add.png"), "&Add to Search List", main_window)
     main_window.addFolderAction.setShortcut("Ctrl+M")
     main_window.addFolderAction.setStatusTip("Add a new folder to search list")
     main_window.addFolderAction.triggered.connect(main_window.browse_folder)
-    main_window.removeSelAction = QAction(QIcon("static/remove.png"), "&Remove from Search List", main_window)
+    main_window.removeSelAction = QAction(QIcon("static/img/remove.png"), "&Remove from Search List", main_window)
     main_window.removeSelAction.setShortcut("Delete")
     main_window.removeSelAction.setStatusTip("Remove selected folder from search list")
     main_window.removeSelAction.triggered.connect(main_window.remove_sel_folder)
@@ -44,11 +46,11 @@ def create_actions(main_window):
 
     # *** Search options
     # Folders
-    main_window.recursiveSearchAction = QAction(QIcon("static/recursive.png"), "&Recursive Search", main_window)
+    main_window.recursiveSearchAction = QAction(QIcon("static/img/recursive.png"), "&Recursive Search", main_window)
     main_window.recursiveSearchAction.setStatusTip("Search in folders and their subfolders")
     main_window.recursiveSearchAction.triggered.connect(
         lambda: main_window.options_manager.set_option("recursive_search", True))
-    main_window.currentSearchAction = QAction(QIcon("static/current.png"), "In the &Current Folder", main_window)
+    main_window.currentSearchAction = QAction(QIcon("static/img/current.png"), "In the &Current Folder", main_window)
     main_window.currentSearchAction.setStatusTip("Search only in the specified folders")
     main_window.currentSearchAction.triggered.connect(
         lambda: main_window.options_manager.set_option("recursive_search", False))
@@ -87,24 +89,33 @@ def create_actions(main_window):
     default_algorithm = main_window.options_manager.options.get("algorithm", "pHash")
     main_window.algorithm_actions[default_algorithm].setChecked(True)
 
-    main_window.algorithmInfoAction = QAction(QIcon("static/info.png"), "&Learn more...", main_window)
+    main_window.algorithmInfoAction = QAction(QIcon("static/img/info.png"), "&Learn more...", main_window)
     main_window.algorithmInfoAction.setStatusTip("Find out algorithms are right for you")
     main_window.algorithmInfoAction.triggered.connect(lambda: open_algorithm_info_dialog(main_window))
     # Max duplicates
-    main_window.maxDuplicatesAction = QAction(QIcon("static/max_dups.png"), "&Set max duplicates...", main_window)
+    main_window.maxDuplicatesAction = QAction(QIcon("static/img/max_dups.png"), "&Set max duplicates...", main_window)
     main_window.maxDuplicatesAction.setStatusTip("Set max number of duplicates to show "
                                                  f"({main_window.options_manager.options['max_duplicates']})")
     main_window.maxDuplicatesAction.triggered.connect(lambda: open_max_duplicates_dialog(main_window))
     # More
-    main_window.openSettingsAction = QAction(QIcon("static/settings.png"), "&More...", main_window)
+    main_window.openSettingsAction = QAction(QIcon("static/img/settings.png"), "&More...", main_window)
     main_window.openSettingsAction.setShortcut("Ctrl+Alt+S")
     main_window.openSettingsAction.setStatusTip("Open detailed settings")
     main_window.openSettingsAction.triggered.connect(lambda: open_options_dialog(main_window))
 
     # Help
-    main_window.aboutAction = QAction(QIcon("static/about.png"), "&About", main_window)
+    main_window.helpContentAction = QAction(QIcon("static/img/readme.png"), "&Help Content", main_window)
+    main_window.helpContentAction.setStatusTip("Launch the Help manual")
+    main_window.helpContentAction.triggered.connect(open_help)
+    main_window.aboutAction = QAction(QIcon("static/img/about.png"), "&About", main_window)
     main_window.aboutAction.setStatusTip("Show the Img Duplicates Finder's About box")
     main_window.aboutAction.triggered.connect(main_window.about)
+
+
+def open_help():
+    help_file_path = os.path.abspath("static/help.html")
+    if os.path.exists(help_file_path):
+        webbrowser.open(f"file://{help_file_path}")
 
 
 def set_algorithm(main_window, algorithm):
