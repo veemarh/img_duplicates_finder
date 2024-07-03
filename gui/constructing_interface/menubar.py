@@ -31,6 +31,8 @@ def create_menubar(main_window):
     algorithms_menu = options_menu.addMenu("&Algorithm")
     for action in main_window.algorithm_actions.values():
         algorithms_menu.addAction(action)
+    algorithms_menu.addSeparator()
+    algorithms_menu.addAction(main_window.algorithmInfoAction)
     # Max duplicates
     max_duplicates_menu = options_menu.addMenu("&Max duplicates")
     max_duplicates_menu.addAction(main_window.maxDuplicatesAction)

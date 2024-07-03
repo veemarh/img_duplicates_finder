@@ -27,6 +27,8 @@ def create_toolbar(main_window):
     algorithms_menu = QMenu(main_window)
     for action in main_window.algorithm_actions.values():
         algorithms_menu.addAction(action)
+    algorithms_menu.addSeparator()
+    algorithms_menu.addAction(main_window.algorithmInfoAction)
     algorithms_tool = QToolButton(main_window)
     algorithms_tool.setToolTip("Algorithm")
     algorithms_tool.setIcon(QIcon("static/algorithm.png"))

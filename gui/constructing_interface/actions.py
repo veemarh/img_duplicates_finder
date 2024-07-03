@@ -2,6 +2,8 @@ from PyQt5.QtWidgets import QAction, QActionGroup
 from PyQt5.QtGui import QIcon
 from gui.options_dialog import open_options_dialog
 from gui.constructing_interface.maxDuplicatesDialog import open_max_duplicates_dialog
+from gui.algorithmInfoDialog import open_algorithm_info_dialog
+from gui.algorithmsManager import get_algorithm_names
 
 
 def create_actions(main_window):
@@ -71,8 +73,7 @@ def create_actions(main_window):
     main_window.bySizeAction.setCheckable(True)
     main_window.bySizeAction.toggled.connect(lambda checked: update_search_by_option(main_window, "Size", checked))
     # Algorithms
-    algorithms = ["aHash", "bHash", "dHash", "mHash", "pHash", "MD5", "SHA-1 (160-bit)", "SHA-2 (256-bit)",
-                  "SHA-2 (384-bit)", "SHA-2 (512-bit)", "ORB"]
+    algorithms = get_algorithm_names()
     algorithms_group = QActionGroup(main_window)
     algorithms_group.setExclusive(True)
     main_window.algorithm_actions = {}
@@ -83,8 +84,12 @@ def create_actions(main_window):
         action.setCheckable(True)
         algorithms_group.addAction(action)
         main_window.algorithm_actions[algorithm] = action
-    default_algorithm = main_window.options_manager.options.get("algorithm", "aHash")
+    default_algorithm = main_window.options_manager.options.get("algorithm", "pHash")
     main_window.algorithm_actions[default_algorithm].setChecked(True)
+
+    main_window.algorithmInfoAction = QAction(QIcon("static/info.png"), "&Learn more...", main_window)
+    main_window.algorithmInfoAction.setStatusTip("Find out algorithms are right for you")
+    main_window.algorithmInfoAction.triggered.connect(lambda: open_algorithm_info_dialog(main_window))
     # Max duplicates
     main_window.maxDuplicatesAction = QAction(QIcon("static/max_dups.png"), "&Set max duplicates...", main_window)
     main_window.maxDuplicatesAction.setStatusTip("Set max number of duplicates to show "

@@ -9,7 +9,7 @@ from algorithms.mhash import mhash
 # - parameter 'Comparison area' (bhash:128x128, 256x256, 512x512; mhash: 8x8, 16x16 )
 def get_hash(
     img: Image,
-    method_name: str = "aHash",
+    method_name: str = "pHash",
     hash_size: int = 16,
     bhash_quick: bool = False,
     comparison_size: int = 16,

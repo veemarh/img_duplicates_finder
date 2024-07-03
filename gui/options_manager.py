@@ -6,7 +6,7 @@ class OptionsManager:
         self.options = {
             "recursive_search": True,
             "search_by": {"Name": False, "Format": False, "Size": False},
-            "algorithm": "aHash",
+            "algorithm": "pHash",
             "limit_size": False,
             "size_value_from": "0",
             "size_unit_from": "bytes",
