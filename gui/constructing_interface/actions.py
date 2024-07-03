@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QAction, QActionGroup
 from PyQt5.QtGui import QIcon
 from gui.options_dialog import open_options_dialog
-from gui.constructing_interface.maxDuplicatesDialog import MaxDuplicatesDialog
+from gui.constructing_interface.maxDuplicatesDialog import open_max_duplicates_dialog
 
 
 def create_actions(main_window):
@@ -89,7 +89,7 @@ def create_actions(main_window):
     main_window.maxDuplicatesAction = QAction(QIcon("static/max_dups.png"), "&Set max duplicates...", main_window)
     main_window.maxDuplicatesAction.setStatusTip("Set max number of duplicates to show "
                                                  f"({main_window.options_manager.options['max_duplicates']})")
-    main_window.maxDuplicatesAction.triggered.connect(lambda: set_max_duplicates(main_window))
+    main_window.maxDuplicatesAction.triggered.connect(lambda: open_max_duplicates_dialog(main_window))
     # More
     main_window.openSettingsAction = QAction(QIcon("static/settings.png"), "&More...", main_window)
     main_window.openSettingsAction.setShortcut("Ctrl+Alt+S")
@@ -120,10 +120,3 @@ def update_search_by_option(main_window, key, checked):
     search_by = main_window.options_manager.get_option("search_by")
     search_by[key] = checked
     main_window.options_manager.set_option("search_by", search_by)
-
-
-def set_max_duplicates(main_window):
-    dialog = MaxDuplicatesDialog(main_window)
-    if dialog.exec_():
-        max_duplicates = dialog.max_duplicates_spinbox.value()
-        main_window.options_manager.set_option("max_duplicates", max_duplicates)
