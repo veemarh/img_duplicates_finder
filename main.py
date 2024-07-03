@@ -17,7 +17,6 @@ from gui.search_event_handlers import browse_folder, start_search, display_resul
     clear_search_list, browse_excluded_folder, remove_sel_excluded_folder, clear_excluded_list, show_duplicate_details
 from gui.specific_file_manager import toggle_specific_file_search, set_specific_file, browse_file
 from gui.uploading_folder_manager import toggle_uploading_folder_search, set_uploading_folder, browse_uploading_folder
-from gui.constructing_interface.maxDuplicatesDialog import MaxDuplicatesDialog
 
 
 class ImgDuplicatesFinder(QMainWindow):
@@ -269,10 +268,6 @@ class ImgDuplicatesFinder(QMainWindow):
             show_duplicate_details(self, row)
         except Exception:
             pass
-
-    def show_max_duplicates_dialog(self):
-        dialog = MaxDuplicatesDialog(self)
-        dialog.exec_()
 
 
 if __name__ == '__main__':

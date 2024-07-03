@@ -31,7 +31,3 @@ class MaxDuplicatesDialog(QDialog):
         button_box.addWidget(cancel_button)
 
         layout.addLayout(button_box)
-
-    def accept(self):
-        self.parent().options_manager.options["max_duplicates"] = self.max_duplicates_spinbox.value()
-        super().accept()
