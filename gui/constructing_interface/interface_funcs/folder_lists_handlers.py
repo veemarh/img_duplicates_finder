@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QFileDialog
-from gui.undo_commands import AddFolderCommand, ClearSearchListCommand, RemoveSelFolderCommand, \
-    AddExcludedFolderCommand, ClearExcludedSearchListCommand, RemoveExcludedSelFolderCommand
+from gui.constructing_interface.interface_funcs.undo_commands import AddFolderCommand, ClearSearchListCommand, \
+    RemoveSelFolderCommand, AddExcludedFolderCommand, ClearExcludedSearchListCommand, RemoveExcludedSelFolderCommand
 
 
 def browse_folder(self):

@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QDialog, QFormLayout, QCheckBox, QDialogButtonBox, Q
     QHBoxLayout
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
-from gui.algorithmsManager import get_algorithm_names
+from gui.constructing_interface.option_handlers.algorithmsManager import get_algorithm_names
 
 
 class OptionsDialog(QDialog):

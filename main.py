@@ -4,7 +4,6 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButto
     QAbstractItemView
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import Qt
-from gui.optionsManager import OptionsManager
 from file_search.fileSearcher import FileSearcher
 from duplicates_finder.comparisonMethod import ComparisonMethod
 from gui.constructing_interface.toolbar import create_toolbar
@@ -12,12 +11,15 @@ from gui.constructing_interface.menubar import create_menubar
 from gui.constructing_interface.context_menu import create_context_menu
 from gui.constructing_interface.statusbar import create_status_bar
 from gui.constructing_interface.actions import create_actions
-from gui.drag_drop import dragEnterEvent, dropEvent
-from gui.search_event_handlers import start_search, display_results, show_duplicate_details
-from gui.folder_lists_handlers import browse_folder, remove_sel_folder, clear_search_list, browse_excluded_folder, \
-    remove_sel_excluded_folder, clear_excluded_list
-from gui.specificFileManager import toggle_specific_file_search, set_specific_file, browse_file
-from gui.uploadingFolderManager import toggle_uploading_folder_search, set_uploading_folder, browse_uploading_folder
+from gui.constructing_interface.interface_funcs.drag_drop import dragEnterEvent, dropEvent
+from gui.constructing_interface.interface_funcs.folder_lists_handlers import browse_folder, remove_sel_folder, \
+    clear_search_list, browse_excluded_folder, remove_sel_excluded_folder, clear_excluded_list
+from gui.constructing_interface.option_handlers.specificFileManager import toggle_specific_file_search, \
+    set_specific_file, browse_file
+from gui.constructing_interface.option_handlers.uploadingFolderManager import toggle_uploading_folder_search, \
+    set_uploading_folder, browse_uploading_folder
+from gui.constructing_interface.option_handlers.optionsManager import OptionsManager
+from gui.search_process_handlers.search_event_handlers import start_search, display_results, show_duplicate_details
 
 
 class ImgDuplicatesFinder(QMainWindow):

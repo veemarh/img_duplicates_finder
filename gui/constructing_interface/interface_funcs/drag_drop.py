@@ -1,6 +1,6 @@
 from PyQt5.QtGui import QCursor
 from PyQt5.QtCore import QFileInfo
-from gui.undo_commands import AddFolderCommand, AddExcludedFolderCommand
+from gui.constructing_interface.interface_funcs.undo_commands import AddFolderCommand, AddExcludedFolderCommand
 
 
 def dragEnterEvent(event):

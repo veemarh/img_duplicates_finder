@@ -1,12 +1,11 @@
 import os
 from datetime import datetime
 from PyQt5.QtWidgets import QMessageBox, QTableWidgetItem
+from PyQt5.QtCore import QThread, pyqtSignal, Qt
 from duplicates_finder.duplicatesFinder import DuplicatesFinder
-from gui.constructing_interface.progressWindow import ProgressWindow
-from PyQt5.QtCore import QThread, pyqtSignal
-from PyQt5.QtCore import Qt
-from gui.custom_exceptions import FolderNotSpecifiedError
-from gui.constructing_interface.duplicateDetailsDialog import DuplicateDetailsDialog
+from gui.search_process_handlers.custom_exceptions import FolderNotSpecifiedError
+from gui.search_process_handlers.assisting_windows.progressWindow import ProgressWindow
+from gui.search_process_handlers.assisting_windows.duplicateDetailsDialog import DuplicateDetailsDialog
 
 
 class FindDuplicatesThread(QThread):
