@@ -86,7 +86,7 @@ def create_actions(main_window):
         action.setCheckable(True)
         algorithms_group.addAction(action)
         main_window.algorithm_actions[algorithm] = action
-    default_algorithm = main_window.options_manager.options.get("algorithm", "pHash")
+    default_algorithm = main_window.options_manager.get_option("algorithm")
     main_window.algorithm_actions[default_algorithm].setChecked(True)
 
     main_window.algorithmInfoAction = QAction(QIcon("static/img/info.png"), "&Learn more...", main_window)

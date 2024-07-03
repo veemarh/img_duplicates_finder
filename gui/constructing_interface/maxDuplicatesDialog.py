@@ -3,11 +3,12 @@ from PyQt5.QtGui import QFont
 
 
 class MaxDuplicatesDialog(QDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, max_value):
+        super().__init__()
         self.setWindowTitle("Set max duplicates")
         self.setFixedSize(300, 100)
         self.setFont(QFont("OpenSans", 10))
+        self.max_value = max_value
         self.initUI()
 
     def initUI(self):
@@ -18,7 +19,7 @@ class MaxDuplicatesDialog(QDialog):
         self.max_duplicates_spinbox = QSpinBox()
         self.max_duplicates_spinbox.setMaximumWidth(200)
         self.max_duplicates_spinbox.setRange(1, 100000)
-        self.max_duplicates_spinbox.setValue(self.parent().options_manager.options.get("max_duplicates", 1000))
+        self.max_duplicates_spinbox.setValue(self.max_value)
         self.form_layout.addRow("Max duplicates:", self.max_duplicates_spinbox)
         layout.addLayout(self.form_layout)
 
@@ -34,7 +35,7 @@ class MaxDuplicatesDialog(QDialog):
 
 
 def open_max_duplicates_dialog(main_window):
-    dialog = MaxDuplicatesDialog(main_window)
+    dialog = MaxDuplicatesDialog(main_window.options_manager.get_option("max_duplicates"))
     if dialog.exec_():
         max_duplicates = dialog.max_duplicates_spinbox.value()
         main_window.options_manager.set_option("max_duplicates", max_duplicates)

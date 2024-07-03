@@ -335,16 +335,16 @@ def update_options(main_window):
     main_window.recursiveSearchAction.setChecked(main_window.options_manager.options["recursive_search"])
     main_window.currentSearchAction.setChecked(not main_window.options_manager.options["recursive_search"])
 
-    search_by = main_window.options_manager.options.get("search_by", {})
+    search_by = main_window.options_manager.get_option("search_by")
     main_window.byNameAction.setChecked(search_by.get("Name", False))
     main_window.byFormatAction.setChecked(search_by.get("Format", False))
     main_window.bySizeAction.setChecked(search_by.get("Size", False))
 
-    algorithm = main_window.options_manager.options.get("algorithm")
+    algorithm = main_window.options_manager.get_option("algorithm")
     main_window.algorithm_actions[algorithm].setChecked(True)
 
-    search_specific_file = main_window.options_manager.options.get("search_specific_file")
+    search_specific_file = main_window.options_manager.get_option("search_specific_file")
     main_window.search_specific_file_checkbox.setChecked(search_specific_file)
 
-    select_uploading_folder = main_window.options_manager.options.get("select_uploading_folder")
+    select_uploading_folder = main_window.options_manager.get_option("select_uploading_folder")
     main_window.select_uploading_folder_checkbox.setChecked(select_uploading_folder)
