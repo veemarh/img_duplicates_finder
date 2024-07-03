@@ -7,7 +7,6 @@
     <list default="true" id="f27f1f75-af0e-45e2-aeb4-81dc16233849" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gui/search_event_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/search_event_handlers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -179,7 +178,7 @@
       <workItem from="1720009958340" duration="4030000" />
       <workItem from="1720014235031" duration="334000" />
       <workItem from="1720026527276" duration="3117000" />
-      <workItem from="1720033092970" duration="4000000" />
+      <workItem from="1720033092970" duration="4542000" />
     </task>
     <servers />
   </component>

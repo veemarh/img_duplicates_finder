@@ -124,7 +124,7 @@ def start_search(self):
     self.thread = FindDuplicatesThread(dupl_finder)
     self.thread.progress.connect(self.progress_window.update_progress)
     self.thread.found_duplicates.connect(
-        lambda duplicates, duplicates_count: update_real_time_duplicates(self, duplicates, duplicates_count))
+        lambda duplicates: update_real_time_duplicates(self, duplicates))
     self.thread.finished.connect(
         lambda duplicates, duplicates_count: on_search_finished(self, duplicates, duplicates_count))
     self.thread.finished.connect(self.thread.deleteLater)
@@ -132,8 +132,8 @@ def start_search(self):
     self.thread.start()
 
 
-def update_real_time_duplicates(self, duplicates, duplicates_count):
-    display_results(self, duplicates, duplicates_count)
+def update_real_time_duplicates(self, duplicates):
+    display_results(self, duplicates)
 
 
 def on_search_finished(self, duplicates, duplicates_count):
@@ -144,7 +144,7 @@ def on_search_finished(self, duplicates, duplicates_count):
     enable_sorting(self)
 
 
-def display_results(self, duplicates, num):
+def display_results(self, duplicates):
     self.result_table.setRowCount(0)
     row = 0
     for one_file in duplicates:

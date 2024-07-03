@@ -219,8 +219,8 @@ class ImgDuplicatesFinder(QMainWindow):
                                 f"<b>Error:</b><br/>{type(e).__name__}<br/>"
                                 f"<b>Details:</b><br/>{str(e)}")
 
-    def display_results(self, duplicates, num):
-        display_results(self, duplicates, num)
+    def display_results(self, duplicates):
+        display_results(self, duplicates)
 
     def remove_sel_folder(self):
         remove_sel_folder(self)
