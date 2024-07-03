@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QAction, QActionGroup
 from PyQt5.QtGui import QIcon
-from gui.options_dialog import open_options_dialog
+from gui.optionsDialog import open_options_dialog
 from gui.constructing_interface.maxDuplicatesDialog import open_max_duplicates_dialog
 from gui.algorithmInfoDialog import open_algorithm_info_dialog
 from gui.algorithmsManager import get_algorithm_names

@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButto
     QAbstractItemView
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import Qt
-from gui.options_manager import OptionsManager
+from gui.optionsManager import OptionsManager
 from file_search.fileSearcher import FileSearcher
 from duplicates_finder.comparisonMethod import ComparisonMethod
 from gui.constructing_interface.toolbar import create_toolbar
@@ -15,8 +15,8 @@ from gui.constructing_interface.actions import create_actions
 from gui.drag_drop import dragEnterEvent, dropEvent
 from gui.search_event_handlers import browse_folder, start_search, display_results, remove_sel_folder, \
     clear_search_list, browse_excluded_folder, remove_sel_excluded_folder, clear_excluded_list, show_duplicate_details
-from gui.specific_file_manager import toggle_specific_file_search, set_specific_file, browse_file
-from gui.uploading_folder_manager import toggle_uploading_folder_search, set_uploading_folder, browse_uploading_folder
+from gui.specificFileManager import toggle_specific_file_search, set_specific_file, browse_file
+from gui.uploadingFolderManager import toggle_uploading_folder_search, set_uploading_folder, browse_uploading_folder
 
 
 class ImgDuplicatesFinder(QMainWindow):
