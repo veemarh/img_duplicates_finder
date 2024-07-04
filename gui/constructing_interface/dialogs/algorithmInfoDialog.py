@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QRadioButton, QButtonGroup, QPushButton, \
     QHBoxLayout, QScrollArea, QWidget
 from PyQt5.QtGui import QFont
-from gui.constructing_interface.option_handlers.algorithmsManager import get_algorithm_names, get_algorithm_description_by_name
+from gui.constructing_interface.option_handlers.algorithmsManager import get_algorithm_names, \
+    get_algorithm_description_by_name
 
 
 class AlgorithmInfoDialog(QDialog):

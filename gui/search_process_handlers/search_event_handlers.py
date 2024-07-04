@@ -5,7 +5,7 @@ from PyQt5.QtCore import QThread, pyqtSignal, Qt
 from duplicates_finder.duplicatesFinder import DuplicatesFinder
 from gui.search_process_handlers.custom_exceptions import FolderNotSpecifiedError
 from gui.search_process_handlers.assisting_windows.progressWindow import ProgressWindow
-from gui.search_process_handlers.assisting_windows.duplicateDetailsDialog import DuplicateDetailsDialog
+from gui.constructing_interface.dialogs.duplicateDetailsDialog import DuplicateDetailsDialog
 
 
 class FindDuplicatesThread(QThread):
